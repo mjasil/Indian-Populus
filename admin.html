@@ -5,7 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Indian Populus — Admin</title>
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"></noscript>
 <style>
 *,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
 :root{
@@ -83,6 +84,7 @@ img{display:block;}
    ADMIN SHELL
 ════════════════════════════════════ */
 #screen-admin{display:none;min-height:100vh;flex-direction:column;}
+#screen-admin.visible{display:flex;}
 .admin-wrap{display:flex;flex:1;min-height:calc(100vh - 52px);}
 
 /* TOP BAR */
@@ -354,9 +356,48 @@ tr:last-child td{border-bottom:none;}
 .editor-toolbar button:hover{background:var(--bg4);color:var(--text);}
 .editor-toolbar .sep{width:1px;height:20px;background:var(--border);margin:0 4px;align-self:center;}
 
-/* PROGRESS BAR */
+/* PERFORMANCE */
+*{-webkit-tap-highlight-color:transparent;}
+.btn,.nav-item,.sidebar,.modal-overlay,.field input{will-change:auto;}
+/* reduce all transitions for speed */
+.nav-item{transition:background .1s,color .1s;}
+.btn{transition:background .15s;}
+.sidebar{transition:transform .2s ease;}
+.field input{transition:border-color .15s;}
 .progress-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:6px;}
 .progress-fill{height:100%;background:var(--green3);border-radius:2px;transition:width .4s;}
+
+/* HAMBURGER */
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:1px solid var(--border);margin-right:4px;}
+.hamburger span{display:block;width:18px;height:1.5px;background:var(--text2);border-radius:2px;}
+/* SIDEBAR OVERLAY */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:149;}
+.sidebar-overlay.open{display:block;}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .sidebar{position:fixed;top:52px;left:0;bottom:0;z-index:150;transform:translateX(-100%);transition:transform .25s ease;display:flex;}
+  .sidebar.open{transform:translateX(0);}
+  .hamburger{display:flex;}
+  .stat-grid{grid-template-columns:1fr 1fr !important;}
+  .author-grid{grid-template-columns:1fr 1fr;}
+  .two-col{grid-template-columns:1fr;}
+  .perm-grid{grid-template-columns:1fr;}
+  .main{padding:20px 16px;}
+  .news__card{grid-template-columns:1fr;}
+}
+@media(max-width:600px){
+  .main{padding:16px 12px;}
+  .stat-grid{grid-template-columns:1fr 1fr !important;}
+  .form-grid{grid-template-columns:1fr;}
+  .author-grid{grid-template-columns:1fr;}
+  .page-header{flex-direction:column;gap:10px;}
+  .page-actions{width:100%;}
+  .topbar{padding:0 12px;}
+  .topbar-view{display:none;}
+  table{font-size:.72rem;}
+  th,td{padding:8px 10px;}
+}
 </style>
 </head>
 <body>
@@ -377,11 +418,11 @@ tr:last-child td{border-bottom:none;}
     <div class="login-err" id="loginErr">⚠ Invalid email or password. Please try again.</div>
     <div class="field">
       <label>Email Address</label>
-      <input type="email" id="loginEmail" placeholder="you@indianpopulus.com" value="sahadpk@login.com"/>
+      <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email"/>
     </div>
     <div class="field">
       <label>Password</label>
-      <input type="password" id="loginPass" placeholder="••••••••" value="loginsahadpk6767"/>
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"/>
     </div>
     <button class="btn-primary" onclick="doLogin()">Sign In →</button>
     <p class="login-note">Indian Populus Admin Panel · v1.0</p>
@@ -391,11 +432,14 @@ tr:last-child td{border-bottom:none;}
 <!-- ═══════════════════════════════════
      ADMIN SHELL
 ═══════════════════════════════════ -->
-<div id="screen-admin" style="display:none;flex-direction:column;">
+<div id="screen-admin">
 
   <!-- TOP BAR -->
   <div class="topbar">
     <div class="topbar-left">
+      <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
       <div class="topbar-logo">
         <svg viewBox="0 0 32 32" fill="none"><path d="M27 5C12 5 5 13 5 23c0 1.6.3 3 .8 4.4C9 19 15 13 26 11c-7 4-12 9-15 18 9 1 18-4 18-16 0-3.4-1-6-2-8z" fill="currentColor"/></svg>
         <span>Indian <em>Populus</em></span>
@@ -416,8 +460,9 @@ tr:last-child td{border-bottom:none;}
   </div>
 
   <div class="admin-wrap">
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
     <!-- SIDEBAR -->
-    <aside class="sidebar">
+    <aside class="sidebar" id="sidebar">
       <div class="sidebar-section">
         <div class="sidebar-label">Main</div>
         <button class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">
@@ -1352,6 +1397,8 @@ tr:last-child td{border-bottom:none;}
 </div>
 
 <script>
+
+
 // ── CREDENTIALS ──
 var CREDS={email:'sahadpk@login.com',pass:'loginsahadpk6767'};
 
@@ -1364,8 +1411,8 @@ function doLogin(){
     err.style.display='none';
     document.getElementById('screen-login').style.display='none';
     var admin=document.getElementById('screen-admin');
-    admin.style.display='flex';
-    // update date
+    admin.classList.add('visible');
+    showPage('dashboard');
     var d=new Date();
     var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
     var el=document.getElementById('dash-date');
@@ -1383,39 +1430,47 @@ document.getElementById('loginEmail').addEventListener('keydown',function(e){if(
 // ── LOGOUT ──
 function doLogout(){
   if(confirm('Sign out of admin panel?')){
-    document.getElementById('screen-admin').style.display='none';
+    document.getElementById('screen-admin').classList.remove('visible');
     document.getElementById('screen-login').style.display='flex';
     document.getElementById('loginPass').value='';
   }
 }
 
+// ── SIDEBAR TOGGLE (mobile) ──
+function toggleSidebar(){
+  var sb=document.getElementById('sidebar');
+  var ov=document.getElementById('sidebarOverlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('open');
+}
+
 // ── PAGE NAVIGATION ──
 function showPage(id){
-  // hide all pages
   document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
-  // deactivate all nav items
   document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
-  // show target page
   var page=document.getElementById('page-'+id);
   if(page) page.classList.add('active');
-  // activate nav item
   var nav=document.getElementById('nav-'+id);
   if(nav) nav.classList.add('active');
-  // scroll to top
-  document.querySelector('.main').scrollTop=0;
+  var main=document.querySelector('.main');
+  if(main) main.scrollTop=0;
+  // close sidebar on mobile after nav
+  var sb=document.getElementById('sidebar');
+  var ov=document.getElementById('sidebarOverlay');
+  if(sb) sb.classList.remove('open');
+  if(ov) ov.classList.remove('open');
 }
 
 // ── MODALS ──
 function openModal(id){document.getElementById(id).classList.add('open');}
 function closeModal(id){document.getElementById(id).classList.remove('open');}
-// close on overlay click
 document.querySelectorAll('.modal-overlay').forEach(function(o){
   o.addEventListener('click',function(e){if(e.target===o)o.classList.remove('open');});
 });
-// close on Escape
 document.addEventListener('keydown',function(e){
   if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(function(o){o.classList.remove('open');});
 });
 </script>
 </body>
 </html>
+
