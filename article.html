@@ -1,0 +1,406 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Threads of Power — Indian Populus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --forest:#1a5c2a;--forest-d:#0f3a1a;--gold:#c9952a;--gold-soft:#d9b463;
+  --ink:#111;--ink-2:#2c2c2c;--ink-3:#555;--ink-4:#888;--ink-5:#aaa;
+  --bg:#fafaf8;--bg-2:#f3f0e8;--bg-3:#ebe6d8;--white:#fff;--rule:#ddd8ce;
+  --serif:'Playfair Display',Georgia,serif;--sans:'Inter',system-ui,sans-serif;
+  --wrap:1240px;--px:32px;
+}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+img{display:block;width:100%;object-fit:cover;}
+.wrap{max-width:var(--wrap);margin-inline:auto;padding-inline:var(--px);}
+
+/* PROGRESS BAR */
+.progress-bar{position:fixed;top:0;left:0;height:3px;background:var(--forest);z-index:999;width:0%;transition:width .1s;}
+
+/* TICKER */
+.ticker{background:var(--forest);display:flex;align-items:stretch;overflow:hidden;height:36px;}
+.ticker__label{flex-shrink:0;background:var(--gold);color:var(--ink);font-family:var(--sans);font-size:.62rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:0 18px;display:flex;align-items:center;white-space:nowrap;}
+.ticker__track{display:flex;align-items:center;overflow:hidden;flex:1;}
+.ticker__inner{display:flex;align-items:center;animation:tick 36s linear infinite;white-space:nowrap;}
+.ticker__item{display:inline-flex;align-items:center;gap:10px;padding:0 36px;font-size:.7rem;color:rgba(255,255,255,.78);border-right:1px solid rgba(255,255,255,.12);}
+.ticker__item b{color:var(--gold-soft);font-weight:700;}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+
+/* NAV */
+.nav{background:var(--bg);border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:200;transition:box-shadow .3s;}
+.nav.scrolled{box-shadow:0 2px 24px rgba(0,0,0,.07);}
+.nav__bar{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-block:14px;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo__leaf{width:28px;height:28px;color:var(--forest);}
+.logo__type{font-family:var(--serif);font-size:1.35rem;font-weight:400;color:var(--ink);}
+.logo__type em{color:var(--forest);font-style:italic;}
+.nav__links{display:flex;align-items:center;overflow-x:auto;scrollbar-width:none;}
+.nav__links::-webkit-scrollbar{display:none;}
+.nav__links a{font-size:.69rem;font-weight:500;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-3);padding:6px 14px;white-space:nowrap;transition:color .2s;}
+.nav__links a:hover{color:var(--forest);}
+.nav__right{display:flex;align-items:center;gap:12px;}
+.btn-sub{display:inline-flex;align-items:center;gap:7px;background:var(--forest);color:var(--white);font-size:.72rem;font-weight:600;padding:8px 18px;transition:background .2s;}
+.btn-sub:hover{background:var(--forest-d);}
+.btn-sub svg{width:14px;height:14px;}
+
+/* ARTICLE HERO */
+.art-hero{padding:48px 0 0;}
+.art-meta-top{display:flex;align-items:center;gap:12px;margin-bottom:20px;}
+.kicker{display:inline-flex;align-items:center;gap:8px;font-family:var(--sans);font-size:.62rem;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;}
+.kicker--green{color:var(--forest);}
+.kicker--gold{color:var(--gold);}
+.kicker:not(.no-rule)::before{content:'';width:24px;height:1.5px;background:currentColor;}
+.art-hero__title{font-family:var(--serif);font-size:3rem;font-weight:600;line-height:1.12;letter-spacing:-.3px;color:var(--ink);margin-bottom:18px;max-width:800px;}
+.art-hero__title em{font-style:italic;color:var(--forest);}
+.art-hero__dek{font-family:var(--sans);font-size:1rem;font-weight:300;color:var(--ink-3);line-height:1.7;margin-bottom:28px;max-width:680px;}
+.art-hero__byline{display:flex;align-items:center;gap:20px;padding:20px 0;border-top:1px solid var(--rule);border-bottom:1px solid var(--rule);flex-wrap:wrap;}
+.author-chip{display:flex;align-items:center;gap:10px;}
+.author-ava{width:40px;height:40px;border-radius:50%;background:var(--bg-3);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:.85rem;font-weight:600;color:var(--forest);border:1.5px solid var(--rule);}
+.author-name{font-size:.82rem;font-weight:600;color:var(--ink-2);}
+.author-role{font-size:.68rem;color:var(--ink-4);}
+.byline-meta{display:flex;align-items:center;gap:10px;font-size:.72rem;color:var(--ink-4);margin-left:auto;flex-wrap:wrap;}
+.byline-meta .sep{color:var(--rule);}
+.byline-meta .read{display:flex;align-items:center;gap:5px;}
+.byline-meta svg{width:12px;height:12px;}
+
+/* COVER IMAGE */
+.art-cover{margin:32px 0;aspect-ratio:21/9;background:var(--bg-3);overflow:hidden;position:relative;}
+.art-cover-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a5c2a14,#c9952a08);font-family:var(--serif);font-size:.85rem;font-style:italic;color:var(--ink-5);}
+.art-cover-caption{text-align:center;font-size:.72rem;color:var(--ink-5);font-style:italic;margin-top:8px;}
+
+/* ARTICLE LAYOUT */
+.art-layout{display:grid;grid-template-columns:1fr 280px;gap:56px;align-items:start;padding-bottom:72px;}
+.art-body{max-width:720px;}
+
+/* ARTICLE TYPOGRAPHY */
+.art-body p{font-family:var(--sans);font-size:.97rem;font-weight:300;color:var(--ink-2);line-height:1.85;margin-bottom:22px;}
+.art-body h2{font-family:var(--serif);font-size:1.6rem;font-weight:600;color:var(--ink);margin:36px 0 16px;line-height:1.25;}
+.art-body h3{font-family:var(--serif);font-size:1.2rem;font-weight:600;color:var(--ink);margin:28px 0 12px;}
+.art-body blockquote{border-left:3px solid var(--gold);padding:16px 24px;margin:28px 0;background:var(--bg-2);}
+.art-body blockquote p{font-family:var(--serif);font-size:1.1rem;font-style:italic;color:var(--ink-2);margin:0;line-height:1.6;}
+.art-body blockquote cite{display:block;font-size:.72rem;color:var(--ink-4);margin-top:8px;font-style:normal;font-family:var(--sans);}
+.drop-cap::first-letter{float:left;font-family:var(--serif);font-size:4.2rem;font-weight:700;line-height:.82;margin-right:8px;margin-top:6px;color:var(--forest);}
+.art-divider{border:none;border-top:1px solid var(--rule);margin:32px 0;}
+.art-tags{display:flex;flex-wrap:wrap;gap:8px;margin-top:32px;padding-top:24px;border-top:1px solid var(--rule);}
+.tag{font-size:.65rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;padding:4px 10px;border:1px solid var(--rule);color:var(--ink-3);transition:all .2s;}
+.tag:hover{border-color:var(--forest);color:var(--forest);}
+
+/* SHARE */
+.share-row{display:flex;align-items:center;gap:10px;margin-top:28px;padding-top:24px;border-top:1px solid var(--rule);}
+.share-label{font-size:.68rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--ink-4);margin-right:4px;}
+.share-btn{display:flex;align-items:center;gap:6px;padding:7px 14px;border:1px solid var(--rule);font-size:.72rem;font-weight:500;color:var(--ink-3);cursor:pointer;background:transparent;transition:all .2s;}
+.share-btn:hover{border-color:var(--forest);color:var(--forest);}
+.share-btn svg{width:13px;height:13px;}
+
+/* AUTHOR BOX */
+.author-box{border:1px solid var(--rule);padding:24px;margin-top:40px;background:var(--bg-2);}
+.author-box-label{font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);margin-bottom:16px;}
+.author-box-inner{display:flex;gap:16px;}
+.author-box-ava{width:52px;height:52px;border-radius:50%;background:var(--forest);display:flex;align-items:center;justify-content:center;font-size:1rem;font-weight:700;color:#fff;flex-shrink:0;}
+.author-box-name{font-family:var(--serif);font-size:1.1rem;font-weight:600;color:var(--ink);margin-bottom:2px;}
+.author-box-role{font-size:.7rem;color:var(--forest);font-weight:500;margin-bottom:8px;}
+.author-box-bio{font-size:.8rem;color:var(--ink-3);line-height:1.6;margin-bottom:10px;}
+.author-box-link{font-size:.72rem;font-weight:600;color:var(--forest);border-bottom:1px solid rgba(26,92,42,.3);display:inline-block;transition:border-color .2s;}
+.author-box-link:hover{border-color:var(--forest);}
+
+/* SIDEBAR */
+.art-sidebar{position:sticky;top:80px;}
+.sidebar-block{margin-bottom:28px;}
+.sidebar-block-label{font-size:.62rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:var(--ink-4);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.sidebar-block-label::after{content:'';flex:1;height:1px;background:var(--rule);}
+.related-card{display:flex;gap:12px;padding:14px 0;border-bottom:1px solid var(--rule);}
+.related-card:last-child{border-bottom:none;}
+.related-card-img{width:72px;height:56px;flex-shrink:0;background:var(--bg-3);overflow:hidden;}
+.related-cat{font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--forest);margin-bottom:4px;}
+.related-title{font-family:var(--serif);font-size:.88rem;font-weight:500;line-height:1.3;color:var(--ink);transition:color .2s;}
+.related-card:hover .related-title{color:var(--forest);}
+.related-meta{font-size:.65rem;color:var(--ink-4);margin-top:4px;}
+.newsletter-mini{background:var(--forest);padding:20px;color:var(--white);}
+.newsletter-mini h4{font-family:var(--serif);font-size:1.1rem;font-weight:400;font-style:italic;margin-bottom:8px;line-height:1.3;}
+.newsletter-mini p{font-size:.72rem;color:rgba(255,255,255,.65);margin-bottom:16px;font-weight:300;}
+.newsletter-mini input{width:100%;padding:9px 12px;background:rgba(255,255,255,.1);border:1px solid rgba(255,255,255,.2);color:var(--white);font-size:.78rem;margin-bottom:8px;outline:none;}
+.newsletter-mini input::placeholder{color:rgba(255,255,255,.4);}
+.newsletter-mini button{width:100%;padding:9px;background:var(--gold);color:var(--ink);font-size:.75rem;font-weight:700;border:none;cursor:pointer;transition:background .2s;}
+.newsletter-mini button:hover{background:var(--gold-soft);}
+
+/* FOOTER */
+footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
+.foot-inner{max-width:var(--wrap);margin:0 auto;}
+.foot-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;padding-bottom:44px;border-bottom:1px solid rgba(255,255,255,.08);}
+.foot-brand-name{font-family:var(--serif);font-size:1.6rem;font-weight:400;}
+.foot-brand-name em{color:var(--gold-soft);font-style:italic;}
+.foot-tag{font-size:.72rem;color:rgba(255,255,255,.3);font-style:italic;font-family:var(--serif);margin-top:6px;margin-bottom:16px;}
+.foot-col h4{font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:16px;}
+.foot-col li{margin-bottom:10px;}
+.foot-col a{font-size:.8rem;color:rgba(255,255,255,.5);transition:color .2s;}
+.foot-col a:hover{color:var(--gold-soft);}
+.foot-bot{display:flex;align-items:center;justify-content:space-between;padding-top:28px;font-size:.72rem;color:rgba(255,255,255,.22);flex-wrap:wrap;gap:10px;}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .art-layout{grid-template-columns:1fr;}
+  .art-sidebar{display:none;}
+  .foot-top{grid-template-columns:1fr 1fr;gap:28px;}
+  .art-hero__title{font-size:2.2rem;}
+}
+@media(max-width:600px){
+  :root{--px:16px;}
+  .art-hero__title{font-size:1.7rem;}
+  .art-cover{aspect-ratio:16/9;}
+  .foot-top{grid-template-columns:1fr;}
+  .nav__links{display:none;}
+  .share-row{flex-wrap:wrap;}
+}
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s;}
+.reveal.in{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+
+<div class="progress-bar" id="progressBar"></div>
+
+<!-- TICKER -->
+<div class="ticker">
+  <div class="ticker__label">Live Wire</div>
+  <div class="ticker__track">
+    <div class="ticker__inner" id="tickerInner">
+      <div class="ticker__item"><b>Parliament</b> Monsoon session opens with debate on the new data-protection bill</div>
+      <div class="ticker__item"><b>Markets</b> Sensex closes at record as monsoon forecast lifts rural demand</div>
+      <div class="ticker__item"><b>Culture</b> Kochi-Muziris Biennale unveils its 2026 curatorial roster</div>
+      <div class="ticker__item"><b>Cities</b> Bengaluru pilots a 15-minute neighbourhood plan across four wards</div>
+      <div class="ticker__item"><b>Parliament</b> Monsoon session opens with debate on the new data-protection bill</div>
+      <div class="ticker__item"><b>Markets</b> Sensex closes at record as monsoon forecast lifts rural demand</div>
+      <div class="ticker__item"><b>Culture</b> Kochi-Muziris Biennale unveils its 2026 curatorial roster</div>
+      <div class="ticker__item"><b>Cities</b> Bengaluru pilots a 15-minute neighbourhood plan across four wards</div>
+    </div>
+  </div>
+</div>
+
+<!-- NAV -->
+<header class="nav" id="nav">
+  <div class="wrap nav__bar">
+    <a class="logo" href="index.html">
+      <svg class="logo__leaf" viewBox="0 0 32 32" fill="none"><path d="M27 5C12 5 5 13 5 23c0 1.6.3 3 .8 4.4C9 19 15 13 26 11c-7 4-12 9-15 18 9 1 18-4 18-16 0-3.4-1-6-2-8z" fill="currentColor"/></svg>
+      <span class="logo__type">Indian <em>Populus</em></span>
+    </a>
+    <nav><div class="nav__links">
+      <a href="category.html?cat=politics">Politics & Society</a>
+      <a href="category.html?cat=culture">Culture & Arts</a>
+      <a href="category.html?cat=health">Health & Wellness</a>
+      <a href="category.html?cat=travel">Travel</a>
+      <a href="category.html?cat=food">Food & Lifestyle</a>
+      <a href="category.html?cat=education">Education</a>
+    </div></nav>
+    <div class="nav__right">
+      <a class="btn-sub" href="index.html#newsletter">Subscribe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    </div>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+
+    <!-- ARTICLE HEADER -->
+    <div class="art-hero">
+      <div class="art-meta-top">
+        <a href="index.html" style="font-size:.72rem;color:var(--ink-4);">← Back</a>
+        <span style="color:var(--rule);">|</span>
+        <span class="kicker kicker--green no-rule">Culture & Arts</span>
+      </div>
+      <h1 class="art-hero__title">Threads of Power: how the handloom became India's <em>loudest</em> statement</h1>
+      <p class="art-hero__dek">From the looms of Varanasi to the front rows of Milan, a new generation is turning six yards of woven cotton into an argument about who gets to define modern India.</p>
+      <div class="art-hero__byline">
+        <div class="author-chip">
+          <div class="author-ava">AP</div>
+          <div>
+            <div class="author-name">Ananya Pillai</div>
+            <div class="author-role">Editor-at-Large</div>
+          </div>
+        </div>
+        <div class="byline-meta">
+          <span>4 June 2026</span>
+          <span class="sep">·</span>
+          <span class="read"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> 14 min read</span>
+          <span class="sep">·</span>
+          <span>47 views</span>
+        </div>
+      </div>
+    </div>
+
+    <!-- COVER IMAGE -->
+    <div class="art-cover">
+      <div class="art-cover-ph">Cover image — handloom weaver, Varanasi</div>
+    </div>
+    <p class="art-cover-caption">A weaver at work in Varanasi's Benaras district. Photo: Indian Populus</p>
+
+    <!-- ARTICLE LAYOUT -->
+    <div class="art-layout">
+      <!-- BODY -->
+      <article class="art-body reveal">
+        <p class="drop-cap">The sari has always been political. Long before it became a symbol of cultural pride or a diplomatic prop, it was a tool of economic resistance — Mahatma Gandhi understood this when he encouraged Indians to spin their own cloth and reject British imports. What is new, in 2026, is that this resistance has moved from the village square to the fashion week runway.</p>
+
+        <p>A quiet revolution is happening in Indian textiles. Weavers who once struggled to survive are now finding themselves at the centre of a global conversation about slow fashion, cultural identity, and the ethics of production. The question being asked — quietly, insistently — is: who benefits when Indian craft becomes international trend?</p>
+
+        <blockquote>
+          <p>"We don't weave fabric. We weave memory. Every motif has a name, a history, a community that keeps it alive."</p>
+          <cite>— Ramji Prasad, master weaver, Varanasi</cite>
+        </blockquote>
+
+        <h2>The Loom as a Political Object</h2>
+
+        <p>In the bylanes of Varanasi's Benaras district, Ramji Prasad has been weaving silk for forty-three years. His loom is a family heirloom — wooden, creaking, extraordinarily precise. He learned from his father, who learned from his. The motifs he reproduces — the dancing peacock, the flowering vine, the geometric border — are centuries old.</p>
+
+        <p>But something has shifted in recent years. Buyers who used to negotiate aggressively — pushing prices down to levels that made the craft barely viable — are now paying more. Some are paying significantly more. The reason, Prasad says with quiet satisfaction, is that people have begun to understand what they are buying.</p>
+
+        <hr class="art-divider">
+
+        <h2>From Village to Vogue</h2>
+
+        <p>In September 2025, a Varanasi silk sari appeared on the cover of an Italian fashion magazine. The model wearing it was Indian. The photographer was Indian. The caption noted, unusually, the name of the weaver who made it.</p>
+
+        <p>This is new. For decades, Indian craft entered global fashion anonymously — as "inspiration", as "print", as aesthetic absorbed without attribution. The handloom weave became a pattern. The block print became a wallpaper. The artisan became invisible.</p>
+
+        <p>What has changed is a combination of factors: a growing Indian middle class with disposable income and cultural pride, a global slow-fashion movement that has made provenance commercially valuable, and a new generation of Indian designers who have decided that attribution is not optional.</p>
+
+        <h2>The Numbers Behind the Story</h2>
+
+        <p>India's handloom sector employs approximately 35 lakh weavers — the second-largest source of employment in the country after agriculture. Yet for decades, the average weaver earned less than a construction labourer. The economics were brutal: raw material costs were rising, middlemen were extracting margins at every stage, and synthetic fabrics were undercutting handloom on price.</p>
+
+        <p>The shift began, ironically, with the pandemic. When global supply chains collapsed, buyers who had previously imported cheap fabric from mills in Bangladesh or China began looking locally. They found, to their surprise, that Indian handloom could compete — not on price, but on story, on quality, on the kind of differentiation that consumers in saturated markets are willing to pay for.</p>
+
+        <hr class="art-divider">
+
+        <h2>Who Benefits?</h2>
+
+        <p>The question that hovers over all of this is the oldest one in the history of craft and commerce: when traditional knowledge becomes fashionable, who captures the value?</p>
+
+        <p>The optimistic answer is that direct-to-weaver models — enabled by e-commerce and by designers who insist on transparent supply chains — are shifting the balance. Some weavers are now earning three to four times what they made a decade ago.</p>
+
+        <p>The pessimistic answer is that fashion is fickle. The sari that appears on an Italian magazine cover this season will be forgotten next season. And when the trend moves on, the weavers who scaled up production — who hired additional workers, who invested in more looms — will be left with inventory they cannot sell.</p>
+
+        <!-- TAGS -->
+        <div class="art-tags">
+          <a href="#" class="tag">Handloom</a>
+          <a href="#" class="tag">Culture</a>
+          <a href="#" class="tag">Fashion</a>
+          <a href="#" class="tag">Varanasi</a>
+          <a href="#" class="tag">Craft</a>
+          <a href="#" class="tag">India</a>
+        </div>
+
+        <!-- SHARE -->
+        <div class="share-row">
+          <span class="share-label">Share</span>
+          <button class="share-btn" onclick="shareWA()">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M17.472 14.382c-.297-.149-1.758-.867-2.03-.967-.273-.099-.471-.148-.67.15-.197.297-.767.966-.94 1.164-.173.199-.347.223-.644.075-.297-.15-1.255-.463-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.298-.347.446-.52.149-.174.198-.298.298-.497.099-.198.05-.371-.025-.52-.075-.149-.669-1.612-.916-2.207-.242-.579-.487-.5-.669-.51-.173-.008-.371-.01-.57-.01-.198 0-.52.074-.792.372-.272.297-1.04 1.016-1.04 2.479 0 1.462 1.065 2.875 1.213 3.074.149.198 2.096 3.2 5.077 4.487.709.306 1.262.489 1.694.625.712.227 1.36.195 1.871.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413-.074-.124-.272-.198-.57-.347z"/><path d="M12 0C5.373 0 0 5.373 0 12c0 2.624.846 5.054 2.284 7.032L.786 23.267l4.34-1.385A11.95 11.95 0 0 0 12 24c6.627 0 12-5.373 12-12S18.627 0 12 0zm0 21.818a9.818 9.818 0 0 1-5.01-1.374l-.358-.214-3.718 1.187 1.205-3.617-.232-.37A9.818 9.818 0 1 1 12 21.818z"/></svg>
+            WhatsApp
+          </button>
+          <button class="share-btn" onclick="shareX()">
+            <svg viewBox="0 0 24 24" fill="currentColor"><path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-4.714-6.231-5.401 6.231H2.748l7.73-8.835L1.254 2.25H8.08l4.253 5.622zm-1.161 17.52h1.833L7.084 4.126H5.117z"/></svg>
+            Twitter / X
+          </button>
+          <button class="share-btn" onclick="copyLink()">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"/><path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"/></svg>
+            Copy Link
+          </button>
+        </div>
+
+        <!-- AUTHOR BOX -->
+        <div class="author-box reveal">
+          <div class="author-box-label">About the Author</div>
+          <div class="author-box-inner">
+            <div class="author-box-ava">AP</div>
+            <div>
+              <div class="author-box-name">Ananya Pillai</div>
+              <div class="author-box-role">Editor-at-Large</div>
+              <div class="author-box-bio">Ananya Pillai covers culture, craft, and the politics of everyday life in India. She has been writing for Indian Populus since its founding issue.</div>
+              <a href="author.html" class="author-box-link">View all articles →</a>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <!-- SIDEBAR -->
+      <aside class="art-sidebar">
+        <div class="sidebar-block">
+          <div class="sidebar-block-label">Related Stories</div>
+          <a href="article.html" class="related-card">
+            <div class="related-card-img"></div>
+            <div>
+              <div class="related-cat">Travel</div>
+              <div class="related-title">The Coastal Villages That Tourism Forgot</div>
+              <div class="related-meta">Shajahav PV · 5 min</div>
+            </div>
+          </a>
+          <a href="article.html" class="related-card">
+            <div class="related-card-img"></div>
+            <div>
+              <div class="related-cat">Education</div>
+              <div class="related-title">How Public Spaces Shape the Way We Think</div>
+              <div class="related-meta">Shajahav PV · 6 min</div>
+            </div>
+          </a>
+          <a href="article.html" class="related-card">
+            <div class="related-card-img"></div>
+            <div>
+              <div class="related-cat">Politics & Society</div>
+              <div class="related-title">Reading Slowly in an Age of Algorithmic Summaries</div>
+              <div class="related-meta">Muhammed Sinan · 7 min</div>
+            </div>
+          </a>
+        </div>
+        <div class="newsletter-mini">
+          <h4>India, unfolded — every Sunday</h4>
+          <p>One essay, three dispatches. No noise, just the conversation.</p>
+          <input type="email" placeholder="your@email.com"/>
+          <button>Subscribe Free</button>
+        </div>
+      </aside>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-top">
+      <div>
+        <div class="foot-brand-name">Indian <em>Populus</em></div>
+        <div class="foot-tag">Where India thinks out loud.</div>
+      </div>
+      <div class="foot-col"><h4>Sections</h4><ul><li><a href="#">Politics & Society</a></li><li><a href="#">Culture & Arts</a></li><li><a href="#">Health & Wellness</a></li><li><a href="#">Travel</a></li><li><a href="#">Food & Lifestyle</a></li><li><a href="#">Education</a></li></ul></div>
+      <div class="foot-col"><h4>Masthead</h4><ul><li><a href="about.html">About us</a></li><li><a href="author.html">Our writers</a></li><li><a href="contact.html">Contact</a></li></ul></div>
+      <div class="foot-col"><h4>Follow</h4><ul><li><a href="#">Twitter / X</a></li><li><a href="#">Instagram</a></li><li><a href="#">LinkedIn</a></li></ul></div>
+    </div>
+    <div class="foot-bot"><span>© 2026 Indian Populus Media Pvt. Ltd.</span><span>Made with ♥ in India 🇮🇳</span></div>
+  </div>
+</footer>
+
+<script>
+// Progress bar
+window.addEventListener('scroll',function(){
+  var s=document.documentElement.scrollTop||document.body.scrollTop;
+  var h=document.documentElement.scrollHeight-document.documentElement.clientHeight;
+  document.getElementById('progressBar').style.width=(s/h*100)+'%';
+},{passive:true});
+// Nav shadow
+window.addEventListener('scroll',function(){document.getElementById('nav').classList.toggle('scrolled',window.scrollY>12);},{passive:true});
+// Reveal
+var revs=[].slice.call(document.querySelectorAll('.reveal'));
+if('IntersectionObserver' in window){
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08});
+  revs.forEach(function(el){if(el.getBoundingClientRect().top<window.innerHeight*.95)el.classList.add('in');else io.observe(el);});
+}else{revs.forEach(function(el){el.classList.add('in');});}
+// Share
+function shareWA(){window.open('https://api.whatsapp.com/send?text='+encodeURIComponent(document.title+' '+window.location.href));}
+function shareX(){window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(document.title)+'&url='+encodeURIComponent(window.location.href));}
+function copyLink(){navigator.clipboard.writeText(window.location.href).then(function(){alert('Link copied!');});}
+</script>
+</body>
+</html>
