@@ -235,9 +235,18 @@ button,input{font-family:var(--sans);}
 .footer__bot a{color:rgba(255,255,255,.35);transition:color .2s;}
 .footer__bot a:hover{color:var(--gold-soft);}
 
-/* ══════════════════════════════
-   ANIMATIONS — Style A + D
-══════════════════════════════ */
+/* MOBILE NAV DROPDOWN */
+.nav__mobile{display:none;flex-direction:column;background:var(--white);border-top:1px solid var(--rule);padding:8px 0;}
+.nav__mobile.open{display:flex;}
+.nav__mobile a{font-size:.78rem;font-weight:500;color:var(--ink-2);padding:12px 24px;border-bottom:1px solid var(--rule-l,#f0ece4);letter-spacing:.3px;transition:color .2s,background .2s;}
+.nav__mobile a:last-child{border-bottom:none;}
+.nav__mobile a:hover{color:var(--forest);background:rgba(26,92,42,.04);}
+
+/* BACK TO HOME BUTTON */
+.home-btn{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:300;display:flex;align-items:center;gap:7px;background:var(--ink);color:var(--white);font-family:var(--sans);font-size:.7rem;font-weight:600;letter-spacing:.5px;padding:9px 18px;border-radius:100px;box-shadow:0 4px 20px rgba(0,0,0,.2);transition:background .2s,transform .2s;white-space:nowrap;opacity:0;pointer-events:none;transition:opacity .3s,transform .2s;}
+.home-btn.visible{opacity:1;pointer-events:all;}
+.home-btn:hover{background:var(--forest);transform:translateX(-50%) translateY(-2px);}
+.home-btn svg{width:13px;height:13px;}
 
 /* Fade + Rise (Style A) */
 .reveal{opacity:0;transform:translateY(28px);transition:opacity .7s cubic-bezier(.22,1,.36,1),transform .7s cubic-bezier(.22,1,.36,1);}
@@ -385,8 +394,19 @@ body{animation:pageFadeIn .4s ease both;}
         Subscribe
         <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg>
       </a>
-      <button class="nav__toggle" id="navToggle" aria-label="Open menu"></button>
+      <button class="nav__toggle" id="navToggle" aria-label="Open menu" onclick="toggleMobileNav()"></button>
     </div>
+  </div>
+  <!-- MOBILE NAV -->
+  <div class="nav__mobile" id="mobileNav">
+    <a href="category.html?cat=politics">🏛️ Politics & Society</a>
+    <a href="category.html?cat=culture">🎭 Culture & Arts</a>
+    <a href="category.html?cat=health">🌿 Health & Wellness</a>
+    <a href="category.html?cat=travel">✈️ Travel</a>
+    <a href="category.html?cat=food">🍽️ Food & Lifestyle</a>
+    <a href="category.html?cat=education">📚 Education</a>
+    <a href="about.html">About</a>
+    <a href="contact.html">Contact</a>
   </div>
 </header>
 
@@ -680,9 +700,9 @@ body{animation:pageFadeIn .4s ease both;}
         <h4>The Masthead</h4>
         <ul>
           <li><a href="about.html">About us</a></li>
-          <li><a href="authors.html">Our writers</a></li>
-          <li><a href="#">Editorial code</a></li>
-          <li><a href="#">Careers</a></li>
+          <li><a href="author.html">Our writers</a></li>
+          <li><a href="about.html">Editorial code</a></li>
+          <li><a href="contact.html">Careers</a></li>
           <li><a href="contact.html">Contact</a></li>
         </ul>
       </div>
@@ -691,16 +711,16 @@ body{animation:pageFadeIn .4s ease both;}
         <ul>
           <li><a href="#newsletter">Newsletter</a></li>
           <li><a href="#newsletter">Subscribe</a></li>
-          <li><a href="#">Gift a subscription</a></li>
-          <li><a href="#">Print archive</a></li>
-          <li><a href="#">Letters to the editor</a></li>
+          <li><a href="contact.html">Write for Us</a></li>
+          <li><a href="articles.html">Archive</a></li>
+          <li><a href="contact.html">Letters to the editor</a></li>
         </ul>
       </div>
     </div>
     <div class="footer__bot">
       <span>© 2026 Indian Populus Media Pvt. Ltd. · New Delhi · Mumbai · Bengaluru</span>
       <span style="display:flex;gap:20px;flex-wrap:wrap">
-        <a href="#">Privacy</a><a href="#">Terms</a><a href="#">Code of conduct</a>
+        <a href="contact.html">Privacy</a><a href="contact.html">Terms</a><a href="about.html">Code of conduct</a>
       </span>
     </div>
   </div>
@@ -710,7 +730,29 @@ body{animation:pageFadeIn .4s ease both;}
 (function(){
   // ── NAV SHADOW ──
   var nav=document.getElementById('nav');
-  window.addEventListener('scroll',function(){nav.classList.toggle('scrolled',window.scrollY>12);},{passive:true});
+  window.addEventListener('scroll',function(){
+    nav.classList.toggle('scrolled',window.scrollY>12);
+    // show home btn after scrolling
+    var btn=document.getElementById('homeBtn');
+    if(btn) btn.classList.toggle('visible',window.scrollY>400);
+  },{passive:true});
+
+  // ── MOBILE NAV TOGGLE ──
+  window.toggleMobileNav=function(){
+    var mn=document.getElementById('mobileNav');
+    var tog=document.getElementById('navToggle');
+    if(!mn) return;
+    mn.classList.toggle('open');
+    tog.setAttribute('aria-expanded', mn.classList.contains('open'));
+  };
+  // close mobile nav on outside click
+  document.addEventListener('click',function(e){
+    var mn=document.getElementById('mobileNav');
+    var tog=document.getElementById('navToggle');
+    if(mn && mn.classList.contains('open') && !mn.contains(e.target) && !tog.contains(e.target)){
+      mn.classList.remove('open');
+    }
+  });
 
   // ── PICKS DRAG TO SCROLL ──
   var rail=document.getElementById('picksRail');
@@ -735,23 +777,18 @@ body{animation:pageFadeIn .4s ease both;}
     var title=document.querySelector('.hero__title');
     if(!title) return;
     var text=title.innerHTML;
-    // split by words preserving <em> tags
     var wrapped=text.replace(/(<em>[^<]*<\/em>|[^\s<]+)/g,function(match){
       return '<span class="word">'+match+'</span>';
     });
     title.innerHTML=wrapped;
     title.classList.add('word-reveal');
-    // stagger reveal
     setTimeout(function(){
       var words=title.querySelectorAll('.word');
-      words.forEach(function(w,i){
-        setTimeout(function(){w.classList.add('in');},i*80);
-      });
+      words.forEach(function(w,i){setTimeout(function(){w.classList.add('in');},i*80);});
     },200);
   }
 
   // ── GOLD RULE DRAW (Style D) ──
-  // Add gold-rule class to section dividers
   document.querySelectorAll('.sec-head').forEach(function(el){
     el.classList.add('gold-rule','reveal');
   });
@@ -761,57 +798,35 @@ body{animation:pageFadeIn .4s ease both;}
   function collectReveals(){
     allReveals=[].slice.call(document.querySelectorAll('.reveal,.reveal-left,.reveal-right,.gold-rule'));
   }
-
   function runReveal(){
     if('IntersectionObserver' in window){
       var io=new IntersectionObserver(function(entries){
         entries.forEach(function(en){
           if(en.isIntersecting){
             var el=en.target;
-            var delay=el.dataset.delay||0;
-            setTimeout(function(){el.classList.add('in');},+delay);
+            setTimeout(function(){el.classList.add('in');},+(el.dataset.delay||0));
             io.unobserve(el);
           }
         });
       },{threshold:.08,rootMargin:'0px 0px -5% 0px'});
-
       allReveals.forEach(function(el){
-        if(el.getBoundingClientRect().top<window.innerHeight*.92){
-          el.classList.add('in');
-        } else {
-          io.observe(el);
-        }
+        if(el.getBoundingClientRect().top<window.innerHeight*.92) el.classList.add('in');
+        else io.observe(el);
       });
-      // safety fallback
       setTimeout(function(){allReveals.forEach(function(el){el.classList.add('in');});},3000);
-    } else {
-      allReveals.forEach(function(el){el.classList.add('in');});
-    }
+    } else {allReveals.forEach(function(el){el.classList.add('in');});}
   }
 
-  // ── STAGGER PICKS CARDS ──
+  // ── STAGGER PICKS ──
   function staggerPicks(){
-    var picks=document.querySelectorAll('.pick');
-    picks.forEach(function(p,i){
-      p.classList.add('reveal');
-      p.dataset.delay=i*80;
-    });
+    document.querySelectorAll('.pick').forEach(function(p,i){p.classList.add('reveal');p.dataset.delay=i*80;});
   }
 
-  // ── STAGGER ARTICLE CARDS ──
+  // ── STAGGER ARTICLES ──
   function staggerArticles(){
-    document.querySelectorAll('.art--third,.art--side').forEach(function(a,i){
-      a.classList.add('reveal');
-      a.dataset.delay=i*100;
-    });
-    document.querySelectorAll('.cat-row').forEach(function(r,i){
-      r.classList.add('reveal');
-      r.dataset.delay=i*60;
-    });
-    document.querySelectorAll('.feat__grid > *').forEach(function(f,i){
-      f.classList.add('reveal');
-      f.dataset.delay=i*120;
-    });
+    document.querySelectorAll('.art--third,.art--side').forEach(function(a,i){a.classList.add('reveal');a.dataset.delay=i*100;});
+    document.querySelectorAll('.cat-row').forEach(function(r,i){r.classList.add('reveal');r.dataset.delay=i*60;});
+    document.querySelectorAll('.feat__grid > *').forEach(function(f,i){f.classList.add('reveal');f.dataset.delay=i*120;});
   }
 
   // ── PARALLAX HERO ──
@@ -824,20 +839,19 @@ body{animation:pageFadeIn .4s ease both;}
     },{passive:true});
   }
 
-  // ── COUNTER ANIMATION ──
-  function animateCounters(){
-    // future: animate stat numbers if added
-  }
-
-  // ── INIT ALL ──
+  // ── INIT ──
   initWordReveal();
   staggerPicks();
   staggerArticles();
   collectReveals();
   runReveal();
   initParallax();
-
 })();
 </script>
+<!-- FLOATING HOME BTN (shows on other pages) -->
+<a href="index.html" class="home-btn" id="homeBtn">
+  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>
+  Home
+</a>
 </body>
 </html>
