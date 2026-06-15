@@ -1,0 +1,150 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Category — Indian Populus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--forest:#1a5c2a;--forest-d:#0f3a1a;--gold:#c9952a;--gold-soft:#d9b463;--ink:#111;--ink-2:#2c2c2c;--ink-3:#555;--ink-4:#888;--bg:#fafaf8;--bg-2:#f3f0e8;--bg-3:#ebe6d8;--white:#fff;--rule:#ddd8ce;--serif:'Playfair Display',Georgia,serif;--sans:'Inter',system-ui,sans-serif;--wrap:1240px;--px:32px;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+.wrap{max-width:var(--wrap);margin-inline:auto;padding-inline:var(--px);}
+.ticker{background:var(--forest);display:flex;align-items:stretch;overflow:hidden;height:36px;}
+.ticker__label{flex-shrink:0;background:var(--gold);color:var(--ink);font-size:.62rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:0 18px;display:flex;align-items:center;white-space:nowrap;}
+.ticker__track{display:flex;align-items:center;overflow:hidden;flex:1;}
+.ticker__inner{display:flex;animation:tick 36s linear infinite;white-space:nowrap;}
+.ticker__item{display:inline-flex;align-items:center;padding:0 36px;font-size:.7rem;color:rgba(255,255,255,.78);border-right:1px solid rgba(255,255,255,.12);}
+.ticker__item b{color:var(--gold-soft);font-weight:700;margin-right:6px;}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.nav{background:var(--bg);border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:200;transition:box-shadow .3s;}
+.nav.scrolled{box-shadow:0 2px 24px rgba(0,0,0,.07);}
+.nav__bar{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-block:14px;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo__leaf{width:28px;height:28px;color:var(--forest);}
+.logo__type{font-family:var(--serif);font-size:1.35rem;font-weight:400;}
+.logo__type em{color:var(--forest);font-style:italic;}
+.nav__links{display:flex;overflow-x:auto;scrollbar-width:none;}
+.nav__links::-webkit-scrollbar{display:none;}
+.nav__links a{font-size:.69rem;font-weight:500;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-3);padding:6px 14px;white-space:nowrap;transition:color .2s;}
+.nav__links a:hover,.nav__links a.active{color:var(--forest);}
+.btn-sub{display:inline-flex;align-items:center;gap:7px;background:var(--forest);color:var(--white);font-size:.72rem;font-weight:600;padding:8px 18px;transition:background .2s;}
+.btn-sub:hover{background:var(--forest-d);}
+.btn-sub svg{width:14px;height:14px;}
+
+/* CATEGORY HEADER */
+.cat-hero{background:var(--ink);color:var(--white);padding:48px 0;}
+.cat-hero__emoji{font-size:2.5rem;margin-bottom:12px;}
+.cat-hero__kicker{font-size:.62rem;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--gold-soft);margin-bottom:8px;}
+.cat-hero h1{font-family:var(--serif);font-size:2.6rem;font-weight:400;color:var(--white);margin-bottom:10px;}
+.cat-hero h1 em{font-style:italic;color:var(--gold-soft);}
+.cat-hero p{font-size:.85rem;color:rgba(255,255,255,.55);font-weight:300;max-width:480px;}
+.cat-count{margin-top:16px;font-size:.72rem;color:rgba(255,255,255,.3);letter-spacing:.5px;}
+
+/* CAT NAV */
+.cat-nav{background:var(--bg-2);border-bottom:1px solid var(--rule);overflow-x:auto;}
+.cat-nav-inner{display:flex;max-width:var(--wrap);margin:0 auto;padding:0 var(--px);}
+.cat-nav a{font-size:.68rem;font-weight:500;letter-spacing:.6px;text-transform:uppercase;color:var(--ink-3);padding:12px 16px;border-bottom:2px solid transparent;white-space:nowrap;transition:all .2s;}
+.cat-nav a:hover,.cat-nav a.active{color:var(--forest);border-bottom-color:var(--forest);}
+
+/* GRID */
+.cat-body{padding:48px 0 72px;}
+.cat-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);}
+.cat-card{background:var(--bg);overflow:hidden;transition:background .2s;}
+.cat-card:hover{background:var(--white);}
+.cat-card__img{aspect-ratio:16/10;background:var(--bg-3);overflow:hidden;}
+.cat-card__img-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:.75rem;font-style:italic;color:var(--ink-4);background:linear-gradient(135deg,#1a5c2a10,#c9952a07);}
+.cat-card__body{padding:20px;}
+.cat-card__cat{font-size:.6rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--forest);margin-bottom:8px;}
+.cat-card__title{font-family:var(--serif);font-size:1.05rem;font-weight:600;line-height:1.3;color:var(--ink);margin-bottom:10px;transition:color .2s;}
+.cat-card:hover .cat-card__title{color:var(--forest);}
+.cat-card__meta{font-size:.7rem;color:var(--ink-4);display:flex;align-items:center;gap:6px;}
+.dot{width:3px;height:3px;background:var(--rule);border-radius:50%;}
+
+footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
+.foot-inner{max-width:var(--wrap);margin:0 auto;}
+.foot-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;padding-bottom:44px;border-bottom:1px solid rgba(255,255,255,.08);}
+.foot-brand-name{font-family:var(--serif);font-size:1.6rem;font-weight:400;}
+.foot-brand-name em{color:var(--gold-soft);font-style:italic;}
+.foot-tag{font-size:.72rem;color:rgba(255,255,255,.3);font-style:italic;font-family:var(--serif);margin-top:6px;margin-bottom:16px;}
+.foot-col h4{font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:16px;}
+.foot-col li{margin-bottom:10px;}
+.foot-col a{font-size:.8rem;color:rgba(255,255,255,.5);transition:color .2s;}
+.foot-col a:hover{color:var(--gold-soft);}
+.foot-bot{display:flex;align-items:center;justify-content:space-between;padding-top:28px;font-size:.72rem;color:rgba(255,255,255,.22);flex-wrap:wrap;gap:10px;}
+@media(max-width:900px){.cat-grid{grid-template-columns:1fr 1fr;}.foot-top{grid-template-columns:1fr 1fr;gap:28px;}}
+@media(max-width:600px){:root{--px:16px;}.cat-grid{grid-template-columns:1fr;}.nav__links{display:none;}.foot-top{grid-template-columns:1fr;}}
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s;}
+.reveal.in{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="ticker"><div class="ticker__label">Live Wire</div><div class="ticker__track"><div class="ticker__inner"><div class="ticker__item"><b>Parliament</b>Monsoon session opens with debate on the data-protection bill</div><div class="ticker__item"><b>Markets</b>Sensex closes at record as monsoon forecast lifts rural demand</div><div class="ticker__item"><b>Culture</b>Kochi-Muziris Biennale unveils 2026 curatorial roster</div><div class="ticker__item"><b>Parliament</b>Monsoon session opens with debate on the data-protection bill</div><div class="ticker__item"><b>Markets</b>Sensex closes at record as monsoon forecast lifts rural demand</div><div class="ticker__item"><b>Culture</b>Kochi-Muziris Biennale unveils 2026 curatorial roster</div></div></div></div>
+<header class="nav" id="nav">
+  <div class="wrap nav__bar">
+    <a class="logo" href="index.html"><svg class="logo__leaf" viewBox="0 0 32 32" fill="none"><path d="M27 5C12 5 5 13 5 23c0 1.6.3 3 .8 4.4C9 19 15 13 26 11c-7 4-12 9-15 18 9 1 18-4 18-16 0-3.4-1-6-2-8z" fill="currentColor"/></svg><span class="logo__type">Indian <em>Populus</em></span></a>
+    <nav><div class="nav__links" id="navLinks"><a href="category.html?cat=politics">Politics & Society</a><a href="category.html?cat=culture">Culture & Arts</a><a href="category.html?cat=health">Health & Wellness</a><a href="category.html?cat=travel">Travel</a><a href="category.html?cat=food">Food & Lifestyle</a><a href="category.html?cat=education">Education</a></div></nav>
+    <a class="btn-sub" href="index.html#newsletter">Subscribe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </div>
+</header>
+
+<div class="cat-hero">
+  <div class="wrap">
+    <div class="cat-hero__emoji" id="catEmoji">🏛️</div>
+    <div class="cat-hero__kicker">Section</div>
+    <h1 id="catTitle">Politics & <em>Society</em></h1>
+    <p id="catDesc">Power, policy, protest, and the people who live with all three. We cover Indian politics without allegiance and society without condescension.</p>
+    <div class="cat-count" id="catCount">3 articles in this section</div>
+  </div>
+</div>
+
+<div class="cat-nav">
+  <div class="cat-nav-inner">
+    <a href="category.html?cat=politics" id="tab-politics">🏛️ Politics</a>
+    <a href="category.html?cat=culture" id="tab-culture">🎭 Culture</a>
+    <a href="category.html?cat=health" id="tab-health">🌿 Health</a>
+    <a href="category.html?cat=travel" id="tab-travel">✈️ Travel</a>
+    <a href="category.html?cat=food" id="tab-food">🍽️ Food</a>
+    <a href="category.html?cat=education" id="tab-education">📚 Education</a>
+  </div>
+</div>
+
+<main>
+  <div class="wrap cat-body">
+    <div class="cat-grid">
+      <a href="article.html" class="cat-card reveal"><div class="cat-card__img"><div class="cat-card__img-ph">Delhi street, dusk</div></div><div class="cat-card__body"><div class="cat-card__cat" id="c1">Politics & Society</div><div class="cat-card__title">Reading Slowly in an Age of Algorithmic Summaries</div><div class="cat-card__meta"><span>Muhammed Sinan</span><span class="dot"></span><span>7 min</span></div></div></a>
+      <a href="article.html" class="cat-card reveal"><div class="cat-card__img"><div class="cat-card__img-ph">City skyline</div></div><div class="cat-card__body"><div class="cat-card__cat">Politics & Society</div><div class="cat-card__title">On Grief, Cortisol, and the Body That Remembers Loss</div><div class="cat-card__meta"><span>Muhammed Sinan</span><span class="dot"></span><span>5 min</span></div></div></a>
+      <a href="article.html" class="cat-card reveal"><div class="cat-card__img"><div class="cat-card__img-ph">Public space</div></div><div class="cat-card__body"><div class="cat-card__cat">Politics & Society</div><div class="cat-card__title">How Public Spaces Shape the Way We Think About Each Other</div><div class="cat-card__meta"><span>Shajahav PV</span><span class="dot"></span><span>6 min</span></div></div></a>
+    </div>
+  </div>
+</main>
+
+<footer><div class="foot-inner"><div class="foot-top"><div><div class="foot-brand-name">Indian <em>Populus</em></div><div class="foot-tag">Where India thinks out loud.</div></div><div class="foot-col"><h4>Sections</h4><ul><li><a href="#">Politics & Society</a></li><li><a href="#">Culture & Arts</a></li><li><a href="#">Health & Wellness</a></li><li><a href="#">Travel</a></li><li><a href="#">Food & Lifestyle</a></li><li><a href="#">Education</a></li></ul></div><div class="foot-col"><h4>Masthead</h4><ul><li><a href="about.html">About us</a></li><li><a href="contact.html">Contact</a></li></ul></div><div class="foot-col"><h4>Follow</h4><ul><li><a href="#">Twitter / X</a></li><li><a href="#">Instagram</a></li></ul></div></div><div class="foot-bot"><span>© 2026 Indian Populus Media Pvt. Ltd.</span><span>Made with ♥ in India 🇮🇳</span></div></div></footer>
+<script>
+window.addEventListener('scroll',function(){document.getElementById('nav').classList.toggle('scrolled',window.scrollY>12);},{passive:true});
+// Read category from URL and update page
+var cats={
+  politics:{emoji:'🏛️',title:'Politics & <em>Society</em>',desc:'Power, policy, protest, and the people who live with all three.',count:'3 articles'},
+  culture:{emoji:'🎭',title:'Culture & <em>Arts</em>',desc:'Cinema, music, theatre, literature — the arts as a mirror of Indian life.',count:'1 article'},
+  health:{emoji:'🌿',title:'Health & <em>Wellness</em>',desc:'The science and story of how India is relearning what it means to be well.',count:'0 articles'},
+  travel:{emoji:'✈️',title:'<em>Travel</em>',desc:'Roads less taken, places rarely written about, and the journeys that change you.',count:'1 article'},
+  food:{emoji:'🍽️',title:'Food & <em>Lifestyle</em>',desc:'What India eats, how it cooks, and what that says about who we are.',count:'2 articles'},
+  education:{emoji:'📚',title:'<em>Education</em>',desc:'Schools, syllabi, students, and the systems that shape a generation.',count:'2 articles'}
+};
+var p=new URLSearchParams(window.location.search);
+var cat=p.get('cat')||'politics';
+var data=cats[cat]||cats.politics;
+document.getElementById('catEmoji').textContent=data.emoji;
+document.getElementById('catTitle').innerHTML=data.title;
+document.getElementById('catDesc').textContent=data.desc;
+document.getElementById('catCount').textContent=data.count+' in this section';
+var tab=document.getElementById('tab-'+cat);
+if(tab)tab.classList.add('active');
+var revs=[].slice.call(document.querySelectorAll('.reveal'));
+if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08});revs.forEach(function(el){if(el.getBoundingClientRect().top<window.innerHeight*.95)el.classList.add('in');else io.observe(el);});}else{revs.forEach(function(el){el.classList.add('in');});}
+</script>
+</body>
+</html>
