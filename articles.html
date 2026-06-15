@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>All Articles — Indian Populus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--forest:#1a5c2a;--forest-d:#0f3a1a;--gold:#c9952a;--gold-soft:#d9b463;--ink:#111;--ink-2:#2c2c2c;--ink-3:#555;--ink-4:#888;--bg:#fafaf8;--bg-2:#f3f0e8;--bg-3:#ebe6d8;--white:#fff;--rule:#ddd8ce;--serif:'Playfair Display',Georgia,serif;--sans:'Inter',system-ui,sans-serif;--wrap:1240px;--px:32px;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+.wrap{max-width:var(--wrap);margin-inline:auto;padding-inline:var(--px);}
+.ticker{background:var(--forest);display:flex;align-items:stretch;overflow:hidden;height:36px;}
+.ticker__label{flex-shrink:0;background:var(--gold);color:var(--ink);font-size:.62rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:0 18px;display:flex;align-items:center;white-space:nowrap;}
+.ticker__track{display:flex;align-items:center;overflow:hidden;flex:1;}
+.ticker__inner{display:flex;animation:tick 36s linear infinite;white-space:nowrap;}
+.ticker__item{display:inline-flex;align-items:center;padding:0 36px;font-size:.7rem;color:rgba(255,255,255,.78);border-right:1px solid rgba(255,255,255,.12);}
+.ticker__item b{color:var(--gold-soft);font-weight:700;margin-right:6px;}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.nav{background:var(--bg);border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:200;transition:box-shadow .3s;}
+.nav.scrolled{box-shadow:0 2px 24px rgba(0,0,0,.07);}
+.nav__bar{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-block:14px;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo__leaf{width:28px;height:28px;color:var(--forest);}
+.logo__type{font-family:var(--serif);font-size:1.35rem;font-weight:400;}
+.logo__type em{color:var(--forest);font-style:italic;}
+.nav__links{display:flex;overflow-x:auto;scrollbar-width:none;}
+.nav__links::-webkit-scrollbar{display:none;}
+.nav__links a{font-size:.69rem;font-weight:500;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-3);padding:6px 14px;white-space:nowrap;transition:color .2s;}
+.nav__links a:hover{color:var(--forest);}
+.btn-sub{display:inline-flex;align-items:center;gap:7px;background:var(--forest);color:var(--white);font-size:.72rem;font-weight:600;padding:8px 18px;transition:background .2s;}
+.btn-sub:hover{background:var(--forest-d);}
+.btn-sub svg{width:14px;height:14px;}
+
+/* ARCHIVE HEADER */
+.arch-header{padding:56px 0 40px;border-bottom:1px solid var(--rule);}
+.arch-eyebrow{display:flex;align-items:center;gap:8px;font-size:.62rem;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--gold);margin-bottom:12px;}
+.arch-eyebrow::before{content:'';width:24px;height:1.5px;background:var(--gold);}
+.arch-header h1{font-family:var(--serif);font-size:2.8rem;font-weight:400;color:var(--ink);margin-bottom:8px;}
+.arch-header h1 em{font-style:italic;color:var(--forest);}
+.arch-header p{font-size:.88rem;color:var(--ink-3);font-weight:300;}
+
+/* FILTER TABS */
+.filter-wrap{padding:24px 0;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:0;overflow-x:auto;scrollbar-width:none;}
+.filter-wrap::-webkit-scrollbar{display:none;}
+.filter-tab{font-size:.72rem;font-weight:500;letter-spacing:.5px;padding:8px 18px;border-bottom:2px solid transparent;white-space:nowrap;cursor:pointer;color:var(--ink-3);transition:color .2s,border-color .2s;background:none;border-top:none;border-left:none;border-right:none;font-family:var(--sans);}
+.filter-tab:hover{color:var(--forest);}
+.filter-tab.active{color:var(--forest);border-bottom-color:var(--forest);font-weight:600;}
+
+/* ARTICLES LIST */
+.arch-body{padding:48px 0 72px;}
+.arch-lead{display:grid;grid-template-columns:1fr 1fr;gap:1px;background:var(--rule);border:1px solid var(--rule);margin-bottom:1px;}
+.arch-list{display:flex;flex-direction:column;gap:0;border:1px solid var(--rule);border-top:none;}
+
+/* Lead card */
+.card-lead{background:var(--bg);padding:0;overflow:hidden;transition:background .2s;}
+.card-lead:hover{background:var(--white);}
+.card-lead__img{aspect-ratio:16/10;background:var(--bg-3);overflow:hidden;}
+.card-lead__img-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:.78rem;font-style:italic;color:var(--ink-4);background:linear-gradient(135deg,#1a5c2a10,#c9952a07);}
+.card-lead__body{padding:24px;}
+.card-lead__cat{font-size:.62rem;font-weight:700;letter-spacing:1.2px;text-transform:uppercase;color:var(--forest);margin-bottom:8px;}
+.card-lead__title{font-family:var(--serif);font-size:1.4rem;font-weight:600;line-height:1.2;color:var(--ink);margin-bottom:10px;transition:color .2s;}
+.card-lead:hover .card-lead__title{color:var(--forest);}
+.card-lead__dek{font-size:.82rem;color:var(--ink-3);line-height:1.65;margin-bottom:14px;font-weight:300;}
+.card-lead__meta{font-size:.7rem;color:var(--ink-4);display:flex;align-items:center;gap:8px;}
+.dot{width:3px;height:3px;background:var(--rule);border-radius:50%;}
+
+/* List row */
+.arch-row{display:flex;gap:20px;padding:20px;border-bottom:1px solid var(--rule);background:var(--bg);transition:background .2s;align-items:center;}
+.arch-row:last-child{border-bottom:none;}
+.arch-row:hover{background:var(--white);}
+.arch-row__num{font-family:var(--serif);font-size:1.2rem;font-style:italic;color:var(--ink-4);opacity:.4;width:32px;flex-shrink:0;}
+.arch-row__img{width:90px;height:68px;background:var(--bg-3);flex-shrink:0;overflow:hidden;}
+.arch-row__img-ph{width:100%;height:100%;display:flex;align-items:center;justify-content:center;background:linear-gradient(135deg,#1a5c2a0d,#c9952a07);}
+.arch-row__body{flex:1;}
+.arch-row__cat{font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;color:var(--forest);margin-bottom:5px;}
+.arch-row__title{font-family:var(--serif);font-size:1.05rem;font-weight:600;line-height:1.3;color:var(--ink);transition:color .2s;}
+.arch-row:hover .arch-row__title{color:var(--forest);}
+.arch-row__meta{font-size:.7rem;color:var(--ink-4);margin-top:6px;display:flex;align-items:center;gap:6px;}
+
+/* LOAD MORE */
+.load-more{text-align:center;padding:40px 0;}
+.load-more button{padding:12px 32px;border:1px solid var(--rule);background:transparent;font-size:.78rem;font-weight:500;color:var(--ink-3);cursor:pointer;transition:all .2s;font-family:var(--sans);}
+.load-more button:hover{border-color:var(--forest);color:var(--forest);}
+
+/* FOOTER */
+footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
+.foot-inner{max-width:var(--wrap);margin:0 auto;}
+.foot-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;padding-bottom:44px;border-bottom:1px solid rgba(255,255,255,.08);}
+.foot-brand-name{font-family:var(--serif);font-size:1.6rem;font-weight:400;}
+.foot-brand-name em{color:var(--gold-soft);font-style:italic;}
+.foot-tag{font-size:.72rem;color:rgba(255,255,255,.3);font-style:italic;font-family:var(--serif);margin-top:6px;margin-bottom:16px;}
+.foot-col h4{font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:16px;}
+.foot-col li{margin-bottom:10px;}
+.foot-col a{font-size:.8rem;color:rgba(255,255,255,.5);transition:color .2s;}
+.foot-col a:hover{color:var(--gold-soft);}
+.foot-bot{display:flex;align-items:center;justify-content:space-between;padding-top:28px;font-size:.72rem;color:rgba(255,255,255,.22);flex-wrap:wrap;gap:10px;}
+@media(max-width:900px){.arch-lead{grid-template-columns:1fr;}.foot-top{grid-template-columns:1fr 1fr;gap:28px;}}
+@media(max-width:600px){:root{--px:16px;}.arch-header h1{font-size:2rem;}.nav__links{display:none;}.foot-top{grid-template-columns:1fr;}}
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s;}
+.reveal.in{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="ticker"><div class="ticker__label">Live Wire</div><div class="ticker__track"><div class="ticker__inner" id="ti"><div class="ticker__item"><b>Parliament</b>Monsoon session opens with debate on the data-protection bill</div><div class="ticker__item"><b>Markets</b>Sensex closes at record as monsoon forecast lifts rural demand</div><div class="ticker__item"><b>Culture</b>Kochi-Muziris Biennale unveils 2026 curatorial roster</div><div class="ticker__item"><b>Cities</b>Bengaluru pilots 15-minute neighbourhood plan across four wards</div><div class="ticker__item"><b>Parliament</b>Monsoon session opens with debate on the data-protection bill</div><div class="ticker__item"><b>Markets</b>Sensex closes at record as monsoon forecast lifts rural demand</div><div class="ticker__item"><b>Culture</b>Kochi-Muziris Biennale unveils 2026 curatorial roster</div><div class="ticker__item"><b>Cities</b>Bengaluru pilots 15-minute neighbourhood plan across four wards</div></div></div></div>
+<header class="nav" id="nav">
+  <div class="wrap nav__bar">
+    <a class="logo" href="index.html"><svg class="logo__leaf" viewBox="0 0 32 32" fill="none"><path d="M27 5C12 5 5 13 5 23c0 1.6.3 3 .8 4.4C9 19 15 13 26 11c-7 4-12 9-15 18 9 1 18-4 18-16 0-3.4-1-6-2-8z" fill="currentColor"/></svg><span class="logo__type">Indian <em>Populus</em></span></a>
+    <nav><div class="nav__links"><a href="category.html?cat=politics">Politics & Society</a><a href="category.html?cat=culture">Culture & Arts</a><a href="category.html?cat=health">Health & Wellness</a><a href="category.html?cat=travel">Travel</a><a href="category.html?cat=food">Food & Lifestyle</a><a href="category.html?cat=education">Education</a></div></nav>
+    <a class="btn-sub" href="index.html#newsletter">Subscribe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="arch-header">
+      <div class="arch-eyebrow">The Full Archive</div>
+      <h1>All <em>Dispatches</em></h1>
+      <p>8 articles across 6 categories</p>
+    </div>
+
+    <!-- FILTER TABS -->
+    <div class="filter-wrap">
+      <button class="filter-tab active" onclick="filterCat('all',this)">All</button>
+      <button class="filter-tab" onclick="filterCat('politics',this)">🏛️ Politics & Society</button>
+      <button class="filter-tab" onclick="filterCat('culture',this)">🎭 Culture & Arts</button>
+      <button class="filter-tab" onclick="filterCat('health',this)">🌿 Health & Wellness</button>
+      <button class="filter-tab" onclick="filterCat('travel',this)">✈️ Travel</button>
+      <button class="filter-tab" onclick="filterCat('food',this)">🍽️ Food & Lifestyle</button>
+      <button class="filter-tab" onclick="filterCat('education',this)">📚 Education</button>
+    </div>
+
+    <div class="arch-body">
+      <!-- LEAD TWO -->
+      <div class="arch-lead">
+        <a href="article.html" class="card-lead" data-cat="education">
+          <div class="card-lead__img"><div class="card-lead__img-ph">Mumbai skyline, golden hour</div></div>
+          <div class="card-lead__body">
+            <div class="card-lead__cat">Education</div>
+            <div class="card-lead__title">How Public Spaces Shape the Way We Think About Each Other</div>
+            <div class="card-lead__dek">The design of our shared spaces does more than move bodies. It shapes assumptions and quietly decides who belongs.</div>
+            <div class="card-lead__meta"><span>Shajahav PV</span><span class="dot"></span><span>Mar 4, 2026</span><span class="dot"></span><span>6 min read</span></div>
+          </div>
+        </a>
+        <a href="article.html" class="card-lead" data-cat="culture">
+          <div class="card-lead__img"><div class="card-lead__img-ph">Dancers backstage</div></div>
+          <div class="card-lead__body">
+            <div class="card-lead__cat">Culture & Arts</div>
+            <div class="card-lead__title">The Theatre of Protest: When Art Becomes Civil Disobedience</div>
+            <div class="card-lead__dek">From Habib Tanvir to the streets of Shaheen Bagh, protest in India has always worn an artistic face.</div>
+            <div class="card-lead__meta"><span>Shajahav PV</span><span class="dot"></span><span>Mar 4, 2026</span><span class="dot"></span><span>8 min read</span></div>
+          </div>
+        </a>
+      </div>
+
+      <!-- LIST -->
+      <div class="arch-list" id="archList">
+        <a href="article.html" class="arch-row reveal" data-cat="politics">
+          <div class="arch-row__num">03</div>
+          <div class="arch-row__img"><div class="arch-row__img-ph"></div></div>
+          <div class="arch-row__body">
+            <div class="arch-row__cat">Politics & Society</div>
+            <div class="arch-row__title">Reading Slowly in an Age of Algorithmic Summaries</div>
+            <div class="arch-row__meta"><span>Muhammed Sinan</span><span class="dot"></span><span>Mar 4, 2026</span><span class="dot"></span><span>7 min read</span></div>
+          </div>
+        </a>
+        <a href="article.html" class="arch-row reveal" data-cat="travel">
+          <div class="arch-row__num">04</div>
+          <div class="arch-row__img"><div class="arch-row__img-ph"></div></div>
+          <div class="arch-row__body">
+            <div class="arch-row__cat">Travel</div>
+            <div class="arch-row__title">The Quiet Science of Forest Bathing and Stress Recovery</div>
+            <div class="arch-row__meta"><span>Muhammed Sinan</span><span class="dot"></span><span>Mar 4, 2026</span><span class="dot"></span><span>3 min read</span></div>
+          </div>
+        </a>
+        <a href="article.html" class="arch-row reveal" data-cat="food">
+          <div class="arch-row__num">05</div>
+          <div class="arch-row__img"><div class="arch-row__img-ph"></div></div>
+          <div class="arch-row__body">
+            <div class="arch-row__cat">Food & Lifestyle</div>
+            <div class="arch-row__title">The Coastal Villages That Tourism Forgot</div>
+            <div class="arch-row__meta"><span>Shajahav PV</span><span class="dot"></span><span>Mar 4, 2026</span><span class="dot"></span><span>5 min read</span></div>
+          </div>
+        </a>
+        <a href="article.html" class="arch-row reveal" data-cat="politics">
+          <div class="arch-row__num">06</div>
+          <div class="arch-row__img"><div class="arch-row__img-ph"></div></div>
+          <div class="arch-row__body">
+            <div class="arch-row__cat">Politics & Society</div>
+            <div class="arch-row__title">On Grief, Cortisol, and the Body That Remembers Loss</div>
+            <div class="arch-row__meta"><span>Muhammed Sinan</span><span class="dot"></span><span>Mar 4, 2026</span><span class="dot"></span><span>5 min read</span></div>
+          </div>
+        </a>
+        <a href="article.html" class="arch-row reveal" data-cat="education">
+          <div class="arch-row__num">07</div>
+          <div class="arch-row__img"><div class="arch-row__img-ph"></div></div>
+          <div class="arch-row__body">
+            <div class="arch-row__cat">Education</div>
+            <div class="arch-row__title">What Finnish Schools Teach About Failure</div>
+            <div class="arch-row__meta"><span>Shajahav PV</span><span class="dot"></span><span>Mar 4, 2026</span><span class="dot"></span><span>7 min read</span></div>
+          </div>
+        </a>
+        <a href="article.html" class="arch-row reveal" data-cat="food">
+          <div class="arch-row__num">08</div>
+          <div class="arch-row__img"><div class="arch-row__img-ph"></div></div>
+          <div class="arch-row__body">
+            <div class="arch-row__cat">Food & Lifestyle</div>
+            <div class="arch-row__title">Fermentation Across Cultures: Preserving More Than Just Food</div>
+            <div class="arch-row__meta"><span>Shajahav PV</span><span class="dot"></span><span>Mar 4, 2026</span><span class="dot"></span><span>4 min read</span></div>
+          </div>
+        </a>
+      </div>
+      <div class="load-more"><button>Load more stories</button></div>
+    </div>
+  </div>
+</main>
+
+<footer><div class="foot-inner"><div class="foot-top"><div><div class="foot-brand-name">Indian <em>Populus</em></div><div class="foot-tag">Where India thinks out loud.</div></div><div class="foot-col"><h4>Sections</h4><ul><li><a href="#">Politics & Society</a></li><li><a href="#">Culture & Arts</a></li><li><a href="#">Health & Wellness</a></li><li><a href="#">Travel</a></li><li><a href="#">Food & Lifestyle</a></li><li><a href="#">Education</a></li></ul></div><div class="foot-col"><h4>Masthead</h4><ul><li><a href="about.html">About us</a></li><li><a href="contact.html">Contact</a></li></ul></div><div class="foot-col"><h4>Follow</h4><ul><li><a href="#">Twitter / X</a></li><li><a href="#">Instagram</a></li></ul></div></div><div class="foot-bot"><span>© 2026 Indian Populus Media Pvt. Ltd.</span><span>Made with ♥ in India 🇮🇳</span></div></div></footer>
+
+<script>
+window.addEventListener('scroll',function(){document.getElementById('nav').classList.toggle('scrolled',window.scrollY>12);},{passive:true});
+function filterCat(cat,btn){
+  document.querySelectorAll('.filter-tab').forEach(function(t){t.classList.remove('active');});
+  btn.classList.add('active');
+  document.querySelectorAll('.arch-row,.card-lead').forEach(function(el){
+    el.style.display=(cat==='all'||el.dataset.cat===cat)?'':'none';
+    if(el.classList.contains('arch-row')) el.style.display=(cat==='all'||el.dataset.cat===cat)?'flex':'none';
+  });
+}
+var revs=[].slice.call(document.querySelectorAll('.reveal'));
+if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08});revs.forEach(function(el){if(el.getBoundingClientRect().top<window.innerHeight*.95)el.classList.add('in');else io.observe(el);});}else{revs.forEach(function(el){el.classList.add('in');});}
+</script>
+</body>
+</html>
