@@ -85,9 +85,16 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
 .foot-col a:hover{color:var(--gold-soft);}
 .foot-bot{display:flex;align-items:center;justify-content:space-between;padding-top:28px;font-size:.72rem;color:rgba(255,255,255,.22);flex-wrap:wrap;gap:10px;}
 @media(max-width:900px){.about-stats{grid-template-columns:1fr 1fr;}.about-mission{grid-template-columns:1fr;}.team-grid{grid-template-columns:1fr 1fr;}.foot-top{grid-template-columns:1fr 1fr;gap:28px;}}
-@media(max-width:600px){:root{--px:16px;}.about-hero h1{font-size:2.2rem;}.about-stats{grid-template-columns:1fr 1fr;}.team-grid{grid-template-columns:1fr;}.value-grid{grid-template-columns:1fr;}.nav__links{display:none;}.foot-top{grid-template-columns:1fr;}}
+@media(max-width:600px){:root{--px:16px;}.about-hero h1{font-size:2.2rem;}.about-stats{grid-template-columns:1fr 1fr;}.team-grid{grid-template-columns:1fr;}.value-grid{grid-template-columns:1fr;}.nav__links{display:none;}
+.nav__mobile{display:none;flex-direction:column;background:var(--white);border-top:1px solid var(--rule);padding:8px 0;}
+.nav__mobile.open{display:flex;}
+.nav__mobile a{font-size:.78rem;font-weight:500;color:var(--ink-2);padding:12px 24px;border-bottom:1px solid var(--rule);transition:color .2s;}
+.nav__mobile a:hover{color:var(--forest);}.foot-top{grid-template-columns:1fr;}}
 .reveal{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s;}
 .reveal.in{opacity:1;transform:none;}
+.home-btn{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:300;display:flex;align-items:center;gap:7px;background:var(--ink);color:var(--white);font-family:var(--sans);font-size:.7rem;font-weight:600;letter-spacing:.5px;padding:9px 18px;border-radius:100px;box-shadow:0 4px 20px rgba(0,0,0,.2);white-space:nowrap;transition:background .2s,transform .2s;}
+.home-btn:hover{background:var(--forest);transform:translateX(-50%) translateY(-2px);}
+.home-btn svg{width:13px;height:13px;}
 </style>
 </head>
 <body>
@@ -163,6 +170,11 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
 window.addEventListener('scroll',function(){document.getElementById('nav').classList.toggle('scrolled',window.scrollY>12);},{passive:true});
 var revs=[].slice.call(document.querySelectorAll('.reveal'));
 if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08});revs.forEach(function(el){if(el.getBoundingClientRect().top<window.innerHeight*.95)el.classList.add('in');else io.observe(el);});}else{revs.forEach(function(el){el.classList.add('in');});}
+</script>
+<a href="index.html" class="home-btn" id="homeBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
+<script>
+window.toggleMobileNav=function(){var mn=document.getElementById("mobileNav");if(mn)mn.classList.toggle("open");};
+window.addEventListener("scroll",function(){var btn=document.getElementById("homeBtn");if(btn)btn.style.opacity=window.scrollY>200?"1":"0";},{passive:true});
 </script>
 </body>
 </html>
