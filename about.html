@@ -1,0 +1,168 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>About — Indian Populus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--forest:#1a5c2a;--forest-d:#0f3a1a;--gold:#c9952a;--gold-soft:#d9b463;--ink:#111;--ink-2:#2c2c2c;--ink-3:#555;--ink-4:#888;--bg:#fafaf8;--bg-2:#f3f0e8;--bg-3:#ebe6d8;--white:#fff;--rule:#ddd8ce;--serif:'Playfair Display',Georgia,serif;--sans:'Inter',system-ui,sans-serif;--wrap:1240px;--px:32px;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+.wrap{max-width:var(--wrap);margin-inline:auto;padding-inline:var(--px);}
+.ticker{background:var(--forest);display:flex;align-items:stretch;overflow:hidden;height:36px;}
+.ticker__label{flex-shrink:0;background:var(--gold);color:var(--ink);font-size:.62rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:0 18px;display:flex;align-items:center;white-space:nowrap;}
+.ticker__track{display:flex;align-items:center;overflow:hidden;flex:1;}
+.ticker__inner{display:flex;animation:tick 36s linear infinite;white-space:nowrap;}
+.ticker__item{display:inline-flex;align-items:center;padding:0 36px;font-size:.7rem;color:rgba(255,255,255,.78);border-right:1px solid rgba(255,255,255,.12);}
+.ticker__item b{color:var(--gold-soft);font-weight:700;margin-right:6px;}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.nav{background:var(--bg);border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:200;transition:box-shadow .3s;}
+.nav.scrolled{box-shadow:0 2px 24px rgba(0,0,0,.07);}
+.nav__bar{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-block:14px;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo__leaf{width:28px;height:28px;color:var(--forest);}
+.logo__type{font-family:var(--serif);font-size:1.35rem;font-weight:400;}
+.logo__type em{color:var(--forest);font-style:italic;}
+.nav__links{display:flex;overflow-x:auto;scrollbar-width:none;}
+.nav__links::-webkit-scrollbar{display:none;}
+.nav__links a{font-size:.69rem;font-weight:500;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-3);padding:6px 14px;white-space:nowrap;transition:color .2s;}
+.nav__links a:hover{color:var(--forest);}
+.btn-sub{display:inline-flex;align-items:center;gap:7px;background:var(--forest);color:var(--white);font-size:.72rem;font-weight:600;padding:8px 18px;transition:background .2s;}
+.btn-sub:hover{background:var(--forest-d);}
+.btn-sub svg{width:14px;height:14px;}
+
+/* ABOUT */
+.about-hero{padding:72px 0 56px;border-bottom:1px solid var(--rule);}
+.about-hero__eyebrow{font-size:.62rem;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--gold);display:flex;align-items:center;gap:8px;margin-bottom:20px;}
+.about-hero__eyebrow::before{content:'';width:24px;height:1.5px;background:var(--gold);}
+.about-hero h1{font-family:var(--serif);font-size:3.2rem;font-weight:400;line-height:1.15;color:var(--ink);max-width:680px;margin-bottom:24px;}
+.about-hero h1 em{font-style:italic;color:var(--forest);}
+.about-hero p{font-size:.97rem;font-weight:300;color:var(--ink-3);line-height:1.8;max-width:600px;}
+
+/* STATS ROW */
+.about-stats{display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);margin:56px 0;}
+.about-stat{background:var(--bg);padding:32px 24px;text-align:center;}
+.about-stat-n{font-family:var(--serif);font-size:2.8rem;font-weight:400;color:var(--forest);line-height:1;}
+.about-stat-l{font-size:.72rem;color:var(--ink-4);margin-top:6px;letter-spacing:.3px;}
+
+/* MISSION */
+.about-mission{display:grid;grid-template-columns:1fr 1fr;gap:56px;align-items:start;padding:56px 0;border-bottom:1px solid var(--rule);}
+.about-mission h2{font-family:var(--serif);font-size:2rem;font-weight:400;color:var(--ink);margin-bottom:20px;}
+.about-mission h2 em{font-style:italic;color:var(--forest);}
+.about-mission p{font-size:.88rem;font-weight:300;color:var(--ink-3);line-height:1.8;margin-bottom:16px;}
+.value-grid{display:grid;grid-template-columns:1fr 1fr;gap:20px;}
+.value-item{padding:20px;border:1px solid var(--rule);background:var(--bg-2);}
+.value-item h4{font-family:var(--serif);font-size:1rem;font-weight:600;color:var(--ink);margin-bottom:6px;}
+.value-item p{font-size:.78rem;color:var(--ink-3);line-height:1.6;margin:0;}
+
+/* TEAM */
+.about-team{padding:56px 0 72px;}
+.about-team h2{font-family:var(--serif);font-size:2rem;font-weight:400;color:var(--ink);margin-bottom:32px;}
+.about-team h2 em{font-style:italic;color:var(--forest);}
+.team-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);}
+.team-card{background:var(--bg);padding:28px;transition:background .2s;}
+.team-card:hover{background:var(--white);}
+.team-ava{width:56px;height:56px;border-radius:50%;background:var(--forest);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.1rem;font-weight:600;color:#fff;margin-bottom:14px;}
+.team-name{font-family:var(--serif);font-size:1.1rem;font-weight:600;color:var(--ink);margin-bottom:4px;}
+.team-role{font-size:.68rem;font-weight:600;letter-spacing:.5px;color:var(--forest);margin-bottom:10px;}
+.team-bio{font-size:.78rem;color:var(--ink-3);line-height:1.6;margin-bottom:12px;}
+.team-link{font-size:.72rem;font-weight:600;color:var(--forest);border-bottom:1px solid rgba(26,92,42,.3);display:inline-block;transition:border-color .2s;}
+.team-link:hover{border-color:var(--forest);}
+
+footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
+.foot-inner{max-width:var(--wrap);margin:0 auto;}
+.foot-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;padding-bottom:44px;border-bottom:1px solid rgba(255,255,255,.08);}
+.foot-brand-name{font-family:var(--serif);font-size:1.6rem;font-weight:400;}
+.foot-brand-name em{color:var(--gold-soft);font-style:italic;}
+.foot-tag{font-size:.72rem;color:rgba(255,255,255,.3);font-style:italic;font-family:var(--serif);margin-top:6px;margin-bottom:16px;}
+.foot-col h4{font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:16px;}
+.foot-col li{margin-bottom:10px;}
+.foot-col a{font-size:.8rem;color:rgba(255,255,255,.5);transition:color .2s;}
+.foot-col a:hover{color:var(--gold-soft);}
+.foot-bot{display:flex;align-items:center;justify-content:space-between;padding-top:28px;font-size:.72rem;color:rgba(255,255,255,.22);flex-wrap:wrap;gap:10px;}
+@media(max-width:900px){.about-stats{grid-template-columns:1fr 1fr;}.about-mission{grid-template-columns:1fr;}.team-grid{grid-template-columns:1fr 1fr;}.foot-top{grid-template-columns:1fr 1fr;gap:28px;}}
+@media(max-width:600px){:root{--px:16px;}.about-hero h1{font-size:2.2rem;}.about-stats{grid-template-columns:1fr 1fr;}.team-grid{grid-template-columns:1fr;}.value-grid{grid-template-columns:1fr;}.nav__links{display:none;}.foot-top{grid-template-columns:1fr;}}
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s;}
+.reveal.in{opacity:1;transform:none;}
+</style>
+</head>
+<body>
+<div class="ticker"><div class="ticker__label">Live Wire</div><div class="ticker__track"><div class="ticker__inner"><div class="ticker__item"><b>Parliament</b>Monsoon session opens with debate on the data-protection bill</div><div class="ticker__item"><b>Markets</b>Sensex closes at record as monsoon forecast lifts rural demand</div><div class="ticker__item"><b>Culture</b>Kochi-Muziris Biennale unveils 2026 curatorial roster</div><div class="ticker__item"><b>Parliament</b>Monsoon session opens with debate on the data-protection bill</div><div class="ticker__item"><b>Markets</b>Sensex closes at record as monsoon forecast lifts rural demand</div><div class="ticker__item"><b>Culture</b>Kochi-Muziris Biennale unveils 2026 curatorial roster</div></div></div></div>
+<header class="nav" id="nav">
+  <div class="wrap nav__bar">
+    <a class="logo" href="index.html"><svg class="logo__leaf" viewBox="0 0 32 32" fill="none"><path d="M27 5C12 5 5 13 5 23c0 1.6.3 3 .8 4.4C9 19 15 13 26 11c-7 4-12 9-15 18 9 1 18-4 18-16 0-3.4-1-6-2-8z" fill="currentColor"/></svg><span class="logo__type">Indian <em>Populus</em></span></a>
+    <nav><div class="nav__links"><a href="category.html?cat=politics">Politics & Society</a><a href="category.html?cat=culture">Culture & Arts</a><a href="category.html?cat=health">Health & Wellness</a><a href="category.html?cat=travel">Travel</a><a href="category.html?cat=food">Food & Lifestyle</a><a href="category.html?cat=education">Education</a></div></nav>
+    <a class="btn-sub" href="index.html#newsletter">Subscribe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+  </div>
+</header>
+
+<main>
+  <div class="wrap">
+    <div class="about-hero">
+      <div class="about-hero__eyebrow">Our Story</div>
+      <h1>We believe in writing <em>worth slowing down for.</em></h1>
+      <p>Indian Populus is an independent magazine covering politics, culture, health, travel, food, and education — not as separate beats, but as facets of a life examined. We are reader-funded and editorially independent.</p>
+    </div>
+
+    <div class="about-stats reveal">
+      <div class="about-stat"><div class="about-stat-n">8</div><div class="about-stat-l">Articles Published</div></div>
+      <div class="about-stat"><div class="about-stat-n">2</div><div class="about-stat-l">Contributing Authors</div></div>
+      <div class="about-stat"><div class="about-stat-n">6</div><div class="about-stat-l">Editorial Categories</div></div>
+      <div class="about-stat"><div class="about-stat-n">84</div><div class="about-stat-l">Total Readers</div></div>
+    </div>
+
+    <div class="about-mission reveal">
+      <div>
+        <h2>Our <em>Story</em></h2>
+        <p>Indian Populus began as a small editorial project born from a shared frustration with content that optimises for clicks rather than comprehension. We wanted to create a space where ideas could breathe, where writers could take the time an argument actually needs.</p>
+        <p>Today we publish independently, funded by readers who believe quality writing is worth supporting. Every article is edited, fact-checked, and designed to last. We are not a news site — we are a magazine, and we take that distinction seriously.</p>
+        <p>We are based across New Delhi, Mumbai, and Bengaluru, with correspondents across the country.</p>
+      </div>
+      <div class="value-grid">
+        <div class="value-item"><h4>Independence</h4><p>No advertisers, no algorithms. Just editors and writers who care about getting it right.</p></div>
+        <div class="value-item"><h4>Depth</h4><p>We take time with ideas. Our average piece is 1,500+ words, because some arguments deserve it.</p></div>
+        <div class="value-item"><h4>Clarity</h4><p>Expertise without jargon. Every reader deserves to understand what we are saying.</p></div>
+        <div class="value-item"><h4>Equity</h4><p>We pay all contributors fairly. Writing is labour. We treat it that way.</p></div>
+      </div>
+    </div>
+
+    <div class="about-team reveal">
+      <h2>The <em>Team</em></h2>
+      <div class="team-grid">
+        <div class="team-card">
+          <div class="team-ava">MS</div>
+          <div class="team-name">Muhammed Sinan</div>
+          <div class="team-role">Editor</div>
+          <div class="team-bio">MBA Candidate, Delhi School of Economics. Covers politics, society, and the economics of everyday India.</div>
+          <a href="author.html" class="team-link">View articles →</a>
+        </div>
+        <div class="team-card">
+          <div class="team-ava" style="background:var(--gold);">SP</div>
+          <div class="team-name">Shajahav PV</div>
+          <div class="team-role">President, MSF DU</div>
+          <div class="team-bio">MA Philosophy, Delhi University. Writes about culture, education, and the ideas that shape modern India.</div>
+          <a href="author.html" class="team-link">View articles →</a>
+        </div>
+        <div class="team-card" style="display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:40px;">
+          <div style="font-size:2rem;margin-bottom:12px;">✍️</div>
+          <div class="team-name" style="font-size:.95rem;">Write for Us</div>
+          <div class="team-bio" style="margin-top:8px;">We are always looking for sharp, thoughtful writers. If you have a story that needs telling, we want to hear it.</div>
+          <a href="contact.html" class="team-link" style="margin-top:12px;">Get in touch →</a>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<footer><div class="foot-inner"><div class="foot-top"><div><div class="foot-brand-name">Indian <em>Populus</em></div><div class="foot-tag">Where India thinks out loud.</div></div><div class="foot-col"><h4>Sections</h4><ul><li><a href="#">Politics & Society</a></li><li><a href="#">Culture & Arts</a></li><li><a href="#">Health & Wellness</a></li><li><a href="#">Travel</a></li><li><a href="#">Food & Lifestyle</a></li><li><a href="#">Education</a></li></ul></div><div class="foot-col"><h4>Masthead</h4><ul><li><a href="about.html">About us</a></li><li><a href="author.html">Our writers</a></li><li><a href="contact.html">Contact</a></li></ul></div><div class="foot-col"><h4>Follow</h4><ul><li><a href="#">Twitter / X</a></li><li><a href="#">Instagram</a></li><li><a href="#">LinkedIn</a></li></ul></div></div><div class="foot-bot"><span>© 2026 Indian Populus Media Pvt. Ltd.</span><span>Made with ♥ in India 🇮🇳</span></div></div></footer>
+<script>
+window.addEventListener('scroll',function(){document.getElementById('nav').classList.toggle('scrolled',window.scrollY>12);},{passive:true});
+var revs=[].slice.call(document.querySelectorAll('.reveal'));
+if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08});revs.forEach(function(el){if(el.getBoundingClientRect().top<window.innerHeight*.95)el.classList.add('in');else io.observe(el);});}else{revs.forEach(function(el){el.classList.add('in');});}
+</script>
+</body>
+</html>
