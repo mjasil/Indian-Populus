@@ -964,11 +964,23 @@ tr:last-child td{border-bottom:none;}
             </div>
             <div class="card">
               <div class="section-title">Cover Image</div>
-              <div class="form-group">
-                <label>Image URL</label>
-                <input type="text" id="art-cover" placeholder="https://..."/>
+              <div id="art-cover-drop" style="border:2px dashed var(--border);padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;overflow:hidden;" onclick="document.getElementById('art-cover-file').click()">
+                <div id="art-cover-preview-wrap" style="display:none;margin-bottom:10px;">
+                  <img id="art-cover-preview" src="" style="width:100%;max-height:140px;object-fit:cover;border-radius:4px;"/>
+                </div>
+                <div id="art-cover-placeholder">
+                  <div style="font-size:1.5rem;margin-bottom:8px;">🖼️</div>
+                  <div style="font-size:.78rem;color:var(--text2);">Click or drag image to upload</div>
+                  <div style="font-size:.68rem;color:var(--text3);margin-top:4px;">JPG, PNG, WebP · Max 5MB</div>
+                </div>
+                <div id="art-cover-uploading" style="display:none;font-size:.78rem;color:var(--green3);">Uploading... ⏳</div>
               </div>
-              <div style="border:2px dashed var(--border);padding:20px;text-align:center;margin-top:10px;font-size:.75rem;color:var(--text3);">Or paste a direct image URL above</div>
+              <input type="file" id="art-cover-file" accept="image/*" style="display:none;" onchange="uploadImage(this.files[0],'art-cover')"/>
+              <input type="hidden" id="art-cover"/>
+              <div class="form-group" style="margin-top:10px;">
+                <label>Or paste Image URL</label>
+                <input type="text" id="art-cover-url-input" placeholder="https://..." onchange="document.getElementById('art-cover').value=this.value;showCoverPreview(this.value);"/>
+              </div>
             </div>
           </div>
         </div>
@@ -1325,7 +1337,18 @@ tr:last-child td{border-bottom:none;}
             <option value="owner">Owner</option>
           </select>
         </div>
-        <div class="form-group form-full"><label>Profile Photo URL</label><input type="text" id="author-modal-photo" placeholder="https://..."/></div>
+        <div class="form-group form-full">
+          <label>Profile Photo</label>
+          <div id="author-photo-drop" style="border:2px dashed var(--border);padding:16px;text-align:center;cursor:pointer;" onclick="document.getElementById('author-photo-file').click()">
+            <div id="author-photo-preview-wrap" style="display:none;margin-bottom:8px;">
+              <img id="author-photo-preview" src="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;"/>
+            </div>
+            <div id="author-photo-placeholder" style="font-size:.75rem;color:var(--text2);">📷 Click to upload photo</div>
+            <div id="author-photo-uploading" style="display:none;font-size:.75rem;color:var(--green3);">Uploading...</div>
+          </div>
+          <input type="file" id="author-photo-file" accept="image/*" style="display:none;" onchange="uploadImage(this.files[0],'author-modal-photo')"/>
+          <input type="hidden" id="author-modal-photo"/>
+        </div>
       </div>
     </div>
     <div class="modal-footer">
@@ -1464,6 +1487,80 @@ const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
 // ── SLUG GENERATOR ──
 function makeSlug(t){return t.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');}
 
+// ── CLOUDINARY IMAGE UPLOAD ──
+const CLOUD_NAME='dgc1grdw9';
+const UPLOAD_PRESET='ml_default';
+
+async function uploadImage(file,targetId){
+  if(!file) return;
+  if(!file.type.startsWith('image/')){toast('Please select an image file','error');return;}
+  if(file.size>5*1024*1024){toast('Image must be under 5MB','error');return;}
+
+  var isAuthor=targetId==='author-modal-photo';
+  var dropId=isAuthor?'author-photo-drop':'art-cover-drop';
+  var placeholderEl=document.getElementById((isAuthor?'author-photo':'art-cover')+'-placeholder');
+  var uploadingEl=document.getElementById((isAuthor?'author-photo':'art-cover')+'-uploading');
+  var previewWrap=document.getElementById((isAuthor?'author-photo':'art-cover')+'-preview-wrap');
+  var previewImg=document.getElementById((isAuthor?'author-photo':'art-cover')+'-preview');
+
+  if(placeholderEl) placeholderEl.style.display='none';
+  if(uploadingEl) uploadingEl.style.display='block';
+
+  try{
+    var formData=new FormData();
+    formData.append('file',file);
+    formData.append('upload_preset',UPLOAD_PRESET);
+    formData.append('folder','indian-populus');
+
+    var res=await fetch('https://api.cloudinary.com/v1_1/'+CLOUD_NAME+'/image/upload',{method:'POST',body:formData});
+    var data=await res.json();
+
+    if(data.secure_url){
+      document.getElementById(targetId).value=data.secure_url;
+      if(previewImg) previewImg.src=data.secure_url;
+      if(previewWrap) previewWrap.style.display='block';
+      if(uploadingEl) uploadingEl.style.display='none';
+      toast('Image uploaded! 📸','success');
+      // sync URL input field for cover
+      var urlInput=document.getElementById('art-cover-url-input');
+      if(urlInput&&targetId==='art-cover') urlInput.value=data.secure_url;
+    } else {
+      throw new Error(data.error?data.error.message:'Upload failed');
+    }
+  }catch(e){
+    toast('Upload failed: '+e.message,'error');
+    if(placeholderEl) placeholderEl.style.display='block';
+    if(uploadingEl) uploadingEl.style.display='none';
+  }
+}
+
+function showCoverPreview(url){
+  if(!url) return;
+  var previewImg=document.getElementById('art-cover-preview');
+  var previewWrap=document.getElementById('art-cover-preview-wrap');
+  var placeholderEl=document.getElementById('art-cover-placeholder');
+  if(previewImg) previewImg.src=url;
+  if(previewWrap) previewWrap.style.display='block';
+  if(placeholderEl) placeholderEl.style.display='none';
+}
+
+// ── DRAG & DROP ──
+document.addEventListener('DOMContentLoaded',function(){
+  ['art-cover-drop','author-photo-drop'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(!el) return;
+    el.addEventListener('dragover',function(e){e.preventDefault();el.style.borderColor='var(--green3)';});
+    el.addEventListener('dragleave',function(e){el.style.borderColor='var(--border)';});
+    el.addEventListener('drop',function(e){
+      e.preventDefault();
+      el.style.borderColor='var(--border)';
+      var file=e.dataTransfer.files[0];
+      var targetId=id==='art-cover-drop'?'art-cover':'author-modal-photo';
+      if(file) uploadImage(file,targetId);
+    });
+  });
+});
+
 // ── READ TIME CALCULATOR ──
 function calcReadTime(text){return Math.max(1,Math.ceil(text.split(/\s+/).length/200));}
 
@@ -1568,6 +1665,7 @@ async function editArticle(id){
   document.getElementById('art-meta-desc').value=data.meta_description||'';
   document.getElementById('art-tags').value=(data.tags||[]).join(', ');
   document.getElementById('art-cover').value=data.cover_image_url||'';
+  if(data.cover_image_url) showCoverPreview(data.cover_image_url);
   document.getElementById('art-featured').checked=data.is_featured||false;
   // load categories and authors for selects
   await loadCategorySelect(data.category_id);
@@ -1656,6 +1754,12 @@ function clearArticleForm(){
   });
   var ft=document.getElementById('art-featured');
   if(ft) ft.checked=false;
+  var urlInput=document.getElementById('art-cover-url-input');
+  if(urlInput) urlInput.value='';
+  var previewWrap=document.getElementById('art-cover-preview-wrap');
+  if(previewWrap) previewWrap.style.display='none';
+  var placeholderEl=document.getElementById('art-cover-placeholder');
+  if(placeholderEl) placeholderEl.style.display='block';
 }
 
 // Auto update read time and slug preview
@@ -1677,94 +1781,4 @@ document.addEventListener('DOMContentLoaded',function(){
 // ══════════════════════════════
 async function loadAuthors(){
   try{
-    var grid=document.getElementById('authors-grid');
-    if(!grid) return;
-    grid.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:20px;">Loading...</div>';
-    const {data,error}=await sb.from('authors').select('*').order('created_at',{ascending:false});
-    if(error) throw error;
-    if(!data||data.length===0){grid.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:20px;">No authors yet. Add your first author!</div>';return;}
-    // get article counts
-    const {data:arts}=await sb.from('articles').select('author_id,views');
-    grid.innerHTML=data.map(function(a){
-      var artCount=(arts||[]).filter(function(x){return x.author_id===a.id;}).length;
-      var totalViews=(arts||[]).filter(function(x){return x.author_id===a.id;}).reduce(function(s,x){return s+(x.views||0);},0);
-      var initials=a.name.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
-      return '<div class="author-card">'
-        +'<div class="author-card-top"><div class="author-ava">'+initials+'</div>'
-        +'<div><div class="author-name">'+a.name+'</div><div class="author-role-tag">'+a.role+'</div></div></div>'
-        +'<div class="author-bio">'+a.bio+'</div>'
-        +'<div style="font-size:.72rem;color:var(--text3);margin-bottom:10px;">✉ '+(a.email||'—')+'</div>'
-        +'<div class="author-stats">'
-        +'<div class="author-stat"><div class="author-stat-n">'+artCount+'</div><div class="author-stat-l">Articles</div></div>'
-        +'<div class="author-stat"><div class="author-stat-n">'+totalViews+'</div><div class="author-stat-l">Views</div></div>'
-        +'</div>'
-        +'<div class="author-actions">'
-        +'<button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center;" onclick="editAuthorModal(\''+a.id+'\')">Edit</button>'
-        +'<button class="btn btn-icon" onclick="toggleAuthor(\''+a.id+'\','+a.is_active+')" title="'+(a.is_active?'Deactivate':'Activate')+'"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg></button>'
-        +'<button class="btn btn-icon" style="color:var(--red);" onclick="deleteAuthor(\''+a.id+'\')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>'
-        +'</div></div>';
-    }).join('');
-    // update header count
-    var h=document.querySelector('#page-authors .page-header h1');
-    if(h) h.innerHTML='Authors <span style="font-size:.85rem;color:var(--text3);font-weight:400;">('+data.length+')</span>';
-  }catch(e){toast('Failed to load authors','error');console.error(e);}
-}
-
-async function editAuthorModal(id){
-  const {data}=await sb.from('authors').select('*').eq('id',id).single();
-  if(!data) return;
-  document.getElementById('author-modal-id').value=data.id;
-  document.getElementById('author-modal-name').value=data.name||'';
-  document.getElementById('author-modal-role').value=data.role||'';
-  document.getElementById('author-modal-bio').value=data.bio||'';
-  document.getElementById('author-modal-email').value=data.email||'';
-  document.getElementById('author-modal-photo').value=data.photo_url||'';
-  document.getElementById('author-modal-perm').value='editor';
-  openModal('modal-add-author');
-}
-
-async function saveAuthor(){
-  var id=document.getElementById('author-modal-id').value;
-  var name=document.getElementById('author-modal-name').value.trim();
-  var role=document.getElementById('author-modal-role').value.trim();
-  var bio=document.getElementById('author-modal-bio').value.trim();
-  var email=document.getElementById('author-modal-email').value.trim();
-  var photo=document.getElementById('author-modal-photo').value.trim();
-  if(!name){toast('Name is required!','error');return;}
-  var payload={name,role,bio,email:email||null,photo_url:photo||null,slug:makeSlug(name)};
-  var error;
-  if(id){var r=await sb.from('authors').update(payload).eq('id',id);error=r.error;}
-  else{var r=await sb.from('authors').insert(payload);error=r.error;}
-  if(error){toast('Failed to save author: '+error.message,'error');return;}
-  toast(id?'Author updated!':'Author added! 🎉','success');
-  closeModal('modal-add-author');
-  document.getElementById('author-modal-id').value='';
-  loadAuthors();
-}
-
-async function deleteAuthor(id){
-  if(!confirm('Delete this author?')) return;
-  const {error}=await sb.from('authors').delete().eq('id',id);
-  if(error){toast('Failed to delete','error');return;}
-  toast('Author deleted','success');
-  loadAuthors();
-}
-
-async function toggleAuthor(id,isActive){
-  await sb.from('authors').update({is_active:!isActive}).eq('id',id);
-  toast(isActive?'Author deactivated':'Author activated','success');
-  loadAuthors();
-}
-
-// ══════════════════════════════
-// COMMENTS — Load from Supabase
-// ══════════════════════════════
-async function loadComments(){
-  try{
-    var cont=document.getElementById('comments-container');
-    if(!cont) return;
-    cont.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:20px;">Loading...</div>';
-    const {data,error}=await sb.from('comments').select('*,articles(title)').order('created_at',{ascending:false});
-    if(error) throw error;
-    if(!data||data.length===0){cont.innerHTML='<div style="color:var(--text3);font-size:.82rem;padding:20px;">No comments yet.</div>';return;}
-    cont.innerHTML=data.ma
+    var grid=document.g
