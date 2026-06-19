@@ -1,0 +1,1770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indian Populus — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap&display=swap" rel="stylesheet" media="print" onload="this.media='all'">
+<noscript><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet"></noscript>
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0f1117;
+  --bg2:#161b22;
+  --bg3:#1c2333;
+  --bg4:#21262d;
+  --border:#30363d;
+  --border2:#3d4450;
+  --green:#1a5c2a;
+  --green2:#2d7a3e;
+  --green3:#4caf65;
+  --green-bg:rgba(26,92,42,.15);
+  --gold:#c9952a;
+  --gold2:#d9b463;
+  --red:#e05252;
+  --red-bg:rgba(224,82,82,.12);
+  --yellow:#e0a830;
+  --yellow-bg:rgba(224,168,48,.12);
+  --blue:#4a9eff;
+  --blue-bg:rgba(74,158,255,.12);
+  --white:#f0f6fc;
+  --text:#e6edf3;
+  --text2:#8b949e;
+  --text3:#6e7681;
+  --serif:'Playfair Display',Georgia,serif;
+  --sans:'Inter',system-ui,sans-serif;
+}
+html{height:100%;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+a{color:inherit;text-decoration:none;}
+button{font-family:var(--sans);cursor:pointer;}
+input,textarea,select{font-family:var(--sans);}
+img{display:block;}
+
+/* ── SCROLLBAR ── */
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* ════════════════════════════════════
+   LOGIN
+════════════════════════════════════ */
+#screen-login{
+  min-height:100vh;display:flex;align-items:center;justify-content:center;
+  background:radial-gradient(ellipse at 60% 40%,rgba(26,92,42,.18) 0%,transparent 60%),var(--bg);
+}
+.login-box{
+  width:100%;max-width:420px;padding:48px 40px;
+  background:var(--bg2);border:1px solid var(--border);
+}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:36px;}
+.login-logo svg{width:30px;height:30px;color:var(--green3);}
+.login-logo span{font-family:var(--serif);font-size:1.3rem;color:var(--white);}
+.login-logo span em{color:var(--green3);font-style:italic;}
+.login-box h2{font-size:1.1rem;font-weight:600;color:var(--white);margin-bottom:6px;}
+.login-box p{font-size:.8rem;color:var(--text2);margin-bottom:28px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:.72rem;font-weight:500;color:var(--text2);margin-bottom:6px;letter-spacing:.3px;}
+.field input{
+  width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);
+  color:var(--text);font-size:.85rem;outline:none;transition:border-color .2s;
+}
+.field input:focus{border-color:var(--green3);}
+.field input::placeholder{color:var(--text3);}
+.login-err{background:var(--red-bg);border:1px solid rgba(224,82,82,.3);color:var(--red);font-size:.78rem;padding:10px 14px;margin-bottom:16px;display:none;}
+.btn-primary{
+  width:100%;padding:11px;background:var(--green);color:#fff;border:none;
+  font-size:.85rem;font-weight:600;letter-spacing:.3px;transition:background .2s;
+}
+.btn-primary:hover{background:var(--green2);}
+.login-note{font-size:.72rem;color:var(--text3);text-align:center;margin-top:16px;}
+
+/* ════════════════════════════════════
+   ADMIN SHELL
+════════════════════════════════════ */
+#screen-admin{display:none;min-height:100vh;flex-direction:column;}
+#screen-admin.visible{display:flex;}
+.admin-wrap{display:flex;flex:1;min-height:calc(100vh - 52px);}
+
+/* TOP BAR */
+.topbar{
+  height:52px;background:var(--bg2);border-bottom:1px solid var(--border);
+  display:flex;align-items:center;justify-content:space-between;padding:0 20px;
+  position:sticky;top:0;z-index:100;
+}
+.topbar-left{display:flex;align-items:center;gap:16px;}
+.topbar-logo{display:flex;align-items:center;gap:8px;}
+.topbar-logo svg{width:22px;height:22px;color:var(--green3);}
+.topbar-logo span{font-family:var(--serif);font-size:1rem;color:var(--white);}
+.topbar-logo span em{color:var(--green3);font-style:italic;}
+.topbar-badge{font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--green-bg);color:var(--green3);padding:2px 8px;border:1px solid rgba(76,175,101,.2);}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.topbar-btn{
+  display:flex;align-items:center;gap:6px;padding:6px 14px;
+  background:var(--green);color:#fff;border:none;font-size:.75rem;font-weight:600;
+  transition:background .2s;
+}
+.topbar-btn:hover{background:var(--green2);}
+.topbar-btn svg{width:14px;height:14px;}
+.topbar-avatar{
+  width:32px;height:32px;border-radius:50%;background:var(--green);
+  display:flex;align-items:center;justify-content:center;
+  font-size:.75rem;font-weight:700;color:#fff;cursor:pointer;position:relative;
+}
+.topbar-view{font-size:.75rem;color:var(--text2);display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);transition:border-color .2s;}
+.topbar-view:hover{border-color:var(--green3);color:var(--green3);}
+.topbar-view svg{width:13px;height:13px;}
+
+/* SIDEBAR */
+.sidebar{
+  width:220px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);
+  padding:16px 0;display:flex;flex-direction:column;
+  position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;
+}
+.sidebar-section{padding:0 12px;margin-bottom:4px;}
+.sidebar-label{font-size:.6rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);padding:10px 8px 6px;}
+.nav-item{
+  display:flex;align-items:center;gap:10px;padding:8px 10px;
+  font-size:.8rem;color:var(--text2);border-radius:4px;cursor:pointer;
+  transition:background .15s,color .15s;border:none;background:none;width:100%;text-align:left;
+}
+.nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:.7;}
+.nav-item:hover{background:var(--bg3);color:var(--text);}
+.nav-item.active{background:var(--green-bg);color:var(--green3);}
+.nav-item.active svg{opacity:1;}
+.sidebar-divider{height:1px;background:var(--border);margin:8px 12px;}
+.sidebar-user{
+  margin-top:auto;padding:12px 16px;border-top:1px solid var(--border);
+  display:flex;align-items:center;gap:10px;
+}
+.sidebar-user-ava{
+  width:30px;height:30px;border-radius:50%;background:var(--green);
+  display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;flex-shrink:0;
+}
+.sidebar-user-name{font-size:.78rem;font-weight:500;color:var(--text);}
+.sidebar-user-role{font-size:.65rem;color:var(--text3);}
+.sidebar-logout{margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;padding:4px;}
+.sidebar-logout:hover{color:var(--red);}
+.sidebar-logout svg{width:14px;height:14px;}
+
+/* MAIN CONTENT */
+.main{flex:1;overflow-y:auto;padding:28px 32px;max-height:calc(100vh - 52px);}
+.page{display:none;}
+.page.active{display:block;}
+
+/* PAGE HEADER */
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:16px;}
+.page-header h1{font-size:1.25rem;font-weight:600;color:var(--white);}
+.page-header p{font-size:.78rem;color:var(--text2);margin-top:3px;}
+.page-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+
+/* CARDS */
+.card{background:var(--bg2);border:1px solid var(--border);padding:20px;}
+.card-sm{background:var(--bg2);border:1px solid var(--border);padding:16px;}
+
+/* STAT GRID */
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.stat-card{background:var(--bg2);border:1px solid var(--border);padding:20px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.stat-card.green::before{background:var(--green3);}
+.stat-card.gold::before{background:var(--gold);}
+.stat-card.blue::before{background:var(--blue);}
+.stat-card.purple::before{background:#a78bfa;}
+.stat-label{font-size:.65rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;}
+.stat-value{font-size:2rem;font-weight:700;color:var(--white);line-height:1;margin-bottom:4px;}
+.stat-sub{font-size:.72rem;color:var(--text3);}
+.stat-icon{position:absolute;top:16px;right:16px;font-size:1.4rem;opacity:.2;}
+
+/* TABLE */
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:.8rem;}
+thead tr{border-bottom:1px solid var(--border);}
+th{padding:10px 14px;text-align:left;font-size:.65rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);}
+td{padding:12px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle;}
+tr:hover td{background:var(--bg3);}
+tr:last-child td{border-bottom:none;}
+.td-title{color:var(--text);font-weight:500;max-width:260px;}
+.td-title-sub{font-size:.7rem;color:var(--text3);margin-top:2px;}
+
+/* BADGES */
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;font-size:.65rem;font-weight:600;letter-spacing:.3px;border-radius:2px;}
+.badge-green{background:var(--green-bg);color:var(--green3);border:1px solid rgba(76,175,101,.2);}
+.badge-yellow{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(224,168,48,.2);}
+.badge-red{background:var(--red-bg);color:var(--red);border:1px solid rgba(224,82,82,.2);}
+.badge-blue{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(74,158,255,.2);}
+.badge-gray{background:var(--bg4);color:var(--text3);border:1px solid var(--border);}
+
+/* BUTTONS */
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;font-size:.78rem;font-weight:500;border:none;cursor:pointer;transition:all .2s;}
+.btn svg{width:14px;height:14px;}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:hover{background:var(--green2);}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border);}
+.btn-ghost:hover{border-color:var(--text2);color:var(--text);}
+.btn-red{background:var(--red-bg);color:var(--red);border:1px solid rgba(224,82,82,.2);}
+.btn-red:hover{background:rgba(224,82,82,.2);}
+.btn-sm{padding:5px 10px;font-size:.72rem;}
+.btn-icon{padding:6px;background:transparent;border:1px solid var(--border);color:var(--text2);}
+.btn-icon:hover{border-color:var(--text2);color:var(--text);}
+.btn-icon svg{width:14px;height:14px;}
+
+/* FORM */
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-full{grid-column:1/-1;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group label{font-size:.72rem;font-weight:500;color:var(--text2);letter-spacing:.2px;}
+.form-group input,.form-group select,.form-group textarea{
+  padding:9px 12px;background:var(--bg3);border:1px solid var(--border);
+  color:var(--text);font-size:.83rem;outline:none;transition:border-color .2s;resize:vertical;
+}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--green3);}
+.form-group input::placeholder,.form-group textarea::placeholder{color:var(--text3);}
+.form-group select option{background:var(--bg3);}
+.form-hint{font-size:.68rem;color:var(--text3);}
+.editor-area{min-height:320px;font-size:.85rem;line-height:1.8;}
+
+/* SEARCH BAR */
+.search-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.search-input-wrap{position:relative;flex:1;min-width:200px;}
+.search-input-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--text3);}
+.search-input{width:100%;padding:8px 12px 8px 34px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:.8rem;outline:none;transition:border-color .2s;}
+.search-input:focus{border-color:var(--green3);}
+.search-input::placeholder{color:var(--text3);}
+.filter-select{padding:8px 12px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:.78rem;outline:none;cursor:pointer;}
+.filter-select option{background:var(--bg3);}
+
+/* ALERT */
+.alert{padding:12px 16px;font-size:.8rem;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.alert-info{background:var(--blue-bg);border:1px solid rgba(74,158,255,.2);color:var(--blue);}
+.alert svg{width:15px;height:15px;flex-shrink:0;}
+
+/* TOGGLE */
+.toggle-wrap{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+.toggle-wrap:last-child{border-bottom:none;}
+.toggle-info{flex:1;}
+.toggle-info strong{font-size:.82rem;color:var(--text);font-weight:500;}
+.toggle-info p{font-size:.72rem;color:var(--text3);margin-top:2px;}
+.toggle{position:relative;width:38px;height:20px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:var(--border2);cursor:pointer;border-radius:20px;transition:.3s;}
+.toggle-slider::before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:var(--text3);border-radius:50%;transition:.3s;}
+.toggle input:checked+.toggle-slider{background:var(--green);}
+.toggle input:checked+.toggle-slider::before{transform:translateX(18px);background:#fff;}
+
+/* ROLE CARD */
+.role-card{background:var(--bg2);border:1px solid var(--border);padding:20px;margin-bottom:16px;}
+.role-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;}
+.role-name{font-size:.9rem;font-weight:600;color:var(--white);}
+.role-desc{font-size:.72rem;color:var(--text3);margin-top:2px;}
+.perm-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0;}
+
+/* AUTHOR CARD */
+.author-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.author-card{background:var(--bg2);border:1px solid var(--border);padding:20px;}
+.author-card-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.author-ava{width:44px;height:44px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:700;color:#fff;flex-shrink:0;}
+.author-name{font-size:.88rem;font-weight:600;color:var(--white);}
+.author-role-tag{font-size:.65rem;color:var(--green3);}
+.author-bio{font-size:.75rem;color:var(--text3);margin-bottom:14px;line-height:1.5;}
+.author-stats{display:flex;gap:16px;padding-top:12px;border-top:1px solid var(--border);}
+.author-stat{text-align:center;}
+.author-stat-n{font-size:1.1rem;font-weight:700;color:var(--white);}
+.author-stat-l{font-size:.62rem;color:var(--text3);}
+.author-actions{display:flex;gap:8px;margin-top:14px;}
+
+/* COMMENT CARD */
+.comment-card{background:var(--bg2);border:1px solid var(--border);padding:16px;margin-bottom:12px;}
+.comment-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+.comment-meta{display:flex;align-items:center;gap:10px;}
+.comment-ava{width:28px;height:28px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:var(--text2);}
+.comment-name{font-size:.8rem;font-weight:600;color:var(--text);}
+.comment-date{font-size:.68rem;color:var(--text3);}
+.comment-article{font-size:.7rem;color:var(--text3);margin-bottom:8px;}
+.comment-article a{color:var(--green3);}
+.comment-body{font-size:.8rem;color:var(--text2);line-height:1.6;margin-bottom:12px;}
+.comment-actions{display:flex;gap:8px;}
+
+/* MODAL */
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border);}
+.modal-header h3{font-size:.95rem;font-weight:600;color:var(--white);}
+.modal-close{background:none;border:none;color:var(--text3);cursor:pointer;padding:4px;}
+.modal-close:hover{color:var(--text);}
+.modal-close svg{width:16px;height:16px;}
+.modal-body{padding:20px;}
+.modal-footer{padding:16px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;}
+
+/* ACTIVITY */
+.activity-list{display:flex;flex-direction:column;gap:0;}
+.activity-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.activity-item:last-child{border-bottom:none;}
+.activity-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.activity-dot.green{background:var(--green3);}
+.activity-dot.gold{background:var(--gold);}
+.activity-dot.blue{background:var(--blue);}
+.activity-dot.red{background:var(--red);}
+.activity-text{font-size:.78rem;color:var(--text2);line-height:1.5;}
+.activity-text strong{color:var(--text);font-weight:500;}
+.activity-time{font-size:.68rem;color:var(--text3);margin-top:2px;}
+
+/* NEEDS ATTENTION */
+.attention-list{display:flex;flex-direction:column;gap:10px;}
+.attention-item{display:flex;align-items:center;gap:12px;padding:12px;background:var(--bg3);border:1px solid var(--border);}
+.attention-icon{font-size:1.1rem;flex-shrink:0;}
+.attention-text{font-size:.78rem;color:var(--text2);flex:1;}
+.attention-text strong{color:var(--text);display:block;font-size:.8rem;margin-bottom:2px;}
+.attention-action{font-size:.72rem;color:var(--green3);cursor:pointer;white-space:nowrap;}
+
+/* TWO COL LAYOUT */
+.two-col{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start;}
+.two-col-full{grid-column:1/-1;}
+
+/* MINI CHART */
+.mini-chart{display:flex;align-items:flex-end;gap:3px;height:48px;}
+.mini-bar{flex:1;background:var(--green-bg);border-radius:2px 2px 0 0;transition:background .2s;min-width:6px;}
+.mini-bar:hover{background:var(--green3);}
+
+/* SECTION TITLE */
+.section-title{font-size:.65rem;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+
+/* SETTINGS ROW */
+.settings-section{margin-bottom:28px;}
+.settings-section h3{font-size:.82rem;font-weight:600;color:var(--white);margin-bottom:16px;padding-bottom:10px;border-bottom:1px solid var(--border);}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .sidebar{display:none;}
+  .stat-grid{grid-template-columns:1fr 1fr;}
+  .author-grid{grid-template-columns:1fr 1fr;}
+  .two-col{grid-template-columns:1fr;}
+  .perm-grid{grid-template-columns:1fr;}
+}
+@media(max-width:600px){
+  .main{padding:16px;}
+  .stat-grid{grid-template-columns:1fr 1fr;}
+  .form-grid{grid-template-columns:1fr;}
+  .author-grid{grid-template-columns:1fr;}
+}
+
+/* EDITOR TOOLBAR */
+.editor-toolbar{display:flex;flex-wrap:wrap;gap:2px;padding:8px;background:var(--bg3);border:1px solid var(--border);border-bottom:none;}
+.editor-toolbar button{padding:5px 9px;background:transparent;border:none;color:var(--text2);font-size:.75rem;cursor:pointer;border-radius:2px;transition:background .15s;}
+.editor-toolbar button:hover{background:var(--bg4);color:var(--text);}
+.editor-toolbar .sep{width:1px;height:20px;background:var(--border);margin:0 4px;align-self:center;}
+
+/* PERFORMANCE */
+*{-webkit-tap-highlight-color:transparent;}
+.btn,.nav-item,.sidebar,.modal-overlay,.field input{will-change:auto;}
+/* reduce all transitions for speed */
+.nav-item{transition:background .1s,color .1s;}
+.btn{transition:background .15s;}
+.sidebar{transition:transform .2s ease;}
+.field input{transition:border-color .15s;}
+.progress-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:6px;}
+.progress-fill{height:100%;background:var(--green3);border-radius:2px;transition:width .4s;}
+
+/* HAMBURGER */
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:1px solid var(--border);margin-right:4px;}
+.hamburger span{display:block;width:18px;height:1.5px;background:var(--text2);border-radius:2px;}
+/* SIDEBAR OVERLAY */
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:149;}
+.sidebar-overlay.open{display:block;}
+
+/* RESPONSIVE */
+@media(max-width:900px){
+  .sidebar{position:fixed;top:52px;left:0;bottom:0;z-index:150;transform:translateX(-100%);transition:transform .25s ease;display:flex;}
+  .sidebar.open{transform:translateX(0);}
+  .hamburger{display:flex;}
+  .stat-grid{grid-template-columns:1fr 1fr !important;}
+  .author-grid{grid-template-columns:1fr 1fr;}
+  .two-col{grid-template-columns:1fr;}
+  .perm-grid{grid-template-columns:1fr;}
+  .main{padding:20px 16px;}
+  .news__card{grid-template-columns:1fr;}
+}
+@media(max-width:600px){
+  .main{padding:16px 12px;}
+  .stat-grid{grid-template-columns:1fr 1fr !important;}
+  .form-grid{grid-template-columns:1fr;}
+  .author-grid{grid-template-columns:1fr;}
+  .page-header{flex-direction:column;gap:10px;}
+  .page-actions{width:100%;}
+  .topbar{padding:0 12px;}
+  .topbar-view{display:none;}
+  table{font-size:.72rem;}
+  th,td{padding:8px 10px;}
+}
+</style>
+</head>
+<body>
+
+<!-- ═══════════════════════════════════
+     LOGIN SCREEN
+═══════════════════════════════════ -->
+<div id="screen-login">
+  <div class="login-box">
+    <div class="login-logo">
+      <svg viewBox="0 0 32 32" fill="none">
+        <path d="M27 5C12 5 5 13 5 23c0 1.6.3 3 .8 4.4C9 19 15 13 26 11c-7 4-12 9-15 18 9 1 18-4 18-16 0-3.4-1-6-2-8z" fill="currentColor"/>
+      </svg>
+      <span>Indian <em>Populus</em></span>
+    </div>
+    <h2>Welcome back</h2>
+    <p>Sign in to your admin panel</p>
+    <div class="login-err" id="loginErr">⚠ Invalid email or password. Please try again.</div>
+    <div class="field">
+      <label>Email Address</label>
+      <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email"/>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <button class="btn-primary" onclick="doLogin()">Sign In →</button>
+    <p class="login-note">Indian Populus Admin Panel · v1.0</p>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     ADMIN SHELL
+═══════════════════════════════════ -->
+<div id="screen-admin">
+
+  <!-- TOP BAR -->
+  <div class="topbar">
+    <div class="topbar-left">
+      <button class="hamburger" onclick="toggleSidebar()" aria-label="Menu">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="topbar-logo">
+        <svg viewBox="0 0 32 32" fill="none"><path d="M27 5C12 5 5 13 5 23c0 1.6.3 3 .8 4.4C9 19 15 13 26 11c-7 4-12 9-15 18 9 1 18-4 18-16 0-3.4-1-6-2-8z" fill="currentColor"/></svg>
+        <span>Indian <em>Populus</em></span>
+      </div>
+      <span class="topbar-badge">Admin Panel</span>
+    </div>
+    <div class="topbar-right">
+      <a href="index.html" target="_blank" class="topbar-view">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        View Site
+      </a>
+      <button class="topbar-btn" onclick="showPage('new-article')">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Article
+      </button>
+      <div class="topbar-avatar" id="topbarAvatar">SK</div>
+    </div>
+  </div>
+
+  <div class="admin-wrap">
+    <div class="sidebar-overlay" id="sidebarOverlay" onclick="toggleSidebar()"></div>
+    <!-- SIDEBAR -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Main</div>
+        <button class="nav-item active" onclick="showPage('dashboard')" id="nav-dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </button>
+        <button class="nav-item" onclick="showPage('articles')" id="nav-articles">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/><line x1="16" y1="13" x2="8" y2="13"/><line x1="16" y1="17" x2="8" y2="17"/><polyline points="10 9 9 9 8 9"/></svg>
+          Articles
+        </button>
+        <button class="nav-item" onclick="showPage('new-article')" id="nav-new-article">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          New Article
+        </button>
+        <button class="nav-item" onclick="showPage('authors')" id="nav-authors">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/><path d="M23 21v-2a4 4 0 0 0-3-3.87"/><path d="M16 3.13a4 4 0 0 1 0 7.75"/></svg>
+          Authors
+        </button>
+        <button class="nav-item" onclick="showPage('comments')" id="nav-comments">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Comments
+          <span class="badge badge-red" style="margin-left:auto;font-size:.58rem;">3</span>
+        </button>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Manage</div>
+        <button class="nav-item" onclick="showPage('categories')" id="nav-categories">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          Categories
+        </button>
+        <button class="nav-item" onclick="showPage('newsletter')" id="nav-newsletter">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Newsletter
+        </button>
+        <button class="nav-item" onclick="showPage('roles')" id="nav-roles">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Roles & Permissions
+        </button>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">System</div>
+        <button class="nav-item" onclick="showPage('settings')" id="nav-settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Settings
+        </button>
+      </div>
+      <div class="sidebar-user">
+        <div class="sidebar-user-ava">SK</div>
+        <div>
+          <div class="sidebar-user-name">Sahad PK</div>
+          <div class="sidebar-user-role">Owner</div>
+        </div>
+        <button class="sidebar-logout" onclick="doLogout()" title="Logout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </aside>
+
+    <!-- MAIN -->
+    <main class="main">
+
+      <!-- ── DASHBOARD ── -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div>
+            <h1>Dashboard</h1>
+            <p id="dash-date">June 2026 · Last updated just now</p>
+          </div>
+          <div class="page-actions">
+            <a href="index.html" target="_blank" class="btn btn-ghost btn-sm">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+              View Site
+            </a>
+          </div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card green">
+            <div class="stat-label">Published Articles</div>
+            <div class="stat-value" id="stat-published">—</div>
+            <div class="stat-sub">0 drafts pending</div>
+            <div class="stat-icon">📄</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-label">Published This Month</div>
+            <div class="stat-value" id="stat-this-month">—</div>
+            <div class="stat-sub">new articles</div>
+            <div class="stat-icon">📅</div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-label">Active Authors</div>
+            <div class="stat-value" id="stat-authors">—</div>
+            <div class="stat-sub">avg 6 min read time</div>
+            <div class="stat-icon">✍️</div>
+          </div>
+          <div class="stat-card purple">
+            <div class="stat-label">Categories</div>
+            <div class="stat-value" id="stat-categories">—</div>
+            <div class="stat-sub">8 articles categorised</div>
+            <div class="stat-icon">📂</div>
+          </div>
+        </div>
+
+        <div class="stat-grid">
+          <div class="stat-card green">
+            <div class="stat-label">Total Views</div>
+            <div class="stat-value" id="stat-views">—</div>
+            <div class="stat-sub">across all articles</div>
+            <div class="stat-icon">👁️</div>
+          </div>
+          <div class="stat-card gold">
+            <div class="stat-label">Views This Month</div>
+            <div class="stat-value" id="stat-views-month">—</div>
+            <div class="stat-sub">last 30 days</div>
+            <div class="stat-icon">📈</div>
+          </div>
+          <div class="stat-card blue">
+            <div class="stat-label">Comments This Month</div>
+            <div class="stat-value" id="stat-comments">—</div>
+            <div class="stat-sub">pending review</div>
+            <div class="stat-icon">💬</div>
+          </div>
+          <div class="stat-card purple">
+            <div class="stat-label">Newsletter Subscribers</div>
+            <div class="stat-value" id="stat-subscribers">—</div>
+            <div class="stat-sub">+0 this month</div>
+            <div class="stat-icon">📬</div>
+          </div>
+        </div>
+
+        <!-- TWO COL -->
+        <div class="two-col" style="margin-top:24px;">
+          <div>
+            <!-- NEEDS ATTENTION -->
+            <div class="card" style="margin-bottom:16px;">
+              <div class="section-title">Needs Attention</div>
+              <div class="attention-list">
+                <div class="attention-item">
+                  <span class="attention-icon">⚠️</span>
+                  <div class="attention-text">
+                    <strong>3 comments pending review</strong>
+                    Reader comments are waiting for moderation approval
+                  </div>
+                  <span class="attention-action" onclick="showPage('comments')">Review →</span>
+                </div>
+                <div class="attention-item">
+                  <span class="attention-icon">📬</span>
+                  <div class="attention-text">
+                    <strong>1 unread message</strong>
+                    A reader sent a message via the contact form
+                  </div>
+                  <span class="attention-action" onclick="showPage('settings')">View →</span>
+                </div>
+                <div class="attention-item">
+                  <span class="attention-icon">✍️</span>
+                  <div class="attention-text">
+                    <strong>0 articles published this month</strong>
+                    Keep the momentum going — publish your next piece
+                  </div>
+                  <span class="attention-action" onclick="showPage('new-article')">Write →</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- RECENT ACTIVITY -->
+            <div class="card">
+              <div class="section-title">Recent Activity</div>
+              <div class="activity-list">
+                <div class="activity-item">
+                  <div class="activity-dot green"></div>
+                  <div>
+                    <div class="activity-text"><strong>Shajahav PV</strong> published "How Public Spaces Shape the Way We Think"</div>
+                    <div class="activity-time">4 March 2026 · 2:41 PM</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-dot blue"></div>
+                  <div>
+                    <div class="activity-text"><strong>Muhammed Sinan</strong> published "Reading Slowly in an Age of Algorithmic Summaries"</div>
+                    <div class="activity-time">4 March 2026 · 2:35 PM</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-dot gold"></div>
+                  <div>
+                    <div class="activity-text"><strong>Admin</strong> added new author Muhammed Sinan</div>
+                    <div class="activity-time">3 March 2026 · 11:00 AM</div>
+                  </div>
+                </div>
+                <div class="activity-item">
+                  <div class="activity-dot green"></div>
+                  <div>
+                    <div class="activity-text"><strong>Shajahav PV</strong> published "The Theatre of Protest: When Art Becomes Civil Disobedience"</div>
+                    <div class="activity-time">4 March 2026 · 2:20 PM</div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT SIDEBAR -->
+          <div>
+            <div class="card" style="margin-bottom:16px;">
+              <div class="section-title">Top Articles</div>
+              <div style="display:flex;flex-direction:column;gap:12px;">
+                <div>
+                  <div style="font-size:.78rem;color:var(--text);font-weight:500;margin-bottom:4px;">The Theatre of Protest: When Art Becomes Civil Disobedience</div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;font-size:.68rem;color:var(--text3);margin-bottom:4px;"><span>47 views</span><span>Culture & Arts</span></div>
+                  <div class="progress-bar"><div class="progress-fill" style="width:56%"></div></div>
+                </div>
+                <div>
+                  <div style="font-size:.78rem;color:var(--text);font-weight:500;margin-bottom:4px;">How Public Spaces Shape the Way We Think</div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;font-size:.68rem;color:var(--text3);margin-bottom:4px;"><span>15 views</span><span>Education</span></div>
+                  <div class="progress-bar"><div class="progress-fill" style="width:18%"></div></div>
+                </div>
+                <div>
+                  <div style="font-size:.78rem;color:var(--text);font-weight:500;margin-bottom:4px;">Reading Slowly in an Age of Algorithmic Summaries</div>
+                  <div style="display:flex;align-items:center;justify-content:space-between;font-size:.68rem;color:var(--text3);margin-bottom:4px;"><span>8 views</span><span>Politics</span></div>
+                  <div class="progress-bar"><div class="progress-fill" style="width:10%"></div></div>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="section-title">Quick Actions</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <button class="btn btn-green" style="width:100%;justify-content:center;" onclick="showPage('new-article')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+                  Write New Article
+                </button>
+                <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="showPage('authors')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M16 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="8.5" cy="7" r="4"/><line x1="20" y1="8" x2="20" y2="14"/><line x1="23" y1="11" x2="17" y2="11"/></svg>
+                  Add Author
+                </button>
+                <button class="btn btn-ghost" style="width:100%;justify-content:center;" onclick="showPage('newsletter')">
+                  <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+                  Send Newsletter
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ARTICLES ── -->
+      <div class="page" id="page-articles">
+        <div class="page-header">
+          <div>
+            <h1>Articles <span style="font-size:.85rem;color:var(--text3);font-weight:400;">(8)</span></h1>
+            <p>Manage all published and draft articles</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-green" onclick="showPage('new-article')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              New Article
+            </button>
+          </div>
+        </div>
+        <div class="search-bar">
+          <div class="search-input-wrap">
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+            <input class="search-input" placeholder="Search articles..."/>
+          </div>
+          <select class="filter-select">
+            <option>All Status</option>
+            <option>Published</option>
+            <option>Draft</option>
+            <option>Pending Review</option>
+          </select>
+          <select class="filter-select">
+            <option>All Categories</option>
+            <option>Politics & Society</option>
+            <option>Culture & Arts</option>
+            <option>Health & Wellness</option>
+            <option>Travel</option>
+            <option>Food & Lifestyle</option>
+            <option>Education</option>
+          </select>
+        </div>
+        <div class="card" style="padding:0;">
+          <div class="table-wrap">
+            <table>
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Category</th>
+                  <th>Author</th>
+                  <th>Views</th>
+                  <th>Status</th>
+                  <th>Date</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="articles-tbody">
+                <tr>
+                  <td><div class="td-title">What Finnish Schools Teach About Failure</div><div class="td-title-sub">7 min read</div></td>
+                  <td><span class="badge badge-gray">Education</span></td>
+                  <td style="font-size:.78rem;">Shajahav PV</td>
+                  <td>1</td>
+                  <td><span class="badge badge-green">Published</span></td>
+                  <td style="font-size:.72rem;color:var(--text3);">Mar 4, 2026</td>
+                  <td><div style="display:flex;gap:6px;">
+                    <button class="btn btn-ghost btn-sm" onclick="showPage('new-article')">Edit</button>
+                    <button class="btn btn-red btn-sm">Delete</button>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td><div class="td-title">On Grief, Cortisol, and the Body That Remembers Loss</div><div class="td-title-sub">5 min read</div></td>
+                  <td><span class="badge badge-gray">Politics & Society</span></td>
+                  <td style="font-size:.78rem;">Muhammed Sinan</td>
+                  <td>4</td>
+                  <td><span class="badge badge-green">Published</span></td>
+                  <td style="font-size:.72rem;color:var(--text3);">Mar 4, 2026</td>
+                  <td><div style="display:flex;gap:6px;">
+                    <button class="btn btn-ghost btn-sm" onclick="showPage('new-article')">Edit</button>
+                    <button class="btn btn-red btn-sm">Delete</button>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td><div class="td-title">The Coastal Villages That Tourism Forgot</div><div class="td-title-sub">5 min read</div></td>
+                  <td><span class="badge badge-gray">Food & Lifestyle</span></td>
+                  <td style="font-size:.78rem;">Shajahav PV</td>
+                  <td>3</td>
+                  <td><span class="badge badge-green">Published</span></td>
+                  <td style="font-size:.72rem;color:var(--text3);">Mar 4, 2026</td>
+                  <td><div style="display:flex;gap:6px;">
+                    <button class="btn btn-ghost btn-sm" onclick="showPage('new-article')">Edit</button>
+                    <button class="btn btn-red btn-sm">Delete</button>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td><div class="td-title">The Theatre of Protest: When Art Becomes Civil Disobedience</div><div class="td-title-sub">8 min read</div></td>
+                  <td><span class="badge badge-gray">Culture & Arts</span></td>
+                  <td style="font-size:.78rem;">Shajahav PV</td>
+                  <td>47</td>
+                  <td><span class="badge badge-green">Published</span></td>
+                  <td style="font-size:.72rem;color:var(--text3);">Mar 4, 2026</td>
+                  <td><div style="display:flex;gap:6px;">
+                    <button class="btn btn-ghost btn-sm" onclick="showPage('new-article')">Edit</button>
+                    <button class="btn btn-red btn-sm">Delete</button>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td><div class="td-title">Reading Slowly in an Age of Algorithmic Summaries</div><div class="td-title-sub">7 min read</div></td>
+                  <td><span class="badge badge-gray">Politics & Society</span></td>
+                  <td style="font-size:.78rem;">Muhammed Sinan</td>
+                  <td>8</td>
+                  <td><span class="badge badge-green">Published</span></td>
+                  <td style="font-size:.72rem;color:var(--text3);">Mar 4, 2026</td>
+                  <td><div style="display:flex;gap:6px;">
+                    <button class="btn btn-ghost btn-sm" onclick="showPage('new-article')">Edit</button>
+                    <button class="btn btn-red btn-sm">Delete</button>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td><div class="td-title">Fermentation Across Cultures: Preserving More Than Just Food</div><div class="td-title-sub">4 min read</div></td>
+                  <td><span class="badge badge-gray">Food & Lifestyle</span></td>
+                  <td style="font-size:.78rem;">Shajahav PV</td>
+                  <td>0</td>
+                  <td><span class="badge badge-yellow">Draft</span></td>
+                  <td style="font-size:.72rem;color:var(--text3);">Mar 4, 2026</td>
+                  <td><div style="display:flex;gap:6px;">
+                    <button class="btn btn-ghost btn-sm" onclick="showPage('new-article')">Edit</button>
+                    <button class="btn btn-red btn-sm">Delete</button>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td><div class="td-title">The Quiet Science of Forest Bathing and Stress Recovery</div><div class="td-title-sub">3 min read</div></td>
+                  <td><span class="badge badge-gray">Travel</span></td>
+                  <td style="font-size:.78rem;">Muhammed Sinan</td>
+                  <td>6</td>
+                  <td><span class="badge badge-blue">Pending</span></td>
+                  <td style="font-size:.72rem;color:var(--text3);">Mar 4, 2026</td>
+                  <td><div style="display:flex;gap:6px;">
+                    <button class="btn btn-ghost btn-sm" onclick="showPage('new-article')">Edit</button>
+                    <button class="btn btn-red btn-sm">Delete</button>
+                  </div></td>
+                </tr>
+                <tr>
+                  <td><div class="td-title">How Public Spaces Shape the Way We Think About Each Other</div><div class="td-title-sub">6 min read</div></td>
+                  <td><span class="badge badge-gray">Education</span></td>
+                  <td style="font-size:.78rem;">Shajahav PV</td>
+                  <td>15</td>
+                  <td><span class="badge badge-green">Published</span></td>
+                  <td style="font-size:.72rem;color:var(--text3);">Mar 4, 2026</td>
+                  <td><div style="display:flex;gap:6px;">
+                    <button class="btn btn-ghost btn-sm" onclick="showPage('new-article')">Edit</button>
+                    <button class="btn btn-red btn-sm">Delete</button>
+                  </div></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── NEW ARTICLE ── -->
+      <div class="page" id="page-new-article">
+        <div class="page-header">
+          <div>
+            <h1>New Article</h1>
+            <p>Write and publish a new story</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-ghost btn-sm">Save Draft</button>
+            <button class="btn btn-green btn-sm">Publish →</button>
+          </div>
+        </div>
+        <div class="two-col">
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="card">
+              <div class="form-group">
+                <label>Article Title</label>
+                <input type="text" id="art-title" placeholder="Enter a compelling headline..."/>
+              </div>
+              <div style="margin-top:14px;" class="form-group">
+                <label>Subtitle / Deck</label>
+                <input type="text" id="art-subtitle" placeholder="A one-line summary of the article..."/>
+              </div>
+              <div style="margin-top:14px;" class="form-group">
+                <label>Article Body</label>
+                <div class="editor-toolbar">
+                  <button title="Bold"><b>B</b></button>
+                  <button title="Italic"><i>I</i></button>
+                  <button title="Underline"><u>U</u></button>
+                  <div class="sep"></div>
+                  <button>H1</button><button>H2</button><button>H3</button>
+                  <div class="sep"></div>
+                  <button title="Quote">❝</button>
+                  <button title="Link">🔗</button>
+                  <button title="Image">🖼</button>
+                  <button title="List">≡</button>
+                  <div class="sep"></div>
+                  <button title="Divider">—</button>
+                </div>
+                <textarea id="art-body" class="editor-area" style="border-top:none;" placeholder="Start writing your article here..."></textarea>
+              </div>
+              <input type="hidden" id="art-id"/>
+            </div>
+            <div class="card">
+              <div class="section-title">SEO & Meta</div>
+              <div class="form-grid">
+                <div class="form-group form-full"><label>Meta Title</label><input type="text" id="art-meta-title" placeholder="SEO-optimised title (50-60 chars)"/><span class="form-hint">Defaults to article title if left blank</span></div>
+                <div class="form-group form-full"><label>Meta Description</label><textarea id="art-meta-desc" style="min-height:80px;" placeholder="Brief description for search engines (150-160 chars)..."></textarea></div>
+                <div class="form-group form-full"><label>Tags (comma separated)</label><input type="text" id="art-tags" placeholder="india, politics, delhi, 2026..."/></div>
+              </div>
+            </div>
+          </div>
+
+          <!-- RIGHT PANEL -->
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="card">
+              <div class="section-title">Publish Settings</div>
+              <div class="form-group" style="margin-bottom:12px;">
+                <label>Status</label>
+                <select id="art-status">
+                  <option value="draft">Draft</option>
+                  <option value="pending">Pending Review</option>
+                  <option value="published">Published</option>
+                  <option value="scheduled">Scheduled</option>
+                </select>
+              </div>
+              <div class="form-group" style="margin-bottom:12px;">
+                <label>Schedule Date (optional)</label>
+                <input type="datetime-local" id="art-schedule"/>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px;">
+                <button class="btn btn-green" style="justify-content:center;" onclick="saveArticle('published')">Publish Now</button>
+                <button class="btn btn-ghost" style="justify-content:center;" onclick="saveArticle('draft')">Save as Draft</button>
+                <button class="btn btn-red" style="justify-content:center;" onclick="clearArticleForm()">Clear Form</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="section-title">Article Details</div>
+              <div class="form-group" style="margin-bottom:12px;">
+                <label>Category</label>
+                <select id="art-category"><option>Loading...</option></select>
+              </div>
+              <div class="form-group" style="margin-bottom:12px;">
+                <label>Author</label>
+                <select id="art-author"><option>Loading...</option></select>
+              </div>
+              <div class="form-group" style="margin-bottom:12px;">
+                <label>Reading Time (auto-calculated)</label>
+                <input type="text" id="art-read-time" placeholder="e.g. 6 min read" readonly style="opacity:.6;"/>
+              </div>
+              <div class="form-group">
+                <label>Slug Preview</label>
+                <div style="font-size:.72rem;color:var(--text3);padding:8px;background:var(--bg3);border:1px solid var(--border);" id="art-slug-preview">/your-article-title</div>
+              </div>
+              <div class="form-group" style="margin-top:12px;">
+                <label>Featured Article</label>
+                <div class="toggle-wrap" style="padding:8px 0;border:none;">
+                  <div class="toggle-info"><p>Pin this to the homepage hero</p></div>
+                  <label class="toggle"><input type="checkbox" id="art-featured"/><span class="toggle-slider"></span></label>
+                </div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="section-title">Cover Image</div>
+              <div id="art-cover-drop" style="border:2px dashed var(--border);padding:20px;text-align:center;cursor:pointer;transition:border-color .2s;position:relative;overflow:hidden;" onclick="document.getElementById('art-cover-file').click()">
+                <div id="art-cover-preview-wrap" style="display:none;margin-bottom:10px;">
+                  <img id="art-cover-preview" src="" style="width:100%;max-height:140px;object-fit:cover;border-radius:4px;"/>
+                </div>
+                <div id="art-cover-placeholder">
+                  <div style="font-size:1.5rem;margin-bottom:8px;">🖼️</div>
+                  <div style="font-size:.78rem;color:var(--text2);">Click or drag image to upload</div>
+                  <div style="font-size:.68rem;color:var(--text3);margin-top:4px;">JPG, PNG, WebP · Max 5MB</div>
+                </div>
+                <div id="art-cover-uploading" style="display:none;font-size:.78rem;color:var(--green3);">Uploading... ⏳</div>
+              </div>
+              <input type="file" id="art-cover-file" accept="image/*" style="display:none;" onchange="uploadImage(this.files[0],'art-cover')"/>
+              <input type="hidden" id="art-cover"/>
+              <div class="form-group" style="margin-top:10px;">
+                <label>Or paste Image URL</label>
+                <input type="text" id="art-cover-url-input" placeholder="https://..." onchange="document.getElementById('art-cover').value=this.value;showCoverPreview(this.value);"/>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── AUTHORS ── -->
+      <div class="page" id="page-authors">
+        <div class="page-header">
+          <div>
+            <h1>Authors <span style="font-size:.85rem;color:var(--text3);font-weight:400;">(2)</span></h1>
+            <p>2 active · 0 inactive</p>
+          </div>
+          <div class="page-actions">
+            <button class="btn btn-green" onclick="openModal('modal-add-author')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Author
+            </button>
+          </div>
+        </div>
+        <div class="author-grid" id="authors-grid">
+          <div class="author-card">
+            <div class="author-card-top">
+              <div class="author-ava">MS</div>
+              <div>
+                <div class="author-name">Muhammed Sinan</div>
+                <div class="author-role-tag">Editor</div>
+              </div>
+            </div>
+            <div class="author-bio">MBA Candidate Delhi School of Economics</div>
+            <div style="font-size:.72rem;color:var(--text3);margin-bottom:10px;">✉ sinan@indianpopulus.com</div>
+            <div class="author-stats">
+              <div class="author-stat"><div class="author-stat-n">3</div><div class="author-stat-l">Articles</div></div>
+              <div class="author-stat"><div class="author-stat-n">18</div><div class="author-stat-l">Total Views</div></div>
+              <div class="author-stat"><div class="author-stat-n">5</div><div class="author-stat-l">Avg Min Read</div></div>
+            </div>
+            <div class="author-actions">
+              <button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center;" onclick="openModal('modal-add-author')">Edit</button>
+              <button class="btn btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg></button>
+              <button class="btn btn-icon" style="color:var(--red);border-color:rgba(224,82,82,.3);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+            </div>
+          </div>
+          <div class="author-card">
+            <div class="author-card-top">
+              <div class="author-ava" style="background:var(--gold);">SP</div>
+              <div>
+                <div class="author-name">Shajahav PV</div>
+                <div class="author-role-tag">President, MSF DU</div>
+              </div>
+            </div>
+            <div class="author-bio">MA Philosophy Delhi University</div>
+            <div style="font-size:.72rem;color:var(--text3);margin-bottom:10px;">✉ shajahav@indianpopulus.com</div>
+            <div class="author-stats">
+              <div class="author-stat"><div class="author-stat-n">5</div><div class="author-stat-l">Articles</div></div>
+              <div class="author-stat"><div class="author-stat-n">66</div><div class="author-stat-l">Total Views</div></div>
+              <div class="author-stat"><div class="author-stat-n">6</div><div class="author-stat-l">Avg Min Read</div></div>
+            </div>
+            <div class="author-actions">
+              <button class="btn btn-ghost btn-sm" style="flex:1;justify-content:center;" onclick="openModal('modal-add-author')">Edit</button>
+              <button class="btn btn-icon"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18.36 6.64a9 9 0 1 1-12.73 0"/><line x1="12" y1="2" x2="12" y2="12"/></svg></button>
+              <button class="btn btn-icon" style="color:var(--red);border-color:rgba(224,82,82,.3);"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><polyline points="3 6 5 6 21 6"/><path d="M19 6l-1 14a2 2 0 0 1-2 2H8a2 2 0 0 1-2-2L5 6"/><path d="M10 11v6M14 11v6"/><path d="M9 6V4h6v2"/></svg></button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── COMMENTS ── -->
+      <div class="page" id="page-comments">
+        <div class="page-header">
+          <div><h1>Comments</h1><p>3 pending review</p></div>
+          <div class="page-actions">
+            <select class="filter-select">
+              <option>All Comments</option>
+              <option>Pending</option>
+              <option>Approved</option>
+              <option>Rejected</option>
+            </select>
+          </div>
+        </div>
+        <div class="alert alert-info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> 3 comments are waiting for your approval before they appear on the site.</div>
+        <div class="comment-card">
+          <div class="comment-header">
+            <div class="comment-meta">
+              <div class="comment-ava">RK</div>
+              <div>
+                <div class="comment-name">Rahul Kumar</div>
+                <div class="comment-date">June 14, 2026 · 10:32 AM</div>
+              </div>
+            </div>
+            <span class="badge badge-yellow">Pending</span>
+          </div>
+          <div class="comment-article">On article: <a href="#">The Theatre of Protest: When Art Becomes Civil Disobedience</a></div>
+          <div class="comment-body">This is one of the most insightful pieces I've read about Indian protest culture. The connection to Habib Tanvir is brilliant — would love to see more on this topic.</div>
+          <div class="comment-actions">
+            <button class="btn btn-green btn-sm">✓ Approve</button>
+            <button class="btn btn-red btn-sm">✗ Reject</button>
+            <button class="btn btn-ghost btn-sm">Reply</button>
+          </div>
+        </div>
+        <div class="comment-card">
+          <div class="comment-header">
+            <div class="comment-meta">
+              <div class="comment-ava">PM</div>
+              <div>
+                <div class="comment-name">Priya Menon</div>
+                <div class="comment-date">June 13, 2026 · 3:15 PM</div>
+              </div>
+            </div>
+            <span class="badge badge-yellow">Pending</span>
+          </div>
+          <div class="comment-article">On article: <a href="#">How Public Spaces Shape the Way We Think About Each Other</a></div>
+          <div class="comment-body">As an urban planner, this resonates deeply. The lack of inclusive design in Indian cities is something we talk about constantly but rarely get to publish about so clearly.</div>
+          <div class="comment-actions">
+            <button class="btn btn-green btn-sm">✓ Approve</button>
+            <button class="btn btn-red btn-sm">✗ Reject</button>
+            <button class="btn btn-ghost btn-sm">Reply</button>
+          </div>
+        </div>
+        <div class="comment-card">
+          <div class="comment-header">
+            <div class="comment-meta">
+              <div class="comment-ava">AS</div>
+              <div>
+                <div class="comment-name">Arun Sharma</div>
+                <div class="comment-date">June 12, 2026 · 8:44 PM</div>
+              </div>
+            </div>
+            <span class="badge badge-green">Approved</span>
+          </div>
+          <div class="comment-article">On article: <a href="#">Reading Slowly in an Age of Algorithmic Summaries</a></div>
+          <div class="comment-body">Shared this with my students. The point about sustained attention being a skill, not a personality trait, is something education needs to hear more of.</div>
+          <div class="comment-actions">
+            <button class="btn btn-red btn-sm">Remove</button>
+            <button class="btn btn-ghost btn-sm">Reply</button>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── CATEGORIES ── -->
+      <div class="page" id="page-categories">
+        <div class="page-header">
+          <div><h1>Categories</h1><p>Manage article categories</p></div>
+          <div class="page-actions">
+            <button class="btn btn-green" onclick="openModal('modal-add-cat')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Category
+            </button>
+          </div>
+        </div>
+        <div class="card" style="padding:0;">
+          <table>
+            <thead><tr><th>Name</th><th>Emoji</th><th>Slug</th><th>Articles</th><th>Actions</th></tr></thead>
+            <tbody id="categories-tbody"><td>🏛️</td><td style="font-size:.72rem;color:var(--text3);">politics</td><td>3</td><td><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">Edit</button><button class="btn btn-red btn-sm">Delete</button></div></td></tr>
+              <tr><td class="td-title">Culture & Arts</td><td>🎭</td><td style="font-size:.72rem;color:var(--text3);">culture</td><td>1</td><td><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">Edit</button><button class="btn btn-red btn-sm">Delete</button></div></td></tr>
+              <tr><td class="td-title">Health & Wellness</td><td>🌿</td><td style="font-size:.72rem;color:var(--text3);">health</td><td>0</td><td><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">Edit</button><button class="btn btn-red btn-sm">Delete</button></div></td></tr>
+              <tr><td class="td-title">Travel</td><td>✈️</td><td style="font-size:.72rem;color:var(--text3);">travel</td><td>1</td><td><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">Edit</button><button class="btn btn-red btn-sm">Delete</button></div></td></tr>
+              <tr><td class="td-title">Food & Lifestyle</td><td>🍽️</td><td style="font-size:.72rem;color:var(--text3);">food</td><td>2</td><td><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">Edit</button><button class="btn btn-red btn-sm">Delete</button></div></td></tr>
+              <tr><td class="td-title">Education</td><td>📚</td><td style="font-size:.72rem;color:var(--text3);">education</td><td>2</td><td><div style="display:flex;gap:6px;"><button class="btn btn-ghost btn-sm">Edit</button><button class="btn btn-red btn-sm">Delete</button></div></td></tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- ── NEWSLETTER ── -->
+      <div class="page" id="page-newsletter">
+        <div class="page-header">
+          <div><h1>Newsletter</h1><p>Manage subscribers and send broadcasts</p></div>
+        </div>
+        <div class="stat-grid" style="grid-template-columns:repeat(3,1fr);">
+          <div class="stat-card green"><div class="stat-label">Total Subscribers</div><div class="stat-value" id="stat-subscribers-nl">—</div><div class="stat-sub">+0 this month</div><div class="stat-icon">📬</div></div>
+          <div class="stat-card gold"><div class="stat-label">Emails Sent</div><div class="stat-value">0</div><div class="stat-sub">all time</div><div class="stat-icon">📨</div></div>
+          <div class="stat-card blue"><div class="stat-label">Avg Open Rate</div><div class="stat-value">—</div><div class="stat-sub">no data yet</div><div class="stat-icon">📊</div></div>
+        </div>
+        <div class="two-col" style="margin-top:20px;">
+          <div class="card">
+            <div class="section-title">Send Broadcast</div>
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>Subject Line</label>
+              <input type="text" placeholder="This week in Indian Populus..."/>
+            </div>
+            <div class="form-group" style="margin-bottom:12px;">
+              <label>Preview Text</label>
+              <input type="text" placeholder="Short preview shown in inbox..."/>
+            </div>
+            <div class="form-group" style="margin-bottom:16px;">
+              <label>Email Body</label>
+              <textarea style="min-height:200px;" placeholder="Write your newsletter email here..."></textarea>
+            </div>
+            <div style="display:flex;gap:10px;">
+              <button class="btn btn-green">Send to All Subscribers</button>
+              <button class="btn btn-ghost">Send Test Email</button>
+            </div>
+          </div>
+          <div>
+            <div class="card" style="margin-bottom:16px;">
+              <div class="section-title">Subscribers</div>
+              <div id="subscribers-list" style="max-height:300px;overflow-y:auto;"></div>
+              <div style="text-align:center;padding:12px 0;color:var(--text3);font-size:.78rem;" id="subscribers-empty">No subscribers yet.</div>
+              <button class="btn btn-ghost btn-sm" style="width:100%;margin-top:8px;justify-content:center;" onclick="exportSubscribers()">Export CSV</button>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── ROLES & PERMISSIONS ── -->
+      <div class="page" id="page-roles">
+        <div class="page-header">
+          <div><h1>Roles & Permissions</h1><p>Control what each role can do</p></div>
+          <div class="page-actions">
+            <button class="btn btn-green" onclick="openModal('modal-add-role')">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+              Add Role
+            </button>
+          </div>
+        </div>
+        <div class="alert alert-info"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="10"/><line x1="12" y1="8" x2="12" y2="12"/><line x1="12" y1="16" x2="12.01" y2="16"/></svg> As Owner, you have full access to everything. Changes here affect Editor and Junior Editor roles only.</div>
+
+        <!-- OWNER ROLE -->
+        <div class="role-card">
+          <div class="role-card-header">
+            <div>
+              <div class="role-name">👑 Owner</div>
+              <div class="role-desc">Full access to everything. Cannot be modified.</div>
+            </div>
+            <span class="badge badge-green">Your Role</span>
+          </div>
+          <div style="font-size:.78rem;color:var(--text3);">Owner has unrestricted access to all features including role management, settings, billing, and all content.</div>
+        </div>
+
+        <!-- EDITOR ROLE -->
+        <div class="role-card">
+          <div class="role-card-header">
+            <div>
+              <div class="role-name">✍️ Editor</div>
+              <div class="role-desc">Can manage and publish content. 1 user currently.</div>
+            </div>
+            <button class="btn btn-ghost btn-sm">Save Changes</button>
+          </div>
+          <div class="perm-grid">
+            <div class="toggle-wrap"><div class="toggle-info"><strong>Publish Articles</strong><p>Can publish directly without approval</p></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+            <div class="toggle-wrap"><div class="toggle-info"><strong>Edit Own Articles</strong><p>Can edit their own submitted articles</p></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+            <div class="toggle-wrap"><div class="toggle-info"><strong>Edit Others' Articles</strong><p>Can edit any author's articles</p></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+            <div class="toggle-wrap"><div class="toggle-info"><strong>Delete Articles</strong><p>Can permanently delete articles</p></div><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
+            <div class="toggle-wrap"><div class="toggle-info"><strong>Manage Comments</strong><p>Can approve/reject comments</p></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+            <div class="toggle-wrap"><div class="toggle-info"><strong>Manage Categories</strong><p>Can add/edit/delete categories</p></div><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
+            <div class="toggle-wrap"><div class="toggle-info"><strong>Manage Authors</strong><p>Can add/edit author profiles</p></div><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
+            <div class="toggle-wrap"><div class="toggle-info"><strong>View Analytics</strong><p>Can see views and engagement data</p></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+            <div class="toggle-wrap"><div class="toggle-info"><strong>Send Newsletter</strong><p>Can broadcast emails to subscribers</p></div><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
+            <div class="toggle-wrap"><div class="toggle-info"><strong>Feature Articles</strong><p>Can pin articles to homepage hero</p></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+          </div>
+        </div>
+
+        <!-- JUNIOR EDITOR ROLE -->
+        <div class="role-card">
+          <div class="role-card-header">
+            <div>
+              <div class="role-name">📝 Junior Editor</div>
+              <div class="role-desc">Can write and submit articles for review. 0 users currently.</div>
+            </div>
+            <button class="btn btn-ghost btn-sm">Save Changes</button>
+          </div>
+          <div class="perm-grid">
+            <div class="toggle-wrap"><div class="toggle-info"><strong>Publish Articles</strong><p>Can publish directly without approval</p></div><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
+            <div class="toggle-wrap"><div class="toggle-info"><strong>Edit Own Articles</strong><p>Can edit their own submitted articles</p></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+            <div class="toggle-wrap"><div class="toggle-info"><strong>Edit Others' Articles</strong><p>Can edit any author's articles</p></div><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
+            <div class="toggle-wrap"><div class="toggle-info"><strong>Delete Articles</strong><p>Can permanently delete articles</p></div><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
+            <div class="toggle-wrap"><div class="toggle-info"><strong>Manage Comments</strong><p>Can approve/reject comments</p></div><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
+            <div class="toggle-wrap"><div class="toggle-info"><strong>Manage Categories</strong><p>Can add/edit/delete categories</p></div><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
+            <div class="toggle-wrap"><div class="toggle-info"><strong>Manage Authors</strong><p>Can add/edit author profiles</p></div><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
+            <div class="toggle-wrap"><div class="toggle-info"><strong>View Analytics</strong><p>Can see views and engagement data</p></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+            <div class="toggle-wrap"><div class="toggle-info"><strong>Send Newsletter</strong><p>Can broadcast emails to subscribers</p></div><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
+            <div class="toggle-wrap"><div class="toggle-info"><strong>Feature Articles</strong><p>Can pin articles to homepage hero</p></div><label class="toggle"><input type="checkbox"/><span class="toggle-slider"></span></label></div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ── SETTINGS ── -->
+      <div class="page" id="page-settings">
+        <div class="page-header">
+          <div><h1>Settings</h1><p>Configure your publication</p></div>
+          <div class="page-actions"><button class="btn btn-green">Save All Changes</button></div>
+        </div>
+        <div class="two-col">
+          <div>
+            <div class="card settings-section">
+              <h3>Publication Settings</h3>
+              <div class="form-grid">
+                <div class="form-group form-full"><label>Site Name</label><input type="text" value="Indian Populus"/></div>
+                <div class="form-group form-full"><label>Tagline</label><input type="text" value="Where India Thinks Out Loud"/></div>
+                <div class="form-group form-full"><label>Site Description</label><textarea style="min-height:80px;">An independent Indian magazine covering politics, culture, health, travel, food, and education.</textarea></div>
+                <div class="form-group"><label>Contact Email</label><input type="email" value="hello@indianpopulus.com"/></div>
+                <div class="form-group"><label>Twitter / X URL</label><input type="text" placeholder="https://x.com/indianpopulus"/></div>
+                <div class="form-group"><label>Instagram URL</label><input type="text" placeholder="https://instagram.com/indianpopulus"/></div>
+                <div class="form-group"><label>LinkedIn URL</label><input type="text" placeholder="https://linkedin.com/company/..."/></div>
+              </div>
+            </div>
+            <div class="card settings-section">
+              <h3>Admin Account</h3>
+              <div class="form-grid">
+                <div class="form-group"><label>Your Name</label><input type="text" value="Sahad PK"/></div>
+                <div class="form-group"><label>Email</label><input type="email" value="sahadpk@login.com"/></div>
+                <div class="form-group"><label>New Password</label><input type="password" placeholder="Leave blank to keep current"/></div>
+                <div class="form-group"><label>Confirm Password</label><input type="password" placeholder="Repeat new password"/></div>
+              </div>
+            </div>
+          </div>
+          <div>
+            <div class="card" style="margin-bottom:16px;">
+              <div class="section-title">Site Features</div>
+              <div class="toggle-wrap"><div class="toggle-info"><strong>Comments</strong><p>Allow readers to comment on articles</p></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+              <div class="toggle-wrap"><div class="toggle-info"><strong>Newsletter Signup</strong><p>Show newsletter form on site</p></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+              <div class="toggle-wrap"><div class="toggle-info"><strong>Reading Progress Bar</strong><p>Show progress bar on article pages</p></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+              <div class="toggle-wrap"><div class="toggle-info"><strong>Related Articles</strong><p>Show related articles at article bottom</p></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+              <div class="toggle-wrap"><div class="toggle-info"><strong>Share Buttons</strong><p>WhatsApp, X, copy link on articles</p></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+              <div class="toggle-wrap"><div class="toggle-info"><strong>News Ticker</strong><p>Show scrolling ticker at top of site</p></div><label class="toggle"><input type="checkbox" checked/><span class="toggle-slider"></span></label></div>
+            </div>
+            <div class="card">
+              <div class="section-title">Danger Zone</div>
+              <div style="font-size:.78rem;color:var(--text3);margin-bottom:14px;line-height:1.6;">These actions are irreversible. Please be absolutely sure before proceeding.</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <button class="btn btn-red" style="justify-content:center;">Export All Data (CSV)</button>
+                <button class="btn btn-red" style="justify-content:center;">Clear All Comments</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </main>
+  </div>
+</div>
+
+<!-- ═══════════════════════════════════
+     MODALS
+═══════════════════════════════════ -->
+
+<!-- Add Author Modal -->
+<div class="modal-overlay" id="modal-add-author">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add / Edit Author</h3>
+      <button class="modal-close" onclick="closeModal('modal-add-author')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <input type="hidden" id="author-modal-id"/>
+      <div class="form-grid">
+        <div class="form-group"><label>Full Name</label><input type="text" id="author-modal-name" placeholder="Author full name"/></div>
+        <div class="form-group"><label>Role / Title</label><input type="text" id="author-modal-role" placeholder="e.g. Editor, Contributor"/></div>
+        <div class="form-group form-full"><label>Bio</label><textarea id="author-modal-bio" style="min-height:80px;" placeholder="Short author bio..."></textarea></div>
+        <div class="form-group"><label>Email</label><input type="email" id="author-modal-email" placeholder="author@indianpopulus.com"/></div>
+        <div class="form-group"><label>Permission Role</label>
+          <select id="author-modal-perm">
+            <option value="junior_editor">Junior Editor</option>
+            <option value="editor">Editor</option>
+            <option value="owner">Owner</option>
+          </select>
+        </div>
+        <div class="form-group form-full">
+          <label>Profile Photo</label>
+          <div id="author-photo-drop" style="border:2px dashed var(--border);padding:16px;text-align:center;cursor:pointer;" onclick="document.getElementById('author-photo-file').click()">
+            <div id="author-photo-preview-wrap" style="display:none;margin-bottom:8px;">
+              <img id="author-photo-preview" src="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;"/>
+            </div>
+            <div id="author-photo-placeholder" style="font-size:.75rem;color:var(--text2);">📷 Click to upload photo</div>
+            <div id="author-photo-uploading" style="display:none;font-size:.75rem;color:var(--green3);">Uploading...</div>
+          </div>
+          <input type="file" id="author-photo-file" accept="image/*" style="display:none;" onchange="uploadImage(this.files[0],'author-modal-photo')"/>
+          <input type="hidden" id="author-modal-photo"/>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-author')">Cancel</button>
+      <button class="btn btn-green" onclick="saveAuthor()">Save Author</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Category Modal -->
+<div class="modal-overlay" id="modal-add-cat">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add Category</h3>
+      <button class="modal-close" onclick="closeModal('modal-add-cat')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Category Name</label><input type="text" id="cat-modal-name" placeholder="e.g. Science & Tech"/></div>
+        <div class="form-group"><label>Emoji</label><input type="text" id="cat-modal-emoji" placeholder="🔬"/></div>
+        <div class="form-group form-full"><label>Slug (auto-generated)</label><input type="text" id="cat-modal-slug" placeholder="science-tech" readonly style="opacity:.6;"/></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-cat')">Cancel</button>
+      <button class="btn btn-green" onclick="saveCategory()">Add Category</button>
+    </div>
+  </div>
+</div>
+
+<!-- Add Role Modal -->
+<div class="modal-overlay" id="modal-add-role">
+  <div class="modal">
+    <div class="modal-header">
+      <h3>Add New Role</h3>
+      <button class="modal-close" onclick="closeModal('modal-add-role')"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/></svg></button>
+    </div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Role Name</label><input type="text" placeholder="e.g. Senior Editor"/></div>
+        <div class="form-group"><label>Emoji Icon</label><input type="text" placeholder="🎖️"/></div>
+        <div class="form-group form-full"><label>Description</label><input type="text" placeholder="Brief description of this role..."/></div>
+      </div>
+    </div>
+    <div class="modal-footer">
+      <button class="btn btn-ghost" onclick="closeModal('modal-add-role')">Cancel</button>
+      <button class="btn btn-green">Create Role</button>
+    </div>
+  </div>
+</div>
+
+<script>
+
+
+// ── CREDENTIALS ──
+var CREDS={email:'sahadpk@login.com',pass:'loginsahadpk6767'};
+
+// ── LOGIN ──
+function doLogin(){
+  var e=document.getElementById('loginEmail').value.trim();
+  var p=document.getElementById('loginPass').value;
+  var err=document.getElementById('loginErr');
+  if(e===CREDS.email && p===CREDS.pass){
+    err.style.display='none';
+    document.getElementById('screen-login').style.display='none';
+    var admin=document.getElementById('screen-admin');
+    admin.classList.add('visible');
+    showPage('dashboard');
+    var d=new Date();
+    var months=['January','February','March','April','May','June','July','August','September','October','November','December'];
+    var el=document.getElementById('dash-date');
+    if(el) el.textContent=months[d.getMonth()]+' '+d.getFullYear()+' · Last updated just now';
+    if(typeof loadDashboard==='function') loadDashboard();
+  } else {
+    err.style.display='flex';
+    document.getElementById('loginPass').value='';
+  }
+}
+
+// ── LOGIN ON ENTER ──
+document.getElementById('loginPass').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+document.getElementById('loginEmail').addEventListener('keydown',function(e){if(e.key==='Enter')doLogin();});
+
+// ── LOGOUT ──
+function doLogout(){
+  if(confirm('Sign out of admin panel?')){
+    document.getElementById('screen-admin').classList.remove('visible');
+    document.getElementById('screen-login').style.display='flex';
+    document.getElementById('loginPass').value='';
+  }
+}
+
+// ── SIDEBAR TOGGLE (mobile) ──
+function toggleSidebar(){
+  var sb=document.getElementById('sidebar');
+  var ov=document.getElementById('sidebarOverlay');
+  sb.classList.toggle('open');
+  ov.classList.toggle('open');
+}
+
+// ── PAGE NAVIGATION ──
+function showPage(id){
+  document.querySelectorAll('.page').forEach(function(p){p.classList.remove('active');});
+  document.querySelectorAll('.nav-item').forEach(function(n){n.classList.remove('active');});
+  var page=document.getElementById('page-'+id);
+  if(page) page.classList.add('active');
+  var nav=document.getElementById('nav-'+id);
+  if(nav) nav.classList.add('active');
+  var main=document.querySelector('.main');
+  if(main) main.scrollTop=0;
+  // close sidebar on mobile after nav
+  var sb=document.getElementById('sidebar');
+  var ov=document.getElementById('sidebarOverlay');
+  if(sb) sb.classList.remove('open');
+  if(ov) ov.classList.remove('open');
+}
+
+// ── MODALS ──
+function openModal(id){document.getElementById(id).classList.add('open');}
+function closeModal(id){document.getElementById(id).classList.remove('open');}
+document.querySelectorAll('.modal-overlay').forEach(function(o){
+  o.addEventListener('click',function(e){if(e.target===o)o.classList.remove('open');});
+});
+document.addEventListener('keydown',function(e){
+  if(e.key==='Escape') document.querySelectorAll('.modal-overlay.open').forEach(function(o){o.classList.remove('open');});
+});
+</script>
+
+<!-- SUPABASE -->
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<script>
+// ── SUPABASE INIT ──
+const SUPA_URL='https://pnvaxzppddrizbmdflnk.supabase.co';
+const SUPA_KEY='eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6InBudmF4enBwZGRyaXpibWRmbG5rIiwicm9sZSI6ImFub24iLCJpYXQiOjE3ODE1NDI5NTMsImV4cCI6MjA5NzExODk1M30.dfRiu3Rq6OLiKbrQh3BKOEF_gY7qJdkDGbIKAAkcZAo';
+const sb=supabase.createClient(SUPA_URL,SUPA_KEY);
+
+// ── CONNECTION TEST (shows visible banner if Supabase fails) ──
+(async function testConnection(){
+  try{
+    const {data,error}=await sb.from('categories').select('id').limit(1);
+    if(error){
+      showConnError('Supabase query error: '+error.message+' (code: '+(error.code||'?')+')');
+    } else {
+      console.log('✅ Supabase connected successfully. Categories found:',data?data.length:0);
+    }
+  }catch(e){
+    showConnError('Supabase connection failed: '+e.message);
+  }
+})();
+
+function showConnError(msg){
+  console.error(msg);
+  var banner=document.createElement('div');
+  banner.style.cssText='position:fixed;top:0;left:0;right:0;z-index:99999;background:#e05252;color:#fff;padding:12px 20px;font-family:sans-serif;font-size:.8rem;text-align:center;';
+  banner.textContent='⚠️ '+msg;
+  document.body.prepend(banner);
+}
+
+// ── SLUG GENERATOR ──
+function makeSlug(t){return t.toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-');}
+
+// ── CLOUDINARY IMAGE UPLOAD ──
+const CLOUD_NAME='dgc1grdw9';
+const UPLOAD_PRESET='ml_default';
+
+async function uploadImage(file,targetId){
+  if(!file) return;
+  if(!file.type.startsWith('image/')){toast('Please select an image file','error');return;}
+  if(file.size>5*1024*1024){toast('Image must be under 5MB','error');return;}
+
+  var isAuthor=targetId==='author-modal-photo';
+  var dropId=isAuthor?'author-photo-drop':'art-cover-drop';
+  var placeholderEl=document.getElementById((isAuthor?'author-photo':'art-cover')+'-placeholder');
+  var uploadingEl=document.getElementById((isAuthor?'author-photo':'art-cover')+'-uploading');
+  var previewWrap=document.getElementById((isAuthor?'author-photo':'art-cover')+'-preview-wrap');
+  var previewImg=document.getElementById((isAuthor?'author-photo':'art-cover')+'-preview');
+
+  if(placeholderEl) placeholderEl.style.display='none';
+  if(uploadingEl) uploadingEl.style.display='block';
+
+  try{
+    var formData=new FormData();
+    formData.append('file',file);
+    formData.append('upload_preset',UPLOAD_PRESET);
+    formData.append('folder','indian-populus');
+
+    var res=await fetch('https://api.cloudinary.com/v1_1/'+CLOUD_NAME+'/image/upload',{method:'POST',body:formData});
+    var data=await res.json();
+
+    if(data.secure_url){
+      document.getElementById(targetId).value=data.secure_url;
+      if(previewImg) previewImg.src=data.secure_url;
+      if(previewWrap) previewWrap.style.display='block';
+      if(uploadingEl) uploadingEl.style.display='none';
+      toast('Image uploaded! 📸','success');
+      // sync URL input field for cover
+      var urlInput=document.getElementById('art-cover-url-input');
+      if(urlInput&&targetId==='art-cover') urlInput.value=data.secure_url;
+    } else {
+      throw new Error(data.error?data.error.message:'Upload failed');
+    }
+  }catch(e){
+    toast('Upload failed: '+e.message,'error');
+    if(placeholderEl) placeholderEl.style.display='block';
+    if(uploadingEl) uploadingEl.style.display='none';
+  }
+}
+
+function showCoverPreview(url){
+  if(!url) return;
+  var previewImg=document.getElementById('art-cover-preview');
+  var previewWrap=document.getElementById('art-cover-preview-wrap');
+  var placeholderEl=document.getElementById('art-cover-placeholder');
+  if(previewImg) previewImg.src=url;
+  if(previewWrap) previewWrap.style.display='block';
+  if(placeholderEl) placeholderEl.style.display='none';
+}
+
+// ── DRAG & DROP ──
+document.addEventListener('DOMContentLoaded',function(){
+  ['art-cover-drop','author-photo-drop'].forEach(function(id){
+    var el=document.getElementById(id);
+    if(!el) return;
+    el.addEventListener('dragover',function(e){e.preventDefault();el.style.borderColor='var(--green3)';});
+    el.addEventListener('dragleave',function(e){el.style.borderColor='var(--border)';});
+    el.addEventListener('drop',function(e){
+      e.preventDefault();
+      el.style.borderColor='var(--border)';
+      var file=e.dataTransfer.files[0];
+      var targetId=id==='art-cover-drop'?'art-cover':'author-modal-photo';
+      if(file) uploadImage(file,targetId);
+    });
+  });
+});
+
+// ── READ TIME CALCULATOR ──
+function calcReadTime(text){return Math.max(1,Math.ceil(text.split(/\s+/).length/200));}
+
+// ── TOAST NOTIFICATION ──
+function toast(msg,type){
+  var t=document.createElement('div');
+  t.style.cssText='position:fixed;bottom:24px;right:24px;z-index:9999;padding:12px 20px;border-radius:4px;font-size:.82rem;font-weight:500;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,.3);transition:opacity .3s;';
+  t.style.background=type==='error'?'#e05252':type==='warn'?'#e0a830':'#1a5c2a';
+  t.textContent=msg;
+  document.body.appendChild(t);
+  setTimeout(function(){t.style.opacity='0';setTimeout(function(){t.remove();},300);},3000);
+}
+
+// ══════════════════════════════
+// DASHBOARD — Load real stats
+// ══════════════════════════════
+async function loadDashboard(){
+  try{
+    const [arts,auths,cats,subs,comms]=await Promise.all([
+      sb.from('articles').select('id,status,views,published_at',{count:'exact'}),
+      sb.from('authors').select('id',{count:'exact'}),
+      sb.from('categories').select('id',{count:'exact'}),
+      sb.from('subscribers').select('id',{count:'exact'}),
+      sb.from('comments').select('id,status',{count:'exact'})
+    ]);
+    // check for errors
+    if(arts.error) throw new Error('articles: '+arts.error.message);
+    if(auths.error) throw new Error('authors: '+auths.error.message);
+    if(cats.error) throw new Error('categories: '+cats.error.message);
+    if(subs.error) throw new Error('subscribers: '+subs.error.message);
+    if(comms.error) throw new Error('comments: '+comms.error.message);
+
+    var published=(arts.data||[]).filter(function(a){return a.status==='published';});
+    var totalViews=(arts.data||[]).reduce(function(s,a){return s+(a.views||0);},0);
+    var pending=(comms.data||[]).filter(function(c){return c.status==='pending';});
+    var now=new Date();
+    var thisMonth=(arts.data||[]).filter(function(a){
+      if(!a.published_at) return false;
+      var d=new Date(a.published_at);
+      return d.getMonth()===now.getMonth()&&d.getFullYear()===now.getFullYear();
+    });
+    // update stat cards
+    var vals={
+      'stat-published':published.length,
+      'stat-this-month':thisMonth.length,
+      'stat-authors':auths.count||0,
+      'stat-categories':cats.count||0,
+      'stat-views':totalViews,
+      'stat-subscribers':subs.count||0,
+      'stat-comments':pending.length,
+      'stat-views-month':0
+    };
+    Object.keys(vals).forEach(function(k){
+      var el=document.getElementById(k);
+      if(el) el.textContent=vals[k];
+    });
+    // update comment badge
+    var badge=document.querySelector('#nav-comments .badge-red');
+    if(badge) badge.textContent=pending.length;
+    if(pending.length===0&&badge) badge.style.display='none';
+  }catch(e){
+    console.error('Dashboard error:',e);
+    toast('Dashboard load failed: '+e.message,'error');
+    // show 0 instead of forever-blank dash
+    ['stat-published','stat-this-month','stat-authors','stat-categories','stat-views','stat-subscribers','stat-comments','stat-views-month'].forEach(function(k){
+      var el=document.getElementById(k);
+      if(el) el.textContent='0';
+    });
+  }
+}
+
+// ══════════════════════════════
+// ARTICLES — Load from Supabase
+// ══════════════════════════════
+async function loadArticles(){
+  try{
+    var tbody=document.getElementById('articles-tbody');
+    if(!tbody) return;
+    tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text3);">Loading...</td></tr>';
+    const {data,error}=await sb.from('articles').select('*,authors(name),categories(name)').order('created_at',{ascending:false});
+    if(error) throw error;
+    if(!data||data.length===0){tbody.innerHTML='<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text3);">No articles yet. Write your first one!</td></tr>';return;}
+    tbody.innerHTML=data.map(function(a){
+      var statusBadge={published:'badge-green',draft:'badge-yellow',pending:'badge-blue',scheduled:'badge-gray'};
+      return '<tr><td><div class="td-title">'+a.title+'</div><div class="td-title-sub">'+(a.read_time||5)+' min read</div></td>'
+        +'<td><span class="badge badge-gray">'+(a.categories?a.categories.name:'—')+'</span></td>'
+        +'<td style="font-size:.78rem;">'+(a.authors?a.authors.name:'—')+'</td>'
+        +'<td>'+(a.views||0)+'</td>'
+        +'<td><span class="badge '+(statusBadge[a.status]||'badge-gray')+'">'+a.status+'</span></td>'
+        +'<td style="font-size:.72rem;color:var(--text3);">'+(a.created_at?new Date(a.created_at).toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'}):'—')+'</td>'
+        +'<td><div style="display:flex;gap:6px;">'
+        +'<button class="btn btn-ghost btn-sm" onclick="editArticle(\''+a.id+'\')">Edit</button>'
+        +'<button class="btn btn-red btn-sm" onclick="deleteArticle(\''+a.id+'\')">Delete</button>'
+        +'</div></td></tr>';
+    }).join('');
+  }catch(e){toast('Failed to load articles','error');console.error(e);}
+}
+
+async function deleteArticle(id){
+  if(!confirm('Delete this article? This cannot be undone.')) return;
+  const {error}=await sb.from('articles').delete().eq('id',id);
+  if(error){toast('Failed to delete','error');return;}
+  toast('Article deleted','success');
+  loadArticles();
+}
+
+async function editArticle(id){
+  const {data,error}=await sb.from('articles').select('*').eq('id',id).single();
+  if(error){toast('Failed to load article','error');return;}
+  // populate form
+  document.getElementById('art-id').value=data.id;
+  document.getElementById('art-title').value=data.title||'';
+  document.getElementById('art-subtitle').value=data.subtitle||'';
+  document.getElementById('art-body').value=data.body||'';
+  document.getElementById('art-status').value=data.status||'draft';
+  document.getElementById('art-meta-title').value=data.meta_title||'';
+  document.getElementById('art-meta-desc').value=data.meta_description||'';
+  document.getElementById('art-tags').value=(data.tags||[]).join(', ');
+  document.getElementById('art-cover').value=data.cover_image_url||'';
+  if(data.cover_image_url) showCoverPreview(data.cover_image_url);
+  document.getElementById('art-featured').checked=data.is_featured||false;
+  // load categories and authors for selects
+  await loadCategorySelect(data.category_id);
+  await loadAuthorSelect(data.author_id);
+  showPage('new-article');
+}
+
+// ══════════════════════════════
+// NEW ARTICLE — Save to Supabase
+// ══════════════════════════════
+async function loadCategorySelect(selectedId){
+  var sel=document.getElementById('art-category');
+  if(!sel) return;
+  try{
+    const {data,error}=await sb.from('categories').select('id,name').order('name');
+    if(error) throw error;
+    if(!data||!data.length){sel.innerHTML='<option value="">No categories found</option>';return;}
+    sel.innerHTML='<option value="">Select Category</option>'+data.map(function(c){
+      return '<option value="'+c.id+'"'+(c.id===selectedId?' selected':'')+'>'+c.name+'</option>';
+    }).join('');
+  }catch(e){
+    console.error('loadCategorySelect error:',e);
+    sel.innerHTML='<option value="">Failed to load — '+e.message+'</option>';
+    toast('Failed to load categories: '+e.message,'error');
+  }
+}
+
+async function loadAuthorSelect(selectedId){
+  var sel=document.getElementById('art-author');
+  if(!sel) return;
+  try{
+    const {data,error}=await sb.from('authors').select('id,name').order('name');
+    if(error) throw error;
+    if(!data||!data.length){sel.innerHTML='<option value="">No authors found — add one first</option>';return;}
+    sel.innerHTML='<option value="">Select Author</option>'+data.map(function(a){
+      return '<option value="'+a.id+'"'+(a.id===selectedId?' selected':'')+'>'+a.name+'</option>';
+    }).join('');
+  }catch(e){
+    console.error('loadAuthorSelect error:',e);
+    sel.innerHTML='<option value="">Failed to load — '+e.message+'</option>';
+    toast('Failed to load authors: '+e.message,'error');
+  }
+}
+
+async function saveArticle(status){
+  var id=document.getElementById('art-id').value;
+  var title=document.getElementById('art-title').value.trim();
+  var subtitle=document.getElementById('art-subtitle').value.trim();
+  var body=document.getElementById('art-body').value.trim();
+  var categoryId=document.getElementById('art-category').value;
+  var authorId=document.getElementById('art-author').value;
+  var metaTitle=document.getElementById('art-meta-title').value.trim();
+  var metaDesc=document.getElementById('art-meta-desc').value.trim();
+  var tagsRaw=document.getElementById('art-tags').value.trim();
+  var coverUrl=document.getElementById('art-cover').value.trim();
+  var featured=document.getElementById('art-featured').checked;
+
+  if(!title){toast('Title is required!','error');return;}
+
+  var tags=tagsRaw?tagsRaw.split(',').map(function(t){return t.trim();}):[];
+  var slug=makeSlug(title);
+  var readTime=calcReadTime(body);
+
+  var payload={
