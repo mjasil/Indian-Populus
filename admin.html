@@ -1,0 +1,1630 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Indian Populus — Admin</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,400;0,600;1,400&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{
+  --bg:#0f1117;--bg2:#161b22;--bg3:#1c2333;--bg4:#21262d;
+  --border:#30363d;--border2:#3d4450;
+  --green:#1a5c2a;--green2:#2d7a3e;--green3:#4caf65;--green-bg:rgba(26,92,42,.15);
+  --gold:#c9952a;--gold2:#d9b463;
+  --red:#e05252;--red-bg:rgba(224,82,82,.12);
+  --yellow:#e0a830;--yellow-bg:rgba(224,168,48,.12);
+  --blue:#4a9eff;--blue-bg:rgba(74,158,255,.12);
+  --white:#f0f6fc;--text:#e6edf3;--text2:#8b949e;--text3:#6e7681;
+  --serif:'Playfair Display',Georgia,serif;--sans:'Inter',system-ui,sans-serif;
+}
+html{height:100%;}
+body{font-family:var(--sans);background:var(--bg);color:var(--text);min-height:100vh;line-height:1.5;}
+a{color:inherit;text-decoration:none;}
+button{font-family:var(--sans);cursor:pointer;}
+input,textarea,select{font-family:var(--sans);}
+img{display:block;}
+::-webkit-scrollbar{width:6px;height:6px;}
+::-webkit-scrollbar-track{background:var(--bg2);}
+::-webkit-scrollbar-thumb{background:var(--border2);border-radius:3px;}
+
+/* LOGIN */
+#screen-login{min-height:100vh;display:flex;align-items:center;justify-content:center;background:radial-gradient(ellipse at 60% 40%,rgba(26,92,42,.18) 0%,transparent 60%),var(--bg);padding:20px;}
+.login-box{width:100%;max-width:420px;padding:48px 40px;background:var(--bg2);border:1px solid var(--border);}
+.login-logo{display:flex;align-items:center;gap:10px;margin-bottom:36px;}
+.login-logo svg{width:30px;height:30px;color:var(--green3);}
+.login-logo span{font-family:var(--serif);font-size:1.3rem;color:var(--white);}
+.login-logo span em{color:var(--green3);font-style:italic;}
+.login-box h2{font-size:1.1rem;font-weight:600;color:var(--white);margin-bottom:6px;}
+.login-box p{font-size:.8rem;color:var(--text2);margin-bottom:28px;}
+.field{margin-bottom:16px;}
+.field label{display:block;font-size:.72rem;font-weight:500;color:var(--text2);margin-bottom:6px;letter-spacing:.3px;}
+.field input{width:100%;padding:10px 14px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:.85rem;outline:none;transition:border-color .2s;}
+.field input:focus{border-color:var(--green3);}
+.field input::placeholder{color:var(--text3);}
+.login-err{background:var(--red-bg);border:1px solid rgba(224,82,82,.3);color:var(--red);font-size:.78rem;padding:10px 14px;margin-bottom:16px;display:none;}
+.login-ok{background:var(--green-bg);border:1px solid rgba(76,175,101,.3);color:var(--green3);font-size:.78rem;padding:10px 14px;margin-bottom:16px;display:none;}
+.btn-primary{width:100%;padding:11px;background:var(--green);color:#fff;border:none;font-size:.85rem;font-weight:600;letter-spacing:.3px;transition:background .2s;}
+.btn-primary:active{background:var(--green2);}
+.btn-google{width:100%;padding:11px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:.85rem;font-weight:600;display:flex;align-items:center;justify-content:center;gap:10px;}
+.btn-google:active{background:var(--bg4);}
+.login-note{font-size:.72rem;color:var(--text3);text-align:center;margin-top:16px;}
+.login-divider{display:flex;align-items:center;gap:10px;margin:16px 0;}
+.login-divider div{flex:1;height:1px;background:var(--border);}
+.login-divider span{font-size:.68rem;color:var(--text3);}
+.login-loading{font-size:.78rem;color:var(--text2);text-align:center;padding:8px;display:none;}
+
+/* ADMIN SHELL */
+#screen-admin{display:none;min-height:100vh;flex-direction:column;}
+#screen-admin.visible{display:flex;}
+.admin-wrap{display:flex;flex:1;min-height:calc(100vh - 52px);}
+.topbar{height:52px;background:var(--bg2);border-bottom:1px solid var(--border);display:flex;align-items:center;justify-content:space-between;padding:0 20px;position:sticky;top:0;z-index:100;}
+.topbar-left{display:flex;align-items:center;gap:16px;}
+.topbar-logo{display:flex;align-items:center;gap:8px;}
+.topbar-logo svg{width:22px;height:22px;color:var(--green3);}
+.topbar-logo span{font-family:var(--serif);font-size:1rem;color:var(--white);}
+.topbar-logo span em{color:var(--green3);font-style:italic;}
+.topbar-badge{font-size:.6rem;font-weight:700;letter-spacing:1px;text-transform:uppercase;background:var(--green-bg);color:var(--green3);padding:2px 8px;border:1px solid rgba(76,175,101,.2);}
+.topbar-right{display:flex;align-items:center;gap:12px;}
+.topbar-btn{display:flex;align-items:center;gap:6px;padding:6px 14px;background:var(--green);color:#fff;border:none;font-size:.75rem;font-weight:600;transition:background .2s;}
+.topbar-btn:active{background:var(--green2);}
+.topbar-btn svg{width:14px;height:14px;}
+.topbar-avatar{width:32px;height:32px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:.75rem;font-weight:700;color:#fff;flex-shrink:0;}
+.topbar-view{font-size:.75rem;color:var(--text2);display:flex;align-items:center;gap:6px;padding:6px 12px;border:1px solid var(--border);}
+.topbar-view svg{width:13px;height:13px;}
+
+.sidebar{width:220px;flex-shrink:0;background:var(--bg2);border-right:1px solid var(--border);padding:16px 0;display:flex;flex-direction:column;position:sticky;top:52px;height:calc(100vh - 52px);overflow-y:auto;}
+.sidebar-section{padding:0 12px;margin-bottom:4px;}
+.sidebar-label{font-size:.6rem;font-weight:600;letter-spacing:1.5px;text-transform:uppercase;color:var(--text3);padding:10px 8px 6px;}
+.nav-item{display:flex;align-items:center;gap:10px;padding:8px 10px;font-size:.8rem;color:var(--text2);border-radius:4px;cursor:pointer;border:none;background:none;width:100%;text-align:left;}
+.nav-item svg{width:16px;height:16px;flex-shrink:0;opacity:.7;}
+.nav-item:active{background:var(--bg3);color:var(--text);}
+.nav-item.active{background:var(--green-bg);color:var(--green3);}
+.nav-item.active svg{opacity:1;}
+.sidebar-divider{height:1px;background:var(--border);margin:8px 12px;}
+.sidebar-user{margin-top:auto;padding:12px 16px;border-top:1px solid var(--border);display:flex;align-items:center;gap:10px;}
+.sidebar-user-ava{width:30px;height:30px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:.7rem;font-weight:700;color:#fff;flex-shrink:0;}
+.sidebar-user-name{font-size:.78rem;font-weight:500;color:var(--text);}
+.sidebar-user-role{font-size:.65rem;color:var(--text3);}
+.sidebar-logout{margin-left:auto;background:none;border:none;color:var(--text3);cursor:pointer;padding:4px;}
+.sidebar-logout svg{width:14px;height:14px;}
+
+.main{flex:1;overflow-y:auto;padding:28px 32px;max-height:calc(100vh - 52px);}
+.page{display:none;}
+.page.active{display:block;}
+.page-header{display:flex;align-items:flex-start;justify-content:space-between;margin-bottom:28px;gap:16px;flex-wrap:wrap;}
+.page-header h1{font-size:1.25rem;font-weight:600;color:var(--white);}
+.page-header p{font-size:.78rem;color:var(--text2);margin-top:3px;}
+.page-actions{display:flex;align-items:center;gap:10px;flex-shrink:0;}
+
+.card{background:var(--bg2);border:1px solid var(--border);padding:20px;}
+.stat-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:16px;margin-bottom:24px;}
+.stat-card{background:var(--bg2);border:1px solid var(--border);padding:20px;position:relative;overflow:hidden;}
+.stat-card::before{content:'';position:absolute;top:0;left:0;right:0;height:2px;}
+.stat-card.green::before{background:var(--green3);}
+.stat-card.gold::before{background:var(--gold);}
+.stat-card.blue::before{background:var(--blue);}
+.stat-card.purple::before{background:#a78bfa;}
+.stat-label{font-size:.65rem;font-weight:600;letter-spacing:1px;text-transform:uppercase;color:var(--text3);margin-bottom:10px;}
+.stat-value{font-size:2rem;font-weight:700;color:var(--white);line-height:1;margin-bottom:4px;}
+.stat-sub{font-size:.72rem;color:var(--text3);}
+.stat-icon{position:absolute;top:16px;right:16px;font-size:1.4rem;opacity:.2;}
+
+.table-wrap{overflow-x:auto;}
+table{width:100%;border-collapse:collapse;font-size:.8rem;}
+thead tr{border-bottom:1px solid var(--border);}
+th{padding:10px 14px;text-align:left;font-size:.65rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--text3);}
+td{padding:12px 14px;border-bottom:1px solid var(--border);color:var(--text2);vertical-align:middle;}
+tr:last-child td{border-bottom:none;}
+.td-title{color:var(--text);font-weight:500;max-width:260px;}
+.td-title-sub{font-size:.7rem;color:var(--text3);margin-top:2px;}
+
+.badge{display:inline-flex;align-items:center;gap:4px;padding:2px 8px;font-size:.65rem;font-weight:600;letter-spacing:.3px;border-radius:2px;}
+.badge-green{background:var(--green-bg);color:var(--green3);border:1px solid rgba(76,175,101,.2);}
+.badge-yellow{background:var(--yellow-bg);color:var(--yellow);border:1px solid rgba(224,168,48,.2);}
+.badge-red{background:var(--red-bg);color:var(--red);border:1px solid rgba(224,82,82,.2);}
+.badge-blue{background:var(--blue-bg);color:var(--blue);border:1px solid rgba(74,158,255,.2);}
+.badge-gray{background:var(--bg4);color:var(--text3);border:1px solid var(--border);}
+
+.btn{display:inline-flex;align-items:center;gap:6px;padding:7px 14px;font-size:.78rem;font-weight:500;border:none;cursor:pointer;}
+.btn svg{width:14px;height:14px;}
+.btn-green{background:var(--green);color:#fff;}
+.btn-green:active{background:var(--green2);}
+.btn-ghost{background:transparent;color:var(--text2);border:1px solid var(--border);}
+.btn-red{background:var(--red-bg);color:var(--red);border:1px solid rgba(224,82,82,.2);}
+.btn-sm{padding:5px 10px;font-size:.72rem;}
+.btn-icon{padding:6px;background:transparent;border:1px solid var(--border);color:var(--text2);}
+.btn-icon svg{width:14px;height:14px;}
+
+.form-grid{display:grid;grid-template-columns:1fr 1fr;gap:16px;}
+.form-full{grid-column:1/-1;}
+.form-group{display:flex;flex-direction:column;gap:6px;}
+.form-group label{font-size:.72rem;font-weight:500;color:var(--text2);letter-spacing:.2px;}
+.form-group input,.form-group select,.form-group textarea{padding:9px 12px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:.83rem;outline:none;resize:vertical;}
+.form-group input:focus,.form-group select:focus,.form-group textarea:focus{border-color:var(--green3);}
+.form-group input::placeholder,.form-group textarea::placeholder{color:var(--text3);}
+.form-group select option{background:var(--bg3);}
+.form-hint{font-size:.68rem;color:var(--text3);}
+.editor-area{min-height:320px;font-size:.85rem;line-height:1.8;}
+
+.search-bar{display:flex;align-items:center;gap:10px;margin-bottom:20px;flex-wrap:wrap;}
+.search-input-wrap{position:relative;flex:1;min-width:200px;}
+.search-input-wrap svg{position:absolute;left:10px;top:50%;transform:translateY(-50%);width:14px;height:14px;color:var(--text3);}
+.search-input{width:100%;padding:8px 12px 8px 34px;background:var(--bg3);border:1px solid var(--border);color:var(--text);font-size:.8rem;outline:none;}
+.filter-select{padding:8px 12px;background:var(--bg3);border:1px solid var(--border);color:var(--text2);font-size:.78rem;outline:none;cursor:pointer;}
+
+.alert{padding:12px 16px;font-size:.8rem;margin-bottom:16px;display:flex;align-items:center;gap:10px;}
+.alert-info{background:var(--blue-bg);border:1px solid rgba(74,158,255,.2);color:var(--blue);}
+.alert svg{width:15px;height:15px;flex-shrink:0;}
+
+.toggle-wrap{display:flex;align-items:center;justify-content:space-between;padding:12px 0;border-bottom:1px solid var(--border);}
+.toggle-wrap:last-child{border-bottom:none;}
+.toggle-info{flex:1;}
+.toggle-info strong{font-size:.82rem;color:var(--text);font-weight:500;}
+.toggle-info p{font-size:.72rem;color:var(--text3);margin-top:2px;}
+.toggle{position:relative;width:38px;height:20px;flex-shrink:0;}
+.toggle input{opacity:0;width:0;height:0;}
+.toggle-slider{position:absolute;inset:0;background:var(--border2);cursor:pointer;border-radius:20px;}
+.toggle-slider::before{content:'';position:absolute;width:14px;height:14px;left:3px;top:3px;background:var(--text3);border-radius:50%;transition:.2s;}
+.toggle input:checked+.toggle-slider{background:var(--green);}
+.toggle input:checked+.toggle-slider::before{transform:translateX(18px);background:#fff;}
+
+.author-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:16px;}
+.author-card{background:var(--bg2);border:1px solid var(--border);padding:20px;}
+.author-card-top{display:flex;align-items:center;gap:12px;margin-bottom:14px;}
+.author-ava{width:44px;height:44px;border-radius:50%;background:var(--green);display:flex;align-items:center;justify-content:center;font-size:.9rem;font-weight:700;color:#fff;flex-shrink:0;overflow:hidden;}
+.author-ava img{width:100%;height:100%;object-fit:cover;}
+.author-name{font-size:.88rem;font-weight:600;color:var(--white);}
+.author-role-tag{font-size:.65rem;color:var(--green3);}
+.author-bio{font-size:.75rem;color:var(--text3);margin-bottom:14px;line-height:1.5;}
+.author-stats{display:flex;gap:16px;padding-top:12px;border-top:1px solid var(--border);}
+.author-stat{text-align:center;}
+.author-stat-n{font-size:1.1rem;font-weight:700;color:var(--white);}
+.author-stat-l{font-size:.62rem;color:var(--text3);}
+.author-actions{display:flex;gap:8px;margin-top:14px;}
+
+.comment-card{background:var(--bg2);border:1px solid var(--border);padding:16px;margin-bottom:12px;}
+.comment-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:10px;flex-wrap:wrap;gap:8px;}
+.comment-meta{display:flex;align-items:center;gap:10px;}
+.comment-ava{width:28px;height:28px;border-radius:50%;background:var(--bg4);display:flex;align-items:center;justify-content:center;font-size:.65rem;font-weight:700;color:var(--text2);}
+.comment-name{font-size:.8rem;font-weight:600;color:var(--text);}
+.comment-date{font-size:.68rem;color:var(--text3);}
+.comment-article{font-size:.7rem;color:var(--text3);margin-bottom:8px;}
+.comment-body{font-size:.8rem;color:var(--text2);line-height:1.6;margin-bottom:12px;}
+.comment-actions{display:flex;gap:8px;}
+
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,.6);z-index:500;display:none;align-items:center;justify-content:center;padding:20px;}
+.modal-overlay.open{display:flex;}
+.modal{background:var(--bg2);border:1px solid var(--border);width:100%;max-width:560px;max-height:90vh;overflow-y:auto;}
+.modal-header{display:flex;align-items:center;justify-content:space-between;padding:18px 20px;border-bottom:1px solid var(--border);}
+.modal-header h3{font-size:.95rem;font-weight:600;color:var(--white);}
+.modal-close{background:none;border:none;color:var(--text3);cursor:pointer;padding:4px;}
+.modal-close svg{width:16px;height:16px;}
+.modal-body{padding:20px;}
+.modal-footer{padding:16px 20px;border-top:1px solid var(--border);display:flex;justify-content:flex-end;gap:10px;}
+
+.activity-list{display:flex;flex-direction:column;gap:0;}
+.activity-item{display:flex;gap:12px;padding:12px 0;border-bottom:1px solid var(--border);}
+.activity-item:last-child{border-bottom:none;}
+.activity-dot{width:8px;height:8px;border-radius:50%;flex-shrink:0;margin-top:5px;}
+.activity-dot.green{background:var(--green3);}
+.activity-dot.gold{background:var(--gold);}
+.activity-dot.blue{background:var(--blue);}
+.activity-text{font-size:.78rem;color:var(--text2);line-height:1.5;}
+.activity-text strong{color:var(--text);font-weight:500;}
+.activity-time{font-size:.68rem;color:var(--text3);margin-top:2px;}
+
+.two-col{display:grid;grid-template-columns:1fr 320px;gap:20px;align-items:start;}
+.section-title{font-size:.65rem;font-weight:600;letter-spacing:1.2px;text-transform:uppercase;color:var(--text3);margin-bottom:14px;display:flex;align-items:center;gap:8px;}
+.section-title::after{content:'';flex:1;height:1px;background:var(--border);}
+.progress-bar{height:4px;background:var(--border);border-radius:2px;overflow:hidden;margin-top:6px;}
+.progress-fill{height:100%;background:var(--green3);border-radius:2px;}
+
+.editor-toolbar{display:flex;flex-wrap:wrap;gap:2px;padding:8px;background:var(--bg3);border:1px solid var(--border);border-bottom:none;}
+.editor-toolbar button{padding:5px 9px;background:transparent;border:none;color:var(--text2);font-size:.75rem;cursor:pointer;}
+.editor-toolbar .sep{width:1px;height:20px;background:var(--border);margin:0 4px;align-self:center;}
+
+.hamburger{display:none;flex-direction:column;gap:5px;cursor:pointer;padding:6px;background:none;border:1px solid var(--border);margin-right:4px;}
+.hamburger span{display:block;width:18px;height:1.5px;background:var(--text2);border-radius:2px;}
+.sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,.55);z-index:149;}
+.sidebar-overlay.open{display:block;}
+
+.role-card{background:var(--bg2);border:1px solid var(--border);padding:20px;margin-bottom:16px;}
+.role-card-header{display:flex;align-items:center;justify-content:space-between;margin-bottom:16px;flex-wrap:wrap;gap:8px;}
+.role-name{font-size:.9rem;font-weight:600;color:var(--white);}
+.role-desc{font-size:.72rem;color:var(--text3);margin-top:2px;}
+.perm-grid{display:grid;grid-template-columns:repeat(2,1fr);gap:0;}
+
+@media(max-width:900px){
+  .sidebar{position:fixed;top:52px;left:0;bottom:0;z-index:150;transform:translateX(-100%);transition:transform .2s ease;display:flex;}
+  .sidebar.open{transform:translateX(0);}
+  .hamburger{display:flex;}
+  .stat-grid{grid-template-columns:1fr 1fr;}
+  .author-grid{grid-template-columns:1fr 1fr;}
+  .two-col{grid-template-columns:1fr;}
+  .perm-grid{grid-template-columns:1fr;}
+  .main{padding:20px 16px;}
+}
+@media(max-width:600px){
+  .main{padding:16px 12px;}
+  .stat-grid{grid-template-columns:1fr 1fr;}
+  .form-grid{grid-template-columns:1fr;}
+  .author-grid{grid-template-columns:1fr;}
+  .page-header{flex-direction:column;gap:10px;}
+  .page-actions{width:100%;}
+  .topbar{padding:0 12px;}
+  .topbar-view{display:none;}
+  table{font-size:.72rem;}
+  th,td{padding:8px 10px;}
+}
+
+#toast-container{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:9999;display:flex;flex-direction:column;gap:8px;align-items:center;pointer-events:none;}
+.toast{padding:12px 20px;border-radius:4px;font-size:.82rem;font-weight:500;color:#fff;box-shadow:0 4px 20px rgba(0,0,0,.3);max-width:90vw;text-align:center;}
+.toast.success{background:#1a5c2a;}
+.toast.error{background:#e05252;}
+.toast.warn{background:#c9952a;}
+</style>
+</head>
+<body>
+
+<div id="toast-container"></div>
+
+<!-- LOGIN SCREEN -->
+<div id="screen-login">
+  <div class="login-box">
+    <div class="login-logo">
+      <svg viewBox="0 0 32 32" fill="none"><path d="M27 5C12 5 5 13 5 23c0 1.6.3 3 .8 4.4C9 19 15 13 26 11c-7 4-12 9-15 18 9 1 18-4 18-16 0-3.4-1-6-2-8z" fill="currentColor"/></svg>
+      <span>Indian <em>Populus</em></span>
+    </div>
+    <h2>Welcome back</h2>
+    <p>Sign in to your admin panel</p>
+    <div class="login-err" id="loginErr"></div>
+    <div class="login-ok" id="loginOk"></div>
+    <div class="field">
+      <label>Email Address</label>
+      <input type="email" id="loginEmail" placeholder="your@email.com" autocomplete="email"/>
+    </div>
+    <div class="field">
+      <label>Password</label>
+      <input type="password" id="loginPass" placeholder="••••••••" autocomplete="current-password"/>
+    </div>
+    <button type="button" class="btn-primary" id="btnSignIn">Sign In →</button>
+    <div class="login-divider"><div></div><span>OR</span><div></div></div>
+    <button type="button" class="btn-google" id="btnGoogleSignIn">
+      <svg width="16" height="16" viewBox="0 0 24 24"><path fill="#4285F4" d="M22.56 12.25c0-.78-.07-1.53-.2-2.25H12v4.26h5.92c-.26 1.37-1.04 2.53-2.21 3.31v2.77h3.57c2.08-1.92 3.28-4.74 3.28-8.09z"/><path fill="#34A853" d="M12 23c2.97 0 5.46-.98 7.28-2.66l-3.57-2.77c-.98.66-2.23 1.06-3.71 1.06-2.86 0-5.29-1.93-6.16-4.53H2.18v2.84C3.99 20.53 7.7 23 12 23z"/><path fill="#FBBC05" d="M5.84 14.09c-.22-.66-.35-1.36-.35-2.09s.13-1.43.35-2.09V7.07H2.18C1.43 8.55 1 10.22 1 12s.43 3.45 1.18 4.93l2.85-2.22.81-.62z"/><path fill="#EA4335" d="M12 5.38c1.62 0 3.06.56 4.21 1.64l3.15-3.15C17.45 2.09 14.97 1 12 1 7.7 1 3.99 3.47 2.18 7.07l3.66 2.84c.87-2.6 3.3-4.53 6.16-4.53z"/></svg>
+      Sign in with Google
+    </button>
+    <div class="login-loading" id="loginLoading">Connecting...</div>
+    <p class="login-note">Access is by invitation only. Contact the Owner if you need an account.</p>
+    <p class="login-note">Indian Populus Admin Panel · v2.0</p>
+  </div>
+</div>
+
+<!-- ADMIN SHELL -->
+<div id="screen-admin">
+  <div class="topbar">
+    <div class="topbar-left">
+      <button type="button" class="hamburger" id="btnHamburger" aria-label="Menu"><span></span><span></span><span></span></button>
+      <div class="topbar-logo">
+        <svg viewBox="0 0 32 32" fill="none"><path d="M27 5C12 5 5 13 5 23c0 1.6.3 3 .8 4.4C9 19 15 13 26 11c-7 4-12 9-15 18 9 1 18-4 18-16 0-3.4-1-6-2-8z" fill="currentColor"/></svg>
+        <span>Indian <em>Populus</em></span>
+      </div>
+      <span class="topbar-badge">Admin Panel</span>
+    </div>
+    <div class="topbar-right">
+      <a href="index.html" target="_blank" class="topbar-view">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M18 13v6a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h6"/><polyline points="15 3 21 3 21 9"/><line x1="10" y1="14" x2="21" y2="3"/></svg>
+        View Site
+      </a>
+      <button type="button" class="topbar-btn" data-page="new-article">
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><line x1="12" y1="5" x2="12" y2="19"/><line x1="5" y1="12" x2="19" y2="12"/></svg>
+        New Article
+      </button>
+      <div class="topbar-avatar" id="topbarAvatar">—</div>
+    </div>
+  </div>
+
+  <div class="admin-wrap">
+    <div class="sidebar-overlay" id="sidebarOverlay"></div>
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Main</div>
+        <button type="button" class="nav-item active" data-page="dashboard" id="nav-dashboard">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="3" y="3" width="7" height="7"/><rect x="14" y="3" width="7" height="7"/><rect x="3" y="14" width="7" height="7"/><rect x="14" y="14" width="7" height="7"/></svg>
+          Dashboard
+        </button>
+        <button type="button" class="nav-item" data-page="articles" id="nav-articles">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"/><polyline points="14 2 14 8 20 8"/></svg>
+          Articles
+        </button>
+        <button type="button" class="nav-item" data-page="new-article" id="nav-new-article">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"/><path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"/></svg>
+          New Article
+        </button>
+        <button type="button" class="nav-item" data-page="authors" id="nav-authors">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Authors
+        </button>
+        <button type="button" class="nav-item" data-page="comments" id="nav-comments">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"/></svg>
+          Comments
+          <span class="badge badge-red" id="commentsBadge" style="margin-left:auto;font-size:.58rem;display:none;">0</span>
+        </button>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Manage</div>
+        <button type="button" class="nav-item" data-page="categories" id="nav-categories">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M22 19a2 2 0 0 1-2 2H4a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5l2 3h9a2 2 0 0 1 2 2z"/></svg>
+          Categories
+        </button>
+        <button type="button" class="nav-item" data-page="newsletter" id="nav-newsletter">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"/><polyline points="22,6 12,13 2,6"/></svg>
+          Newsletter
+        </button>
+        <button type="button" class="nav-item" data-page="team" id="nav-team">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"/><circle cx="9" cy="7" r="4"/></svg>
+          Team Members
+        </button>
+        <button type="button" class="nav-item" data-page="roles" id="nav-roles">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 22s8-4 8-10V5l-8-3-8 3v7c0 6 8 10 8 10z"/></svg>
+          Roles & Permissions
+        </button>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">System</div>
+        <button type="button" class="nav-item" data-page="settings" id="nav-settings">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M19.4 15a1.65 1.65 0 0 0 .33 1.82l.06.06a2 2 0 0 1-2.83 2.83l-.06-.06a1.65 1.65 0 0 0-1.82-.33 1.65 1.65 0 0 0-1 1.51V21a2 2 0 0 1-4 0v-.09A1.65 1.65 0 0 0 9 19.4a1.65 1.65 0 0 0-1.82.33l-.06.06a2 2 0 0 1-2.83-2.83l.06-.06A1.65 1.65 0 0 0 4.68 15a1.65 1.65 0 0 0-1.51-1H3a2 2 0 0 1 0-4h.09A1.65 1.65 0 0 0 4.6 9a1.65 1.65 0 0 0-.33-1.82l-.06-.06a2 2 0 0 1 2.83-2.83l.06.06A1.65 1.65 0 0 0 9 4.68a1.65 1.65 0 0 0 1-1.51V3a2 2 0 0 1 4 0v.09a1.65 1.65 0 0 0 1 1.51 1.65 1.65 0 0 0 1.82-.33l.06-.06a2 2 0 0 1 2.83 2.83l-.06.06A1.65 1.65 0 0 0 19.4 9a1.65 1.65 0 0 0 1.51 1H21a2 2 0 0 1 0 4h-.09a1.65 1.65 0 0 0-1.51 1z"/></svg>
+          Settings
+        </button>
+      </div>
+      <div class="sidebar-user">
+        <div class="sidebar-user-ava" id="sidebarAva">—</div>
+        <div>
+          <div class="sidebar-user-name" id="sidebarName">—</div>
+          <div class="sidebar-user-role" id="sidebarRole">—</div>
+        </div>
+        <button type="button" class="sidebar-logout" id="btnLogout" title="Logout">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"/><polyline points="16 17 21 12 16 7"/><line x1="21" y1="12" x2="9" y2="12"/></svg>
+        </button>
+      </div>
+    </aside>
+
+    <main class="main">
+      <!-- DASHBOARD -->
+      <div class="page active" id="page-dashboard">
+        <div class="page-header">
+          <div><h1>Dashboard</h1><p id="dashDate">—</p></div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-card green"><div class="stat-label">Published Articles</div><div class="stat-value" id="statPublished">—</div><div class="stat-sub">total published</div><div class="stat-icon">📄</div></div>
+          <div class="stat-card gold"><div class="stat-label">Published This Month</div><div class="stat-value" id="statThisMonth">—</div><div class="stat-sub">new articles</div><div class="stat-icon">📅</div></div>
+          <div class="stat-card blue"><div class="stat-label">Active Authors</div><div class="stat-value" id="statAuthors">—</div><div class="stat-sub">total authors</div><div class="stat-icon">✍️</div></div>
+          <div class="stat-card purple"><div class="stat-label">Categories</div><div class="stat-value" id="statCategories">—</div><div class="stat-sub">total categories</div><div class="stat-icon">📂</div></div>
+        </div>
+        <div class="stat-grid">
+          <div class="stat-card green"><div class="stat-label">Total Views</div><div class="stat-value" id="statViews">—</div><div class="stat-sub">across all articles</div><div class="stat-icon">👁️</div></div>
+          <div class="stat-card gold"><div class="stat-label">Comments</div><div class="stat-value" id="statComments">—</div><div class="stat-sub" id="statCommentsSub">pending review</div><div class="stat-icon">💬</div></div>
+          <div class="stat-card blue"><div class="stat-label">Newsletter Subscribers</div><div class="stat-value" id="statSubscribers">—</div><div class="stat-sub">total subscribers</div><div class="stat-icon">📬</div></div>
+          <div class="stat-card purple"><div class="stat-label">Team Members</div><div class="stat-value" id="statTeam">—</div><div class="stat-sub">with access</div><div class="stat-icon">👥</div></div>
+        </div>
+        <div class="two-col" style="margin-top:24px;">
+          <div>
+            <div class="card" style="margin-bottom:16px;">
+              <div class="section-title">Recent Activity</div>
+              <div class="activity-list" id="activityList"><div style="text-align:center;padding:20px;color:var(--text3);font-size:.78rem;">Loading...</div></div>
+            </div>
+          </div>
+          <div>
+            <div class="card" style="margin-bottom:16px;">
+              <div class="section-title">Top Articles</div>
+              <div style="display:flex;flex-direction:column;gap:12px;" id="topArticlesList"><div style="text-align:center;padding:12px;color:var(--text3);font-size:.78rem;">Loading...</div></div>
+            </div>
+            <div class="card">
+              <div class="section-title">Quick Actions</div>
+              <div style="display:flex;flex-direction:column;gap:8px;">
+                <button type="button" class="btn btn-green" style="width:100%;justify-content:center;" data-page="new-article">Write New Article</button>
+                <button type="button" class="btn btn-ghost" style="width:100%;justify-content:center;" data-page="authors">Add Author</button>
+                <button type="button" class="btn btn-ghost" style="width:100%;justify-content:center;" data-page="team">Manage Team</button>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ARTICLES -->
+      <div class="page" id="page-articles">
+        <div class="page-header">
+          <div><h1>Articles <span id="articlesCount" style="font-size:.85rem;color:var(--text3);font-weight:400;">(—)</span></h1><p>Manage all published and draft articles</p></div>
+          <div class="page-actions"><button type="button" class="btn btn-green" data-page="new-article">+ New Article</button></div>
+        </div>
+        <div class="card" style="padding:0;">
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>Title</th><th>Category</th><th>Author</th><th>Views</th><th>Status</th><th>Date</th><th>Actions</th></tr></thead>
+              <tbody id="articlesTbody"><tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text3);">Loading...</td></tr></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- NEW ARTICLE -->
+      <div class="page" id="page-new-article">
+        <div class="page-header">
+          <div><h1 id="articleFormTitle">New Article</h1><p>Write and publish a new story</p></div>
+        </div>
+        <div class="two-col">
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="card">
+              <div class="form-group"><label>Article Title</label><input type="text" id="artTitle" placeholder="Enter a compelling headline..."/></div>
+              <div style="margin-top:14px;" class="form-group"><label>Subtitle / Deck</label><input type="text" id="artSubtitle" placeholder="A one-line summary..."/></div>
+              <div style="margin-top:14px;" class="form-group">
+                <label>Article Body</label>
+                <div class="editor-toolbar"><button type="button">B</button><button type="button">I</button><button type="button">H2</button><button type="button">H3</button><button type="button">"Quote"</button></div>
+                <textarea id="artBody" class="editor-area" style="border-top:none;" placeholder="Start writing... (use blank lines between paragraphs, # for H2, ## for H3, > for quote)"></textarea>
+              </div>
+              <input type="hidden" id="artId"/>
+            </div>
+            <div class="card">
+              <div class="section-title">SEO & Meta</div>
+              <div class="form-grid">
+                <div class="form-group form-full"><label>Meta Title</label><input type="text" id="artMetaTitle" placeholder="Defaults to article title"/></div>
+                <div class="form-group form-full"><label>Meta Description</label><textarea id="artMetaDesc" style="min-height:70px;" placeholder="Brief description for search engines..."></textarea></div>
+                <div class="form-group form-full"><label>Tags (comma separated)</label><input type="text" id="artTags" placeholder="india, politics, delhi"/></div>
+              </div>
+            </div>
+          </div>
+          <div style="display:flex;flex-direction:column;gap:16px;">
+            <div class="card">
+              <div class="section-title">Publish Settings</div>
+              <div class="form-group" style="margin-bottom:12px;"><label>Status</label>
+                <select id="artStatus"><option value="draft">Draft</option><option value="pending">Pending Review</option><option value="published">Published</option></select>
+              </div>
+              <div style="display:flex;flex-direction:column;gap:8px;margin-top:14px;">
+                <button type="button" class="btn btn-green" id="btnPublish" style="justify-content:center;">Publish Now</button>
+                <button type="button" class="btn btn-ghost" id="btnSaveDraft" style="justify-content:center;">Save as Draft</button>
+                <button type="button" class="btn btn-red" id="btnClearForm" style="justify-content:center;">Clear Form</button>
+              </div>
+            </div>
+            <div class="card">
+              <div class="section-title">Article Details</div>
+              <div class="form-group" style="margin-bottom:12px;"><label>Category</label><select id="artCategory"><option value="">Loading...</option></select></div>
+              <div class="form-group" style="margin-bottom:12px;"><label>Author</label><select id="artAuthor"><option value="">Loading...</option></select></div>
+              <div class="form-group" style="margin-bottom:12px;"><label>Reading Time</label><input type="text" id="artReadTime" readonly style="opacity:.6;"/></div>
+              <div class="form-group" style="margin-top:12px;">
+                <div class="toggle-wrap" style="padding:8px 0;border:none;"><div class="toggle-info"><p>Pin to homepage hero</p></div><label class="toggle"><input type="checkbox" id="artFeatured"/><span class="toggle-slider"></span></label></div>
+                <div class="toggle-wrap" style="padding:8px 0;border:none;"><div class="toggle-info"><p>Editor's Pick</p></div><label class="toggle"><input type="checkbox" id="artEditorsPick"/><span class="toggle-slider"></span></label></div>
+              </div>
+            </div>
+            <div class="card">
+              <div class="section-title">Cover Image</div>
+              <div id="coverDrop" style="border:2px dashed var(--border);padding:20px;text-align:center;cursor:pointer;">
+                <div id="coverPreviewWrap" style="display:none;margin-bottom:10px;"><img id="coverPreview" src="" style="width:100%;max-height:140px;object-fit:cover;"/></div>
+                <div id="coverPlaceholder"><div style="font-size:1.5rem;margin-bottom:8px;">🖼️</div><div style="font-size:.78rem;color:var(--text2);">Tap to upload image</div></div>
+                <div id="coverUploading" style="display:none;font-size:.78rem;color:var(--green3);">Uploading...</div>
+              </div>
+              <input type="file" id="coverFile" accept="image/*" style="display:none;"/>
+              <input type="hidden" id="artCover"/>
+              <div class="form-group" style="margin-top:10px;"><label>Or paste Image URL</label><input type="text" id="coverUrlInput" placeholder="https://..."/></div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- AUTHORS -->
+      <div class="page" id="page-authors">
+        <div class="page-header">
+          <div><h1>Authors <span id="authorsCount" style="font-size:.85rem;color:var(--text3);font-weight:400;">(—)</span></h1><p id="authorsSub">Loading...</p></div>
+          <div class="page-actions"><button type="button" class="btn btn-green" id="btnAddAuthor">+ Add Author</button></div>
+        </div>
+        <div class="author-grid" id="authorsGrid"><div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3);">Loading...</div></div>
+      </div>
+
+      <!-- COMMENTS -->
+      <div class="page" id="page-comments">
+        <div class="page-header"><div><h1>Comments</h1><p id="commentsSub">Loading...</p></div></div>
+        <div id="commentsContainer"><div style="text-align:center;padding:40px;color:var(--text3);">Loading...</div></div>
+      </div>
+
+      <!-- CATEGORIES -->
+      <div class="page" id="page-categories">
+        <div class="page-header">
+          <div><h1>Categories</h1><p>Manage article categories</p></div>
+          <div class="page-actions"><button type="button" class="btn btn-green" id="btnAddCategory">+ Add Category</button></div>
+        </div>
+        <div class="card" style="padding:0;">
+          <table>
+            <thead><tr><th>Name</th><th>Emoji</th><th>Slug</th><th>Articles</th><th>Actions</th></tr></thead>
+            <tbody id="categoriesTbody"><tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text3);">Loading...</td></tr></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- NEWSLETTER -->
+      <div class="page" id="page-newsletter">
+        <div class="page-header"><div><h1>Newsletter</h1><p>Manage subscribers</p></div></div>
+        <div class="stat-grid" style="grid-template-columns:repeat(2,1fr);">
+          <div class="stat-card green"><div class="stat-label">Total Subscribers</div><div class="stat-value" id="statSubscribersNl">—</div><div class="stat-icon">📬</div></div>
+          <div class="stat-card gold"><div class="stat-label">Active</div><div class="stat-value" id="statSubscribersActive">—</div><div class="stat-icon">✅</div></div>
+        </div>
+        <div class="card">
+          <div class="section-title">Subscribers</div>
+          <div id="subscribersList" style="max-height:400px;overflow-y:auto;"></div>
+          <button type="button" class="btn btn-ghost btn-sm" id="btnExportSubs" style="width:100%;margin-top:12px;justify-content:center;">Export CSV</button>
+        </div>
+      </div>
+
+      <!-- TEAM MEMBERS -->
+      <div class="page" id="page-team">
+        <div class="page-header">
+          <div><h1>Team Members <span id="teamCount" style="font-size:.85rem;color:var(--text3);font-weight:400;">(—)</span></h1><p>Manage who has access to this admin panel</p></div>
+          <div class="page-actions"><button type="button" class="btn btn-green" id="btnAddTeam">+ Add Team Member</button></div>
+        </div>
+        <div class="alert alert-info">When you add someone, set a password for them — their login is created immediately. Share the email + password, or they can sign in with Google using that exact email.</div>
+        <div id="teamList"><div style="text-align:center;padding:40px;color:var(--text3);">Loading...</div></div>
+      </div>
+
+      <!-- ROLES -->
+      <div class="page" id="page-roles">
+        <div class="page-header"><div><h1>Roles & Permissions</h1><p>Reference for what each role can do</p></div></div>
+        <div class="role-card">
+          <div class="role-card-header"><div><div class="role-name">👑 Owner</div><div class="role-desc">Full access to everything, including team management</div></div></div>
+        </div>
+        <div class="role-card">
+          <div class="role-card-header"><div><div class="role-name">✍️ Editor</div><div class="role-desc">Can write, edit, and publish articles directly</div></div></div>
+        </div>
+        <div class="role-card">
+          <div class="role-card-header"><div><div class="role-name">📝 Junior Editor</div><div class="role-desc">Can write articles, saved as drafts for review</div></div></div>
+        </div>
+      </div>
+
+      <!-- SETTINGS -->
+      <div class="page" id="page-settings">
+        <div class="page-header"><div><h1>Settings</h1><p>Your account</p></div></div>
+        <div class="card">
+          <div class="section-title">Account Info</div>
+          <div class="form-group" style="margin-bottom:12px;"><label>Name</label><input type="text" id="settingsName" readonly style="opacity:.7;"/></div>
+          <div class="form-group" style="margin-bottom:12px;"><label>Email</label><input type="text" id="settingsEmail" readonly style="opacity:.7;"/></div>
+          <div class="form-group"><label>Role</label><input type="text" id="settingsRole" readonly style="opacity:.7;"/></div>
+        </div>
+      </div>
+    </main>
+  </div>
+</div>
+
+<!-- MODALS -->
+<div class="modal-overlay" id="modalTeam">
+  <div class="modal">
+    <div class="modal-header"><h3 id="teamModalTitle">Add Team Member</h3><button type="button" class="modal-close" data-close="modalTeam">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="teamId"/>
+      <div class="form-grid">
+        <div class="form-group form-full"><label>Full Name</label><input type="text" id="teamName" placeholder="Their full name"/></div>
+        <div class="form-group form-full"><label>Email Address</label><input type="email" id="teamEmail" placeholder="their@email.com"/></div>
+        <div class="form-group form-full" id="teamPassGroup"><label>Set Password</label><input type="text" id="teamPass" placeholder="Min 6 characters"/><span class="form-hint">Share this password with them</span></div>
+        <div class="form-group form-full"><label>Role</label>
+          <select id="teamRole"><option value="junior_editor">Junior Editor</option><option value="editor">Editor</option><option value="owner">Owner</option></select>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer"><button type="button" class="btn btn-ghost" data-close="modalTeam">Cancel</button><button type="button" class="btn btn-green" id="btnSaveTeam">Save</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalAuthor">
+  <div class="modal">
+    <div class="modal-header"><h3 id="authorModalTitle">Add Author</h3><button type="button" class="modal-close" data-close="modalAuthor">✕</button></div>
+    <div class="modal-body">
+      <input type="hidden" id="authorId"/>
+      <div class="form-grid">
+        <div class="form-group"><label>Full Name</label><input type="text" id="authorName" placeholder="Author name"/></div>
+        <div class="form-group"><label>Role / Title</label><input type="text" id="authorRole" placeholder="e.g. Editor"/></div>
+        <div class="form-group form-full"><label>Bio</label><textarea id="authorBio" style="min-height:70px;" placeholder="Short bio..."></textarea></div>
+        <div class="form-group form-full"><label>Email</label><input type="email" id="authorEmail" placeholder="author@email.com"/></div>
+        <div class="form-group form-full">
+          <label>Photo</label>
+          <div id="authorPhotoDrop" style="border:2px dashed var(--border);padding:16px;text-align:center;cursor:pointer;">
+            <div id="authorPhotoPreviewWrap" style="display:none;margin-bottom:8px;"><img id="authorPhotoPreview" src="" style="width:64px;height:64px;border-radius:50%;object-fit:cover;"/></div>
+            <div id="authorPhotoPlaceholder" style="font-size:.75rem;color:var(--text2);">📷 Tap to upload photo</div>
+          </div>
+          <input type="file" id="authorPhotoFile" accept="image/*" style="display:none;"/>
+          <input type="hidden" id="authorPhoto"/>
+        </div>
+      </div>
+    </div>
+    <div class="modal-footer"><button type="button" class="btn btn-ghost" data-close="modalAuthor">Cancel</button><button type="button" class="btn btn-green" id="btnSaveAuthor">Save</button></div>
+  </div>
+</div>
+
+<div class="modal-overlay" id="modalCategory">
+  <div class="modal">
+    <div class="modal-header"><h3>Add Category</h3><button type="button" class="modal-close" data-close="modalCategory">✕</button></div>
+    <div class="modal-body">
+      <div class="form-grid">
+        <div class="form-group"><label>Name</label><input type="text" id="catName" placeholder="e.g. Science"/></div>
+        <div class="form-group"><label>Emoji</label><input type="text" id="catEmoji" placeholder="🔬"/></div>
+      </div>
+    </div>
+    <div class="modal-footer"><button type="button" class="btn btn-ghost" data-close="modalCategory">Cancel</button><button type="button" class="btn btn-green" id="btnSaveCategory">Save</button></div>
+  </div>
+</div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getAuth, createUserWithEmailAndPassword, signInWithEmailAndPassword,
+  signOut, onAuthStateChanged, GoogleAuthProvider, signInWithPopup
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-auth.js";
+import {
+  getFirestore, collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc,
+  deleteDoc, query, where, orderBy, limit, increment, serverTimestamp
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+
+const firebaseConfig = {
+  apiKey: "AIzaSyBf4d83iuU7cSsh2TfYmsD6hTh6hWAL8pY",
+  authDomain: "indian-populus.firebaseapp.com",
+  projectId: "indian-populus",
+  storageBucket: "indian-populus.firebasestorage.app",
+  messagingSenderId: "784688896367",
+  appId: "1:784688896367:web:2dd371541554db97a6309a"
+};
+
+const app = initializeApp(firebaseConfig);
+const auth = getAuth(app);
+const db = getFirestore(app);
+const googleProvider = new GoogleAuthProvider();
+
+async function createUserSeparately(email, password){
+  const secondaryApp = initializeApp(firebaseConfig, 'secondary-' + Date.now());
+  const secondaryAuth = getAuth(secondaryApp);
+  try{
+    const cred = await createUserWithEmailAndPassword(secondaryAuth, email, password);
+    const uid = cred.user.uid;
+    await signOut(secondaryAuth);
+    return { uid, error: null };
+  }catch(err){
+    return { uid: null, error: err };
+  }
+}
+
+window.FB = {
+  auth, db, googleProvider,
+  signInWithEmailAndPassword, signInWithPopup, signOut, onAuthStateChanged,
+  collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
+  query, where, orderBy, limit, increment, serverTimestamp,
+  createUserSeparately
+};
+
+window.dispatchEvent(new CustomEvent('fb-ready'));
+</script>
+
+<script>
+(function(){
+  'use strict';
+
+  var SEED_OWNER = 'jasiljasil000@gmail.com';
+  var CLOUD_NAME = 'dgc1grdw9';
+  var UPLOAD_PRESET = 'ml_default';
+
+  var FB = null;
+  var user = null;
+  var userRole = null;
+
+  // ── TOAST ──
+  function toast(msg, type){
+    var c = document.getElementById('toast-container');
+    var t = document.createElement('div');
+    t.className = 'toast ' + (type || 'success');
+    t.textContent = msg;
+    c.appendChild(t);
+    setTimeout(function(){ t.remove(); }, 3500);
+  }
+  window.toast = toast;
+
+  function $(id){ return document.getElementById(id); }
+
+  // ── WAIT FOR FIREBASE ──
+  window.addEventListener('fb-ready', function(){
+    FB = window.FB;
+    initApp();
+  });
+
+  // Fallback: if fb-ready never fires within 8s, show an error so the page isn't dead silently
+  setTimeout(function(){
+    if(!FB){
+      var err = $('loginErr');
+      if(err){
+        err.textContent = '⚠ Could not connect to the server. Check your internet connection and reload the page.';
+        err.style.display = 'block';
+      }
+    }
+  }, 8000);
+
+  function initApp(){
+    FB.onAuthStateChanged(FB.auth, function(u){
+      if(u){
+        handleSignedIn(u);
+      } else {
+        user = null;
+        userRole = null;
+      }
+    });
+
+    bindLoginEvents();
+    bindNavEvents();
+    bindArticleEvents();
+    bindAuthorEvents();
+    bindTeamEvents();
+    bindCategoryEvents();
+    bindModalEvents();
+    bindUploadEvents();
+  }
+
+  async function handleSignedIn(u){
+    user = u;
+    try{
+      var role = await getTeamRole(u.email);
+      if(!role && u.email.toLowerCase() === SEED_OWNER){
+        await FB.setDoc(FB.doc(FB.db, 'team_members', u.uid), {
+          name: u.displayName || 'Owner',
+          email: u.email.toLowerCase(),
+          role: 'owner',
+          created_at: FB.serverTimestamp()
+        });
+        role = 'owner';
+      }
+      if(!role){
+        toast('No access assigned to this account. Contact the Owner.', 'error');
+        await FB.signOut(FB.auth);
+        return;
+      }
+      userRole = role;
+      showAdmin();
+    }catch(e){
+      console.error(e);
+      toast('Error verifying access: ' + e.message, 'error');
+    }
+  }
+
+  async function getTeamRole(email){
+    var q = FB.query(FB.collection(FB.db, 'team_members'), FB.where('email', '==', email.toLowerCase()));
+    var snap = await FB.getDocs(q);
+    if(snap.empty) return null;
+    return snap.docs[0].data().role;
+  }
+
+  function showAdmin(){
+    $('screen-login').style.display = 'none';
+    $('screen-admin').classList.add('visible');
+
+    var name = user.displayName || user.email.split('@')[0];
+    var initials = name.split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
+    $('sidebarName').textContent = name;
+    $('sidebarRole').textContent = userRole === 'owner' ? 'Owner' : userRole === 'editor' ? 'Editor' : 'Junior Editor';
+    $('sidebarAva').textContent = initials;
+    $('topbarAvatar').textContent = initials;
+    $('settingsName').value = name;
+    $('settingsEmail').value = user.email;
+    $('settingsRole').value = userRole;
+
+    if(userRole !== 'owner'){
+      $('nav-team').style.display = 'none';
+    } else {
+      $('nav-team').style.display = '';
+    }
+
+    var d = new Date();
+    var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
+    $('dashDate').textContent = months[d.getMonth()] + ' ' + d.getFullYear();
+
+    showPage('dashboard');
+  }
+
+  // ── LOGIN EVENTS ──
+  function bindLoginEvents(){
+    var btnSignIn = $('btnSignIn');
+    var btnGoogle = $('btnGoogleSignIn');
+
+    if(btnSignIn){
+      btnSignIn.addEventListener('click', function(){ doLogin(); });
+    }
+    if(btnGoogle){
+      btnGoogle.addEventListener('click', function(){ doGoogleLogin(); });
+    }
+    $('loginEmail').addEventListener('keydown', function(e){ if(e.key === 'Enter') doLogin(); });
+    $('loginPass').addEventListener('keydown', function(e){ if(e.key === 'Enter') doLogin(); });
+  }
+
+  function doLogin(){
+    var err = $('loginErr'), ok = $('loginOk'), loading = $('loginLoading');
+    err.style.display = 'none'; ok.style.display = 'none';
+    var email = $('loginEmail').value.trim();
+    var pass = $('loginPass').value;
+    if(!email || !pass){
+      err.textContent = '⚠ Please enter email and password.';
+      err.style.display = 'block';
+      return;
+    }
+    if(!FB){
+      err.textContent = '⚠ Still connecting, please wait a moment and try again.';
+      err.style.display = 'block';
+      return;
+    }
+    loading.style.display = 'block';
+    FB.signInWithEmailAndPassword(FB.auth, email, pass).then(function(){
+      loading.style.display = 'none';
+      $('loginPass').value = '';
+    }).catch(function(e){
+      loading.style.display = 'none';
+      var msg = 'Invalid email or password.';
+      if(e.code === 'auth/user-not-found') msg = 'No account found with this email.';
+      if(e.code === 'auth/wrong-password' || e.code === 'auth/invalid-credential') msg = 'Incorrect password.';
+      if(e.code === 'auth/invalid-email') msg = 'Invalid email format.';
+      if(e.code === 'auth/too-many-requests') msg = 'Too many attempts. Try again later.';
+      err.textContent = '⚠ ' + msg;
+      err.style.display = 'block';
+    });
+  }
+
+  function doGoogleLogin(){
+    var err = $('loginErr'), loading = $('loginLoading');
+    err.style.display = 'none';
+    if(!FB){
+      err.textContent = '⚠ Still connecting, please wait a moment and try again.';
+      err.style.display = 'block';
+      return;
+    }
+    loading.style.display = 'block';
+    FB.signInWithPopup(FB.auth, FB.googleProvider).then(function(){
+      loading.style.display = 'none';
+    }).catch(function(e){
+      loading.style.display = 'none';
+      if(e.code === 'auth/popup-closed-by-user') return;
+      if(e.code === 'auth/popup-blocked'){
+        err.textContent = '⚠ Popup was blocked. Allow popups for this site and try again.';
+      } else {
+        err.textContent = '⚠ ' + (e.message || 'Google sign-in failed.');
+      }
+      err.style.display = 'block';
+    });
+  }
+
+  function doLogout(){
+    if(confirm('Sign out?')){
+      FB.signOut(FB.auth).then(function(){
+        $('screen-admin').classList.remove('visible');
+        $('screen-login').style.display = 'flex';
+        $('loginPass').value = '';
+      });
+    }
+  }
+  $('btnLogout').addEventListener('click', doLogout);
+
+  // ── NAVIGATION ──
+  function bindNavEvents(){
+    document.querySelectorAll('[data-page]').forEach(function(el){
+      el.addEventListener('click', function(){
+        showPage(el.getAttribute('data-page'));
+      });
+    });
+    $('btnHamburger').addEventListener('click', toggleSidebar);
+    $('sidebarOverlay').addEventListener('click', toggleSidebar);
+  }
+
+  function toggleSidebar(){
+    $('sidebar').classList.toggle('open');
+    $('sidebarOverlay').classList.toggle('open');
+  }
+
+  function showPage(id){
+    document.querySelectorAll('.page').forEach(function(p){ p.classList.remove('active'); });
+    document.querySelectorAll('.nav-item').forEach(function(n){ n.classList.remove('active'); });
+    var page = $('page-' + id);
+    if(page) page.classList.add('active');
+    var nav = $('nav-' + id);
+    if(nav) nav.classList.add('active');
+    document.querySelector('.main').scrollTop = 0;
+    $('sidebar').classList.remove('open');
+    $('sidebarOverlay').classList.remove('open');
+
+    if(id === 'dashboard') loadDashboard();
+    else if(id === 'articles') loadArticles();
+    else if(id === 'authors') loadAuthors();
+    else if(id === 'comments') loadComments();
+    else if(id === 'categories') loadCategories();
+    else if(id === 'newsletter') loadNewsletter();
+    else if(id === 'team') loadTeam();
+    else if(id === 'new-article') loadArticleSelects();
+  }
+
+  // ── MODALS ──
+  function bindModalEvents(){
+    document.querySelectorAll('[data-close]').forEach(function(btn){
+      btn.addEventListener('click', function(){
+        closeModal(btn.getAttribute('data-close'));
+      });
+    });
+    document.querySelectorAll('.modal-overlay').forEach(function(o){
+      o.addEventListener('click', function(e){ if(e.target === o) o.classList.remove('open'); });
+    });
+  }
+  function openModal(id){ $(id).classList.add('open'); }
+  function closeModal(id){ $(id).classList.remove('open'); }
+
+  // ── UTILITIES ──
+  function makeSlug(t){ return (t||'').toLowerCase().replace(/[^a-z0-9\s-]/g,'').trim().replace(/\s+/g,'-'); }
+  function calcReadTime(t){ return Math.max(1, Math.ceil((t||'').split(/\s+/).length / 200)); }
+  function initialsOf(name){ return (name||'?').split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2); }
+
+  // ══════════════════════════════════
+  // DASHBOARD
+  // ══════════════════════════════════
+  async function loadDashboard(){
+    try{
+      var artsSnap = await FB.getDocs(FB.collection(FB.db, 'articles'));
+      var authsSnap = await FB.getDocs(FB.collection(FB.db, 'authors'));
+      var catsSnap = await FB.getDocs(FB.collection(FB.db, 'categories'));
+      var subsSnap = await FB.getDocs(FB.collection(FB.db, 'subscribers'));
+      var commsSnap = await FB.getDocs(FB.collection(FB.db, 'comments'));
+      var teamSnap = await FB.getDocs(FB.collection(FB.db, 'team_members'));
+
+      var arts = artsSnap.docs.map(function(d){ return Object.assign({id:d.id}, d.data()); });
+      var comms = commsSnap.docs.map(function(d){ return Object.assign({id:d.id}, d.data()); });
+
+      var published = arts.filter(function(a){ return a.status === 'published'; });
+      var totalViews = arts.reduce(function(s,a){ return s + (a.views||0); }, 0);
+      var pending = comms.filter(function(c){ return c.status === 'pending'; });
+      var now = new Date();
+      var thisMonth = arts.filter(function(a){
+        if(!a.published_at) return false;
+        var d = a.published_at.toDate ? a.published_at.toDate() : new Date(a.published_at);
+        return d.getMonth() === now.getMonth() && d.getFullYear() === now.getFullYear();
+      });
+
+      $('statPublished').textContent = published.length;
+      $('statThisMonth').textContent = thisMonth.length;
+      $('statAuthors').textContent = authsSnap.size;
+      $('statCategories').textContent = catsSnap.size;
+      $('statViews').textContent = totalViews;
+      $('statComments').textContent = comms.length;
+      $('statCommentsSub').textContent = pending.length + ' pending review';
+      $('statSubscribers').textContent = subsSnap.size;
+      $('statTeam').textContent = teamSnap.size;
+
+      var badge = $('commentsBadge');
+      if(pending.length > 0){ badge.textContent = pending.length; badge.style.display = 'inline-flex'; }
+      else { badge.style.display = 'none'; }
+
+      // top articles
+      var topList = $('topArticlesList');
+      var top = published.slice().sort(function(a,b){ return (b.views||0)-(a.views||0); }).slice(0,3);
+      if(top.length){
+        var maxV = Math.max.apply(null, top.map(function(a){return a.views||0;}).concat([1]));
+        topList.innerHTML = top.map(function(a){
+          var pct = Math.round(((a.views||0)/maxV)*100);
+          return '<div><div style="font-size:.78rem;color:var(--text);font-weight:500;margin-bottom:4px;">'+escapeHtml(a.title)+'</div>'
+            +'<div style="font-size:.68rem;color:var(--text3);margin-bottom:4px;">'+(a.views||0)+' views</div>'
+            +'<div class="progress-bar"><div class="progress-fill" style="width:'+pct+'%"></div></div></div>';
+        }).join('');
+      } else {
+        topList.innerHTML = '<div style="text-align:center;padding:12px;color:var(--text3);font-size:.78rem;">No published articles yet.</div>';
+      }
+
+      // recent activity
+      var actList = $('activityList');
+      var recent = arts.slice().sort(function(a,b){
+        var ad = a.updated_at || a.created_at; ad = ad && ad.toDate ? ad.toDate() : new Date(ad||0);
+        var bd = b.updated_at || b.created_at; bd = bd && bd.toDate ? bd.toDate() : new Date(bd||0);
+        return bd - ad;
+      }).slice(0,5);
+      if(recent.length){
+        var authorMap = {};
+        authsSnap.docs.forEach(function(d){ authorMap[d.id] = d.data().name; });
+        actList.innerHTML = recent.map(function(a){
+          var dotClass = a.status === 'published' ? 'green' : a.status === 'draft' ? 'gold' : 'blue';
+          var verb = a.status === 'published' ? 'published' : 'saved a draft of';
+          var dv = a.updated_at || a.created_at; dv = dv && dv.toDate ? dv.toDate() : new Date(dv||Date.now());
+          return '<div class="activity-item"><div class="activity-dot '+dotClass+'"></div><div>'
+            +'<div class="activity-text"><strong>'+escapeHtml(authorMap[a.author_id]||'Someone')+'</strong> '+verb+' "'+escapeHtml(a.title)+'"</div>'
+            +'<div class="activity-time">'+dv.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})+'</div></div></div>';
+        }).join('');
+      } else {
+        actList.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3);font-size:.78rem;">No activity yet.</div>';
+      }
+    }catch(e){
+      console.error('Dashboard error:', e);
+      toast('Failed to load dashboard: ' + e.message, 'error');
+    }
+  }
+
+  function escapeHtml(s){
+    var d = document.createElement('div');
+    d.textContent = s || '';
+    return d.innerHTML;
+  }
+
+  // ══════════════════════════════════
+  // ARTICLES
+  // ══════════════════════════════════
+  async function loadArticles(){
+    var tbody = $('articlesTbody');
+    tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text3);">Loading...</td></tr>';
+    try{
+      var snap = await FB.getDocs(FB.query(FB.collection(FB.db,'articles'), FB.orderBy('created_at','desc')));
+      var arts = snap.docs.map(function(d){ return Object.assign({id:d.id}, d.data()); });
+      $('articlesCount').textContent = '(' + arts.length + ')';
+      if(!arts.length){
+        tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--text3);">No articles yet. Write your first one!</td></tr>';
+        return;
+      }
+      var authSnap = await FB.getDocs(FB.collection(FB.db,'authors'));
+      var catSnap = await FB.getDocs(FB.collection(FB.db,'categories'));
+      var authMap = {}; authSnap.docs.forEach(function(d){ authMap[d.id] = d.data().name; });
+      var catMap = {}; catSnap.docs.forEach(function(d){ catMap[d.id] = d.data().name; });
+
+      var statusBadge = { published:'badge-green', draft:'badge-yellow', pending:'badge-blue' };
+      tbody.innerHTML = arts.map(function(a){
+        var dv = a.created_at; dv = dv && dv.toDate ? dv.toDate() : new Date(dv||Date.now());
+        return '<tr>'
+          +'<td><div class="td-title">'+escapeHtml(a.title)+'</div><div class="td-title-sub">'+(a.read_time||5)+' min read</div></td>'
+          +'<td><span class="badge badge-gray">'+escapeHtml(catMap[a.category_id]||'—')+'</span></td>'
+          +'<td style="font-size:.78rem;">'+escapeHtml(authMap[a.author_id]||'—')+'</td>'
+          +'<td>'+(a.views||0)+'</td>'
+          +'<td><span class="badge '+(statusBadge[a.status]||'badge-gray')+'">'+a.status+'</span></td>'
+          +'<td style="font-size:.72rem;color:var(--text3);">'+dv.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})+'</td>'
+          +'<td><div style="display:flex;gap:6px;"><button type="button" class="btn btn-ghost btn-sm" data-edit-article="'+a.id+'">Edit</button><button type="button" class="btn btn-red btn-sm" data-delete-article="'+a.id+'">Delete</button></div></td>'
+          +'</tr>';
+      }).join('');
+
+      tbody.querySelectorAll('[data-edit-article]').forEach(function(b){
+        b.addEventListener('click', function(){ editArticle(b.getAttribute('data-edit-article')); });
+      });
+      tbody.querySelectorAll('[data-delete-article]').forEach(function(b){
+        b.addEventListener('click', function(){ deleteArticle(b.getAttribute('data-delete-article')); });
+      });
+    }catch(e){
+      console.error(e);
+      tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--red);">Failed to load: '+e.message+'</td></tr>';
+    }
+  }
+
+  async function deleteArticle(id){
+    if(!confirm('Delete this article?')) return;
+    try{
+      await FB.deleteDoc(FB.doc(FB.db,'articles',id));
+      toast('Article deleted', 'success');
+      loadArticles();
+    }catch(e){ toast('Failed: ' + e.message, 'error'); }
+  }
+
+  async function editArticle(id){
+    try{
+      var snap = await FB.getDoc(FB.doc(FB.db,'articles',id));
+      if(!snap.exists()){ toast('Not found', 'error'); return; }
+      var d = snap.data();
+      $('artId').value = id;
+      $('artTitle').value = d.title || '';
+      $('artSubtitle').value = d.subtitle || '';
+      $('artBody').value = d.body || '';
+      $('artStatus').value = d.status || 'draft';
+      $('artMetaTitle').value = d.meta_title || '';
+      $('artMetaDesc').value = d.meta_description || '';
+      $('artTags').value = (d.tags||[]).join(', ');
+      $('artCover').value = d.cover_image_url || '';
+      $('artFeatured').checked = !!d.is_featured;
+      $('artEditorsPick').checked = !!d.is_editors_pick;
+      if(d.cover_image_url) showCoverPreview(d.cover_image_url);
+      $('articleFormTitle').textContent = 'Edit Article';
+      await loadArticleSelects(d.category_id, d.author_id);
+      showPage('new-article');
+    }catch(e){ toast('Failed to load: ' + e.message, 'error'); }
+  }
+
+  async function loadArticleSelects(selectedCat, selectedAuth){
+    var catSel = $('artCategory'), authSel = $('artAuthor');
+    try{
+      var catSnap = await FB.getDocs(FB.query(FB.collection(FB.db,'categories'), FB.orderBy('name')));
+      catSel.innerHTML = catSnap.empty ? '<option value="">No categories</option>' :
+        '<option value="">Select Category</option>' + catSnap.docs.map(function(d){
+          return '<option value="'+d.id+'"'+(d.id===selectedCat?' selected':'')+'>'+escapeHtml(d.data().name)+'</option>';
+        }).join('');
+    }catch(e){ catSel.innerHTML = '<option value="">Failed to load</option>'; }
+    try{
+      var authSnap = await FB.getDocs(FB.query(FB.collection(FB.db,'authors'), FB.orderBy('name')));
+      authSel.innerHTML = authSnap.empty ? '<option value="">No authors — add one first</option>' :
+        '<option value="">Select Author</option>' + authSnap.docs.map(function(d){
+          return '<option value="'+d.id+'"'+(d.id===selectedAuth?' selected':'')+'>'+escapeHtml(d.data().name)+'</option>';
+        }).join('');
+    }catch(e){ authSel.innerHTML = '<option value="">Failed to load</option>'; }
+  }
+
+  function clearArticleForm(){
+    ['artId','artTitle','artSubtitle','artBody','artMetaTitle','artMetaDesc','artTags','artCover','coverUrlInput'].forEach(function(id){
+      var el = $(id); if(el) el.value = '';
+    });
+    $('artFeatured').checked = false;
+    $('artEditorsPick').checked = false;
+    $('coverPreviewWrap').style.display = 'none';
+    $('coverPlaceholder').style.display = 'block';
+    $('articleFormTitle').textContent = 'New Article';
+  }
+
+  async function saveArticleAs(status){
+    var id = $('artId').value;
+    var title = $('artTitle').value.trim();
+    if(!title){ toast('Title is required!', 'error'); return; }
+
+    var body = $('artBody').value.trim();
+    var tagsRaw = $('artTags').value.trim();
+    var payload = {
+      title: title,
+      subtitle: $('artSubtitle').value.trim(),
+      body: body,
+      slug: makeSlug(title),
+      category_id: $('artCategory').value || null,
+      author_id: $('artAuthor').value || null,
+      status: status,
+      meta_title: $('artMetaTitle').value.trim() || title,
+      meta_description: $('artMetaDesc').value.trim(),
+      tags: tagsRaw ? tagsRaw.split(',').map(function(t){return t.trim();}) : [],
+      cover_image_url: $('artCover').value.trim() || null,
+      is_featured: $('artFeatured').checked,
+      is_editors_pick: $('artEditorsPick').checked,
+      read_time: calcReadTime(body),
+      updated_at: FB.serverTimestamp()
+    };
+    if(status === 'published') payload.published_at = FB.serverTimestamp();
+
+    try{
+      if(id){
+        await FB.updateDoc(FB.doc(FB.db,'articles',id), payload);
+      } else {
+        payload.created_at = FB.serverTimestamp();
+        payload.views = 0;
+        await FB.addDoc(FB.collection(FB.db,'articles'), payload);
+      }
+      toast(status === 'published' ? 'Article published! 🎉' : 'Draft saved!', 'success');
+      clearArticleForm();
+      showPage('articles');
+    }catch(e){
+      toast('Failed to save: ' + e.message, 'error');
+    }
+  }
+
+  function bindArticleEvents(){
+    $('btnPublish').addEventListener('click', function(){ saveArticleAs('published'); });
+    $('btnSaveDraft').addEventListener('click', function(){ saveArticleAs('draft'); });
+    $('btnClearForm').addEventListener('click', clearArticleForm);
+    $('artTitle').addEventListener('input', function(){
+      $('artReadTime').value = '';
+    });
+    $('artBody').addEventListener('input', function(){
+      $('artReadTime').value = calcReadTime(this.value) + ' min read';
+    });
+    $('coverUrlInput').addEventListener('change', function(){
+      $('artCover').value = this.value;
+      if(this.value) showCoverPreview(this.value);
+    });
+  }
+
+  function showCoverPreview(url){
+    $('coverPreview').src = url;
+    $('coverPreviewWrap').style.display = 'block';
+    $('coverPlaceholder').style.display = 'none';
+  }
+
+  // ══════════════════════════════════
+  // AUTHORS
+  // ══════════════════════════════════
+  async function loadAuthors(){
+    var grid = $('authorsGrid');
+    grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3);">Loading...</div>';
+    try{
+      var snap = await FB.getDocs(FB.query(FB.collection(FB.db,'authors'), FB.orderBy('created_at','desc')));
+      $('authorsCount').textContent = '(' + snap.size + ')';
+      if(snap.empty){
+        grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--text3);">No authors yet. Add your first one!</div>';
+        $('authorsSub').textContent = '0 authors';
+        return;
+      }
+      var authors = snap.docs.map(function(d){ return Object.assign({id:d.id}, d.data()); });
+      $('authorsSub').textContent = authors.length + ' total';
+
+      var artSnap = await FB.getDocs(FB.collection(FB.db,'articles'));
+      var arts = artSnap.docs.map(function(d){ return d.data(); });
+
+      grid.innerHTML = authors.map(function(a){
+        var count = arts.filter(function(x){ return x.author_id === a.id; }).length;
+        var views = arts.filter(function(x){ return x.author_id === a.id; }).reduce(function(s,x){return s+(x.views||0);},0);
+        var initials = initialsOf(a.name);
+        var avaHtml = a.photo_url ? '<img src="'+a.photo_url+'"/>' : initials;
+        return '<div class="author-card">'
+          +'<div class="author-card-top"><div class="author-ava">'+avaHtml+'</div><div><div class="author-name">'+escapeHtml(a.name)+'</div><div class="author-role-tag">'+escapeHtml(a.role||'')+'</div></div></div>'
+          +'<div class="author-bio">'+escapeHtml(a.bio||'')+'</div>'
+          +'<div style="font-size:.72rem;color:var(--text3);margin-bottom:10px;">✉ '+escapeHtml(a.email||'—')+'</div>'
+          +'<div class="author-stats"><div class="author-stat"><div class="author-stat-n">'+count+'</div><div class="author-stat-l">Articles</div></div><div class="author-stat"><div class="author-stat-n">'+views+'</div><div class="author-stat-l">Views</div></div></div>'
+          +'<div class="author-actions"><button type="button" class="btn btn-ghost btn-sm" style="flex:1;justify-content:center;" data-edit-author="'+a.id+'">Edit</button><button type="button" class="btn btn-icon" data-delete-author="'+a.id+'" style="color:var(--red);">🗑</button></div>'
+          +'</div>';
+      }).join('');
+
+      grid.querySelectorAll('[data-edit-author]').forEach(function(b){
+        b.addEventListener('click', function(){ editAuthor(b.getAttribute('data-edit-author')); });
+      });
+      grid.querySelectorAll('[data-delete-author]').forEach(function(b){
+        b.addEventListener('click', function(){ deleteAuthor(b.getAttribute('data-delete-author')); });
+      });
+    }catch(e){
+      console.error(e);
+      grid.innerHTML = '<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--red);">Failed to load: '+e.message+'</div>';
+    }
+  }
+
+  function openAddAuthor(){
+    $('authorId').value = '';
+    $('authorName').value = '';
+    $('authorRole').value = '';
+    $('authorBio').value = '';
+    $('authorEmail').value = '';
+    $('authorPhoto').value = '';
+    $('authorPhotoPreviewWrap').style.display = 'none';
+    $('authorPhotoPlaceholder').style.display = 'block';
+    $('authorModalTitle').textContent = 'Add Author';
+    openModal('modalAuthor');
+  }
+
+  async function editAuthor(id){
+    try{
+      var snap = await FB.getDoc(FB.doc(FB.db,'authors',id));
+      if(!snap.exists()) return;
+      var d = snap.data();
+      $('authorId').value = id;
+      $('authorName').value = d.name || '';
+      $('authorRole').value = d.role || '';
+      $('authorBio').value = d.bio || '';
+      $('authorEmail').value = d.email || '';
+      $('authorPhoto').value = d.photo_url || '';
+      if(d.photo_url){
+        $('authorPhotoPreview').src = d.photo_url;
+        $('authorPhotoPreviewWrap').style.display = 'block';
+        $('authorPhotoPlaceholder').style.display = 'none';
+      } else {
+        $('authorPhotoPreviewWrap').style.display = 'none';
+        $('authorPhotoPlaceholder').style.display = 'block';
+      }
+      $('authorModalTitle').textContent = 'Edit Author';
+      openModal('modalAuthor');
+    }catch(e){ toast('Failed to load: ' + e.message, 'error'); }
+  }
+
+  async function saveAuthor(){
+    var id = $('authorId').value;
+    var name = $('authorName').value.trim();
+    if(!name){ toast('Name is required!', 'error'); return; }
+    var payload = {
+      name: name,
+      role: $('authorRole').value.trim(),
+      bio: $('authorBio').value.trim(),
+      email: $('authorEmail').value.trim() || null,
+      photo_url: $('authorPhoto').value.trim() || null,
+      slug: makeSlug(name),
+      is_active: true
+    };
+    try{
+      if(id){
+        await FB.updateDoc(FB.doc(FB.db,'authors',id), payload);
+      } else {
+        payload.created_at = FB.serverTimestamp();
+        await FB.addDoc(FB.collection(FB.db,'authors'), payload);
+      }
+      toast(id ? 'Author updated!' : 'Author added! 🎉', 'success');
+      closeModal('modalAuthor');
+      loadAuthors();
+    }catch(e){ toast('Failed: ' + e.message, 'error'); }
+  }
+
+  async function deleteAuthor(id){
+    if(!confirm('Delete this author?')) return;
+    try{
+      await FB.deleteDoc(FB.doc(FB.db,'authors',id));
+      toast('Author deleted', 'success');
+      loadAuthors();
+    }catch(e){ toast('Failed: ' + e.message, 'error'); }
+  }
+
+  function bindAuthorEvents(){
+    $('btnAddAuthor').addEventListener('click', openAddAuthor);
+    $('btnSaveAuthor').addEventListener('click', saveAuthor);
+  }
+
+  // ══════════════════════════════════
+  // COMMENTS
+  // ══════════════════════════════════
+  async function loadComments(){
+    var cont = $('commentsContainer');
+    cont.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);">Loading...</div>';
+    try{
+      var snap = await FB.getDocs(FB.query(FB.collection(FB.db,'comments'), FB.orderBy('created_at','desc')));
+      if(snap.empty){
+        cont.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);">No comments yet.</div>';
+        $('commentsSub').textContent = '0 comments';
+        return;
+      }
+      var comments = snap.docs.map(function(d){ return Object.assign({id:d.id}, d.data()); });
+      var pending = comments.filter(function(c){return c.status==='pending';});
+      $('commentsSub').textContent = pending.length + ' pending review';
+
+      var artSnap = await FB.getDocs(FB.collection(FB.db,'articles'));
+      var artMap = {}; artSnap.docs.forEach(function(d){ artMap[d.id] = d.data().title; });
+
+      var statusBadge = {pending:'badge-yellow', approved:'badge-green', rejected:'badge-red'};
+      cont.innerHTML = comments.map(function(c){
+        var dv = c.created_at; dv = dv && dv.toDate ? dv.toDate() : new Date(dv||Date.now());
+        return '<div class="comment-card">'
+          +'<div class="comment-header"><div class="comment-meta"><div class="comment-ava">'+initialsOf(c.name)+'</div><div><div class="comment-name">'+escapeHtml(c.name)+'</div><div class="comment-date">'+dv.toLocaleDateString('en-IN')+'</div></div></div><span class="badge '+(statusBadge[c.status]||'badge-gray')+'">'+c.status+'</span></div>'
+          +'<div class="comment-article">On: '+escapeHtml(artMap[c.article_id]||'Unknown')+'</div>'
+          +'<div class="comment-body">'+escapeHtml(c.body)+'</div>'
+          +'<div class="comment-actions">'
+          +(c.status!=='approved'?'<button type="button" class="btn btn-green btn-sm" data-approve-comment="'+c.id+'">Approve</button>':'')
+          +(c.status!=='rejected'?'<button type="button" class="btn btn-red btn-sm" data-reject-comment="'+c.id+'">Reject</button>':'')
+          +'<button type="button" class="btn btn-ghost btn-sm" data-delete-comment="'+c.id+'">Delete</button>'
+          +'</div></div>';
+      }).join('');
+
+      cont.querySelectorAll('[data-approve-comment]').forEach(function(b){ b.addEventListener('click', function(){ updateCommentStatus(b.getAttribute('data-approve-comment'), 'approved'); }); });
+      cont.querySelectorAll('[data-reject-comment]').forEach(function(b){ b.addEventListener('click', function(){ updateCommentStatus(b.getAttribute('data-reject-comment'), 'rejected'); }); });
+      cont.querySelectorAll('[data-delete-comment]').forEach(function(b){ b.addEventListener('click', function(){ deleteComment(b.getAttribute('data-delete-comment')); }); });
+    }catch(e){
+      cont.innerHTML = '<div style="text-align:center;padding:40px;color:var(--red);">Failed: '+e.message+'</div>';
+    }
+  }
+
+  async function updateCommentStatus(id, status){
+    try{
+      await FB.updateDoc(FB.doc(FB.db,'comments',id), {status:status});
+      toast('Comment ' + status, 'success');
+      loadComments();
+    }catch(e){ toast('Failed: ' + e.message, 'error'); }
+  }
+  async function deleteComment(id){
+    if(!confirm('Delete this comment?')) return;
+    try{
+      await FB.deleteDoc(FB.doc(FB.db,'comments',id));
+      toast('Comment deleted', 'success');
+      loadComments();
+    }catch(e){ toast('Failed: ' + e.message, 'error'); }
+  }
+
+  // ══════════════════════════════════
+  // CATEGORIES
+  // ══════════════════════════════════
+  async function loadCategories(){
+    var tbody = $('categoriesTbody');
+    tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text3);">Loading...</td></tr>';
+    try{
+      var snap = await FB.getDocs(FB.query(FB.collection(FB.db,'categories'), FB.orderBy('name')));
+      if(snap.empty){
+        tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--text3);">No categories yet.</td></tr>';
+        return;
+      }
+      var cats = snap.docs.map(function(d){ return Object.assign({id:d.id}, d.data()); });
+      var artSnap = await FB.getDocs(FB.collection(FB.db,'articles'));
+      var arts = artSnap.docs.map(function(d){ return d.data(); });
+      tbody.innerHTML = cats.map(function(c){
+        var count = arts.filter(function(a){ return a.category_id === c.id; }).length;
+        return '<tr><td class="td-title">'+escapeHtml(c.name)+'</td><td>'+(c.emoji||'')+'</td><td style="font-size:.72rem;color:var(--text3);">'+c.slug+'</td><td>'+count+'</td>'
+          +'<td><button type="button" class="btn btn-red btn-sm" data-delete-cat="'+c.id+'">Delete</button></td></tr>';
+      }).join('');
+      tbody.querySelectorAll('[data-delete-cat]').forEach(function(b){
+        b.addEventListener('click', function(){ deleteCategory(b.getAttribute('data-delete-cat')); });
+      });
+    }catch(e){
+      tbody.innerHTML = '<tr><td colspan="5" style="text-align:center;padding:32px;color:var(--red);">Failed: '+e.message+'</td></tr>';
+    }
+  }
+
+  async function saveCategory(){
+    var name = $('catName').value.trim();
+    if(!name){ toast('Name is required', 'error'); return; }
+    try{
+      await FB.addDoc(FB.collection(FB.db,'categories'), { name:name, emoji:$('catEmoji').value.trim(), slug:makeSlug(name) });
+      toast('Category added!', 'success');
+      closeModal('modalCategory');
+      $('catName').value=''; $('catEmoji').value='';
+      loadCategories();
+    }catch(e){ toast('Failed: ' + e.message, 'error'); }
+  }
+  async function deleteCategory(id){
+    if(!confirm('Delete this category?')) return;
+    try{
+      await FB.deleteDoc(FB.doc(FB.db,'categories',id));
+      toast('Deleted', 'success');
+      loadCategories();
+    }catch(e){ toast('Failed: ' + e.message, 'error'); }
+  }
+
+  function bindCategoryEvents(){
+    $('btnAddCategory').addEventListener('click', function(){ openModal('modalCategory'); });
+    $('btnSaveCategory').addEventListener('click', saveCategory);
+  }
+
+  // ══════════════════════════════════
+  // NEWSLETTER
+  // ══════════════════════════════════
+  async function loadNewsletter(){
+    try{
+      var snap = await FB.getDocs(FB.query(FB.collection(FB.db,'subscribers'), FB.orderBy('subscribed_at','desc')));
+      $('statSubscribersNl').textContent = snap.size;
+      var active = snap.docs.filter(function(d){ return d.data().is_active !== false; }).length;
+      $('statSubscribersActive').textContent = active;
+      var list = $('subscribersList');
+      if(snap.empty){
+        list.innerHTML = '<div style="text-align:center;padding:20px;color:var(--text3);">No subscribers yet.</div>';
+        return;
+      }
+      list.innerHTML = snap.docs.map(function(d){
+        var s = d.data();
+        var dv = s.subscribed_at; dv = dv && dv.toDate ? dv.toDate() : new Date(dv||Date.now());
+        return '<div style="display:flex;justify-content:space-between;padding:10px 0;border-bottom:1px solid var(--border);font-size:.78rem;"><span>'+escapeHtml(s.email)+'</span><span style="color:var(--text3);">'+dv.toLocaleDateString('en-IN')+'</span></div>';
+      }).join('');
+    }catch(e){ console.error(e); }
+  }
+
+  async function exportSubscribers(){
+    try{
+      var snap = await FB.getDocs(FB.collection(FB.db,'subscribers'));
+      if(snap.empty){ toast('No subscribers to export', 'warn'); return; }
+      var csv = 'Email,Subscribed At\n' + snap.docs.map(function(d){
+        var s = d.data();
+        var dv = s.subscribed_at; dv = dv && dv.toDate ? dv.toDate() : new Date(dv||Date.now());
+        return s.email + ',' + dv.toISOString();
+      }).join('\n');
+      var blob = new Blob([csv], {type:'text/csv'});
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a'); a.href = url; a.download = 'subscribers.csv'; a.click();
+      toast('CSV downloaded!', 'success');
+    }catch(e){ toast('Export failed: ' + e.message, 'error'); }
+  }
+
+  // ══════════════════════════════════
+  // TEAM MEMBERS
+  // ══════════════════════════════════
+  async function loadTeam(){
+    var list = $('teamList');
+    if(userRole !== 'owner'){
+      list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);">Only Owners can manage team members.</div>';
+      return;
+    }
+    list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);">Loading...</div>';
+    try{
+      var snap = await FB.getDocs(FB.query(FB.collection(FB.db,'team_members'), FB.orderBy('created_at','desc')));
+      $('teamCount').textContent = '(' + snap.size + ')';
+      if(snap.empty){
+        list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);">No team members yet.</div>';
+        return;
+      }
+      var roleLabel = {owner:'👑 Owner', editor:'✍️ Editor', junior_editor:'📝 Junior Editor'};
+      var rows = snap.docs.map(function(d){
+        var t = d.data();
+        var isPermanent = t.email === SEED_OWNER;
+        return '<tr><td class="td-title">'+escapeHtml(t.name||'—')+'</td><td style="font-size:.78rem;">'+escapeHtml(t.email)+'</td><td><span class="badge badge-gray">'+(roleLabel[t.role]||t.role)+'</span></td>'
+          +'<td>'+(isPermanent ? '<span style="font-size:.68rem;color:var(--text3);">Permanent</span>' : '<button type="button" class="btn btn-red btn-sm" data-delete-team="'+d.id+'">Remove</button>')+'</td></tr>';
+      }).join('');
+      list.innerHTML = '<div class="card" style="padding:0;"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
+      list.querySelectorAll('[data-delete-team]').forEach(function(b){
+        b.addEventListener('click', function(){ deleteTeamMember(b.getAttribute('data-delete-team')); });
+      });
+    }catch(e){
+      list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--red);">Failed: '+e.message+'</div>';
+    }
+  }
+
+  function openAddTeam(){
+    $('teamId').value = '';
+    $('teamName').value = '';
+    $('teamEmail').value = '';
+    $('teamEmail').disabled = false;
+    $('teamPass').value = '';
+    $('teamRole').value = 'junior_editor';
+    $('teamModalTitle').textContent = 'Add Team Member';
+    $('teamPassGroup').style.display = '';
+    openModal('modalTeam');
+  }
+
+  async function saveTeam(){
+    var name = $('teamName').value.trim();
+    var email = $('teamEmail').value.trim().toLowerCase();
+    var pass = $('teamPass').value;
+    var role = $('teamRole').value;
+    if(!name || !email){ toast('Name and email required', 'error'); return; }
+    if(!pass || pass.length < 6){ toast('Password must be at least 6 characters', 'error'); return; }
+
+    try{
+      var existing = await getTeamRole(email);
+      if(existing){ toast('This email already has access', 'error'); return; }
+
+      var result = await FB.createUserSeparately(email, pass);
+      if(result.error){
+        var msg = result.error.message || 'Failed to create account';
+        if(result.error.code === 'auth/email-already-in-use') msg = 'An account with this email already exists.';
+        toast('Failed: ' + msg, 'error');
+        return;
+      }
+      await FB.setDoc(FB.doc(FB.db,'team_members', result.uid), {
+        name: name, email: email, role: role, created_at: FB.serverTimestamp()
+      });
+      toast('Team member added! Login: ' + email, 'success');
+      closeModal('modalTeam');
+      loadTeam();
+    }catch(e){
+      toast('Failed: ' + e.message, 'error');
+    }
+  }
+
+  async function deleteTeamMember(id){
+    if(!confirm('Remove this team member?')) return;
+    try{
+      await FB.deleteDoc(FB.doc(FB.db,'team_members',id));
+      toast('Removed', 'success');
+      loadTeam();
+    }catch(e){ toast('Failed: ' + e.message, 'error'); }
+  }
+
+  function bindTeamEvents(){
+    $('btnAddTeam').addEventListener('click', openAddTeam);
+    $('btnSaveTeam').addEventListener('click', saveTeam);
+    $('btnExportSubs').addEventListener('click', exportSubscribers);
+  }
+
+  // ══════════════════════════════════
+  // IMAGE UPLOAD (Cloudinary)
+  // ══════════════════════════════════
+  async function uploadImage(file, targetInputId, previewImgId, previewWrapId, placeholderId, uploadingId){
+    if(!file) return;
+    if(!file.type.startsWith('image/')){ toast('Please select an image file', 'error'); return; }
+    if(file.size > 5*1024*1024){ toast('Image must be under 5MB', 'error'); return; }
+
+    $(placeholderId).style.display = 'none';
+    $(uploadingId).style.display = 'block';
+
+    try{
+      var fd = new FormData();
+      fd.append('file', file);
+      fd.append('upload_preset', UPLOAD_PRESET);
+      fd.append('folder', 'indian-populus');
+      var res = await fetch('https://api.cloudinary.com/v1_1/' + CLOUD_NAME + '/image/upload', { method:'POST', body:fd });
+      var data = await res.json();
+      if(data.secure_url){
+        $(targetInputId).value = data.secure_url;
+        $(previewImgId).src = data.secure_url;
+        $(previewWrapId).style.display = 'block';
+        $(uploadingId).style.display = 'none';
+        toast('Image uploaded! 📸', 'success');
+        if(targetInputId === 'artCover') $('coverUrlInput').value = data.secure_url;
+      } else {
+        throw new Error(data.error ? data.error.message : 'Upload failed');
+      }
+    }catch(e){
+      toast('Upload failed: ' + e.message, 'error');
+      $(placeholderId).style.display = 'block';
+      $(uploadingId).style.display = 'none';
+    }
+  }
+
+  function bindUploadEvents(){
+    $('coverDrop').addEventListener('click', function(){ $('coverFile').click(); });
+    $('coverFile').addEventListener('change', function(){
+      uploadImage(this.files[0], 'artCover', 'coverPreview', 'coverPreviewWrap', 'coverPlaceholder', 'coverUploading');
+    });
+    $('authorPhotoDrop').addEventListener('click', function(){ $('authorPhotoFile').click(); });
+    $('authorPhotoFile').addEventListener('change', function(){
+      uploadImage(this.files[0], 'authorPhoto', 'authorPhotoPreview', 'authorPhotoPreviewWrap', 'authorPhotoPlaceholder', 'authorPhotoPlaceholder');
+    });
+  }
+
+})();
+</script>
+</body>
+</html>
+
