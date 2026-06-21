@@ -93,7 +93,7 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
 <header class="nav" id="nav">
   <div class="wrap nav__bar">
     <a class="logo" href="index.html"><svg class="logo__leaf" viewBox="0 0 32 32" fill="none"><path d="M27 5C12 5 5 13 5 23c0 1.6.3 3 .8 4.4C9 19 15 13 26 11c-7 4-12 9-15 18 9 1 18-4 18-16 0-3.4-1-6-2-8z" fill="currentColor"/></svg><span class="logo__type">Indian <em>Populus</em></span></a>
-    <nav><div class="nav__links" id="navLinks"><a href="category.html?cat=politics">Politics & Society</a><a href="category.html?cat=culture">Culture & Arts</a><a href="category.html?cat=health">Health & Wellness</a><a href="category.html?cat=travel">Travel</a><a href="category.html?cat=food">Food & Lifestyle</a><a href="category.html?cat=education">Education</a></div></nav>
+    <nav><div class="nav__links" id="navLinks"><a href="/politics">Politics & Society</a><a href="/culture">Culture & Arts</a><a href="/health">Health & Wellness</a><a href="/travel">Travel</a><a href="/food">Food & Lifestyle</a><a href="/education">Education</a></div></nav>
     <a class="btn-sub" href="index.html#newsletter">Subscribe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
   </div>
 </header>
@@ -110,12 +110,12 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
 
 <div class="cat-nav">
   <div class="cat-nav-inner">
-    <a href="category.html?cat=politics" id="tab-politics">🏛️ Politics</a>
-    <a href="category.html?cat=culture" id="tab-culture">🎭 Culture</a>
-    <a href="category.html?cat=health" id="tab-health">🌿 Health</a>
-    <a href="category.html?cat=travel" id="tab-travel">✈️ Travel</a>
-    <a href="category.html?cat=food" id="tab-food">🍽️ Food</a>
-    <a href="category.html?cat=education" id="tab-education">📚 Education</a>
+    <a href="/politics" id="tab-politics">🏛️ Politics</a>
+    <a href="/culture" id="tab-culture">🎭 Culture</a>
+    <a href="/health" id="tab-health">🌿 Health</a>
+    <a href="/travel" id="tab-travel">✈️ Travel</a>
+    <a href="/food" id="tab-food">🍽️ Food</a>
+    <a href="/education" id="tab-education">📚 Education</a>
   </div>
 </div>
 
@@ -129,7 +129,7 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
   </div>
 </main>
 
-<footer><div class="foot-inner"><div class="foot-top"><div><div class="foot-brand-name">Indian <em>Populus</em></div><div class="foot-tag">Where India thinks out loud.</div></div><div class="foot-col"><h4>Sections</h4><ul><li><a href="category.html?cat=politics">Politics & Society</a></li><li><a href="category.html?cat=culture">Culture & Arts</a></li><li><a href="category.html?cat=health">Health & Wellness</a></li><li><a href="category.html?cat=travel">Travel</a></li><li><a href="category.html?cat=food">Food & Lifestyle</a></li><li><a href="category.html?cat=education">Education</a></li></ul></div><div class="foot-col"><h4>Masthead</h4><ul><li><a href="about.html">About us</a></li><li><a href="contact.html">Contact</a></li></ul></div><div class="foot-col"><h4>Follow</h4><ul><li><a href="#">Twitter / X</a></li><li><a href="#">Instagram</a></li></ul></div></div><div class="foot-bot"><span>© 2026 Indian Populus Media Pvt. Ltd.</span><span>Made with ♥ in India 🇮🇳</span></div></div></footer>
+<footer><div class="foot-inner"><div class="foot-top"><div><div class="foot-brand-name">Indian <em>Populus</em></div><div class="foot-tag">Where India thinks out loud.</div></div><div class="foot-col"><h4>Sections</h4><ul><li><a href="/politics">Politics & Society</a></li><li><a href="/culture">Culture & Arts</a></li><li><a href="/health">Health & Wellness</a></li><li><a href="/travel">Travel</a></li><li><a href="/food">Food & Lifestyle</a></li><li><a href="/education">Education</a></li></ul></div><div class="foot-col"><h4>Masthead</h4><ul><li><a href="about.html">About us</a></li><li><a href="contact.html">Contact</a></li></ul></div><div class="foot-col"><h4>Follow</h4><ul><li><a href="#">Twitter / X</a></li><li><a href="#">Instagram</a></li></ul></div></div><div class="foot-bot"><span>© 2026 Indian Populus Media Pvt. Ltd.</span><span>Made with ♥ in India 🇮🇳</span></div></div></footer>
 <script>
 window.addEventListener('scroll',function(){document.getElementById('nav').classList.toggle('scrolled',window.scrollY>12);},{passive:true});
 // Read category from URL and update page
@@ -157,6 +157,79 @@ if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es
 <script>
 window.toggleMobileNav=function(){var mn=document.getElementById("mobileNav");if(mn)mn.classList.toggle("open");};
 window.addEventListener("scroll",function(){var btn=document.getElementById("homeBtn");if(btn)btn.style.opacity=window.scrollY>200?"1":"0";},{passive:true});
+</script>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore, collection, query, where, orderBy, getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyBf4d83iuU7cSsh2TfYmsD6hTh6hWAL8pY",
+  authDomain: "indian-populus.firebaseapp.com",
+  projectId: "indian-populus",
+  storageBucket: "indian-populus.firebasestorage.app",
+  messagingSenderId: "784688896367",
+  appId: "1:784688896367:web:2dd371541554db97a6309a"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+window.__fb = { db, collection, query, where, orderBy, getDocs };
+window.dispatchEvent(new Event('firebase-ready'));
+</script>
+<script>
+window.addEventListener('firebase-ready',async function(){
+  var fb=window.__fb;
+  try{
+    var catSlug=new URLSearchParams(window.location.search).get('cat')||window.location.pathname.replace('/','');
+    if(!catSlug) return;
+
+    var catQ=fb.query(fb.collection(fb.db,'categories'),fb.where('slug','==',catSlug));
+    var catSnap=await fb.getDocs(catQ);
+    var cat=null,catId=null;
+    if(!catSnap.empty){
+      cat=catSnap.docs[0].data();
+      catId=catSnap.docs[0].id;
+      var emoji=document.getElementById('catEmoji');
+      var title=document.getElementById('catTitle');
+      var desc=document.getElementById('catDesc');
+      if(emoji) emoji.textContent=cat.emoji||'📰';
+      if(title) title.innerHTML=cat.name;
+      if(desc) desc.textContent=cat.description||'';
+      var tab=document.getElementById('tab-'+catSlug);
+      if(tab) tab.classList.add('active');
+    }
+
+    var grid=document.querySelector('.cat-grid');
+    if(!grid) return;
+
+    if(!catId){grid.innerHTML='<div style="padding:40px;color:#888;font-size:.85rem;text-align:center;grid-column:1/-1;">Category not found.</div>';return;}
+
+    var artQ=fb.query(fb.collection(fb.db,'articles'),fb.where('status','==','published'),fb.where('category_id','==',catId),fb.orderBy('published_at','desc'));
+    var artSnap=await fb.getDocs(artQ);
+    var countEl=document.getElementById('catCount');
+    if(countEl) countEl.textContent=artSnap.size+' article'+(artSnap.size===1?'':'s')+' in this section';
+    if(artSnap.empty){grid.innerHTML='<div style="padding:40px;color:#888;font-size:.85rem;text-align:center;grid-column:1/-1;">No articles in this category yet.</div>';return;}
+
+    var data=artSnap.docs.map(function(d){return Object.assign({id:d.id},d.data());});
+    var authSnap=await fb.getDocs(fb.collection(fb.db,'authors'));
+    var authMap={};authSnap.docs.forEach(function(d){authMap[d.id]=d.data().name;});
+
+    grid.innerHTML=data.map(function(a){
+      return '<a href="/article?slug='+a.slug+'" class="cat-card reveal">'
+        +'<div class="cat-card__img">'+(a.cover_image_url?'<img src="'+a.cover_image_url+'" alt="'+a.title+'" style="width:100%;height:100%;object-fit:cover;"/>':'<div class="cat-card__img-ph">'+(cat?cat.name:'')+'</div>')+'</div>'
+        +'<div class="cat-card__body"><div class="cat-card__cat">'+(cat?cat.name:'')+'</div>'
+        +'<div class="cat-card__title">'+a.title+'</div>'
+        +'<div class="cat-card__meta"><span>'+(authMap[a.author_id]||'')+'</span><span class="dot"></span><span>'+(a.read_time||5)+' min</span></div>'
+        +'</div></a>';
+    }).join('');
+    var revs=[].slice.call(document.querySelectorAll('.reveal'));
+    if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08});revs.forEach(function(el){io.observe(el);});}else{revs.forEach(function(el){el.classList.add('in');});}
+  }catch(e){
+    console.error('Category load error:',e);
+    var grid=document.querySelector('.cat-grid');
+    if(grid) grid.innerHTML='<div style="padding:40px;color:#e05252;text-align:center;grid-column:1/-1;">Failed to load category.</div>';
+  }
+});
 </script>
 </body>
 </html>
