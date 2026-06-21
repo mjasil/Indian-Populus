@@ -2,15 +2,19 @@
   "cleanUrls": true,
   "trailingSlash": false,
   "rewrites": [
+    { "source": "/admin", "destination": "/admin.html" },
+    { "source": "/article", "destination": "/article.html" },
+    { "source": "/articles", "destination": "/articles.html" },
+    { "source": "/author", "destination": "/author.html" },
+    { "source": "/authors", "destination": "/authors.html" },
+    { "source": "/about", "destination": "/about.html" },
+    { "source": "/category", "destination": "/category.html" },
+    { "source": "/contact", "destination": "/contact.html" },
     { "source": "/politics", "destination": "/category.html?cat=politics" },
     { "source": "/culture", "destination": "/category.html?cat=culture" },
     { "source": "/health", "destination": "/category.html?cat=health" },
     { "source": "/travel", "destination": "/category.html?cat=travel" },
     { "source": "/food", "destination": "/category.html?cat=food" },
-    { "source": "/education", "destination": "/category.html?cat=education" },
-    { "source": "/admin", "destination": "/admin.html" },
-    { "source": "/about", "destination": "/about.html" },
-    { "source": "/contact", "destination": "/contact.html" },
-    { "source": "/articles", "destination": "/articles.html" }
+    { "source": "/education", "destination": "/category.html?cat=education" }
   ]
 }
