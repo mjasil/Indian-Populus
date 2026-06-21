@@ -161,7 +161,7 @@ window.addEventListener("scroll",function(){var btn=document.getElementById("hom
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
-  getFirestore, collection, query, where, orderBy, getDocs
+  getFirestore, collection, query, where, orderBy, getDocs, addDoc
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 const firebaseConfig = {
   apiKey: "AIzaSyBf4d83iuU7cSsh2TfYmsD6hTh6hWAL8pY",
@@ -173,10 +173,19 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-window.__fb = { db, collection, query, where, orderBy, getDocs };
+window.__fb = { db, collection, query, where, orderBy, getDocs, addDoc };
 window.dispatchEvent(new Event('firebase-ready'));
 </script>
 <script>
+var DEFAULT_CATEGORIES = [
+  { name:'Politics & Society', slug:'politics', emoji:'🏛️', description:'Power, policy, and the people who live with both.' },
+  { name:'Culture & Arts', slug:'culture', emoji:'🎭', description:'Cinema, music, theatre, literature — the arts as a mirror of Indian life.' },
+  { name:'Health & Wellness', slug:'health', emoji:'🌿', description:'The science and story of how India is relearning what it means to be well.' },
+  { name:'Travel', slug:'travel', emoji:'✈️', description:'Roads less taken, places rarely written about, and the journeys that change you.' },
+  { name:'Food & Lifestyle', slug:'food', emoji:'🍽️', description:'What India eats, how it cooks, and what that says about who we are.' },
+  { name:'Education', slug:'education', emoji:'📚', description:'Schools, syllabi, students, and the systems that shape a generation.' }
+];
+
 window.addEventListener('firebase-ready',async function(){
   var fb=window.__fb;
   try{
@@ -186,6 +195,20 @@ window.addEventListener('firebase-ready',async function(){
     var catQ=fb.query(fb.collection(fb.db,'categories'),fb.where('slug','==',catSlug));
     var catSnap=await fb.getDocs(catQ);
     var cat=null,catId=null;
+
+    // self-heal: if not found AND it's one of our defaults, check if categories collection is empty entirely and seed it
+    if(catSnap.empty){
+      var allCatsSnap=await fb.getDocs(fb.collection(fb.db,'categories'));
+      if(allCatsSnap.empty){
+        // seed all defaults
+        for(var i=0;i<DEFAULT_CATEGORIES.length;i++){
+          await fb.addDoc(fb.collection(fb.db,'categories'), DEFAULT_CATEGORIES[i]);
+        }
+        // retry the lookup
+        catSnap=await fb.getDocs(fb.query(fb.collection(fb.db,'categories'),fb.where('slug','==',catSlug)));
+      }
+    }
+
     if(!catSnap.empty){
       cat=catSnap.docs[0].data();
       catId=catSnap.docs[0].id;
@@ -197,12 +220,16 @@ window.addEventListener('firebase-ready',async function(){
       if(desc) desc.textContent=cat.description||'';
       var tab=document.getElementById('tab-'+catSlug);
       if(tab) tab.classList.add('active');
+      document.title=cat.name+' — Indian Populus';
     }
 
     var grid=document.querySelector('.cat-grid');
     if(!grid) return;
 
-    if(!catId){grid.innerHTML='<div style="padding:40px;color:#888;font-size:.85rem;text-align:center;grid-column:1/-1;">Category not found.</div>';return;}
+    if(!catId){
+      grid.innerHTML='<div style="padding:60px 20px;text-align:center;grid-column:1/-1;"><div style="font-size:2rem;margin-bottom:12px;">🤔</div><div style="color:#555;font-size:1rem;margin-bottom:8px;">This category doesn\'t exist.</div><a href="/" style="color:#1a5c2a;font-size:.85rem;font-weight:600;">← Back to homepage</a></div>';
+      return;
+    }
 
     var artQ=fb.query(fb.collection(fb.db,'articles'),fb.where('status','==','published'),fb.where('category_id','==',catId),fb.orderBy('published_at','desc'));
     var artSnap=await fb.getDocs(artQ);
@@ -227,7 +254,7 @@ window.addEventListener('firebase-ready',async function(){
   }catch(e){
     console.error('Category load error:',e);
     var grid=document.querySelector('.cat-grid');
-    if(grid) grid.innerHTML='<div style="padding:40px;color:#e05252;text-align:center;grid-column:1/-1;">Failed to load category.</div>';
+    if(grid) grid.innerHTML='<div style="padding:40px;color:#e05252;text-align:center;grid-column:1/-1;">Failed to load category: '+e.message+'</div>';
   }
 });
 </script>
