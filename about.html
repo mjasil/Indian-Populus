@@ -102,7 +102,7 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
 <header class="nav" id="nav">
   <div class="wrap nav__bar">
     <a class="logo" href="index.html"><svg class="logo__leaf" viewBox="0 0 32 32" fill="none"><path d="M27 5C12 5 5 13 5 23c0 1.6.3 3 .8 4.4C9 19 15 13 26 11c-7 4-12 9-15 18 9 1 18-4 18-16 0-3.4-1-6-2-8z" fill="currentColor"/></svg><span class="logo__type">Indian <em>Populus</em></span></a>
-    <nav><div class="nav__links"><a href="category.html?cat=politics">Politics & Society</a><a href="category.html?cat=culture">Culture & Arts</a><a href="category.html?cat=health">Health & Wellness</a><a href="category.html?cat=travel">Travel</a><a href="category.html?cat=food">Food & Lifestyle</a><a href="category.html?cat=education">Education</a></div></nav>
+    <nav><div class="nav__links"><a href="/politics">Politics & Society</a><a href="/culture">Culture & Arts</a><a href="/health">Health & Wellness</a><a href="/travel">Travel</a><a href="/food">Food & Lifestyle</a><a href="/education">Education</a></div></nav>
     <a class="btn-sub" href="index.html#newsletter">Subscribe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
   </div>
 </header>
@@ -116,10 +116,10 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
     </div>
 
     <div class="about-stats reveal">
-      <div class="about-stat"><div class="about-stat-n">8</div><div class="about-stat-l">Articles Published</div></div>
-      <div class="about-stat"><div class="about-stat-n">2</div><div class="about-stat-l">Contributing Authors</div></div>
-      <div class="about-stat"><div class="about-stat-n">6</div><div class="about-stat-l">Editorial Categories</div></div>
-      <div class="about-stat"><div class="about-stat-n">84</div><div class="about-stat-l">Total Readers</div></div>
+      <div class="about-stat"><div class="about-stat-n" id="statArticles">—</div><div class="about-stat-l">Articles Published</div></div>
+      <div class="about-stat"><div class="about-stat-n" id="statAuthors">—</div><div class="about-stat-l">Contributing Authors</div></div>
+      <div class="about-stat"><div class="about-stat-n" id="statCategories">—</div><div class="about-stat-l">Editorial Categories</div></div>
+      <div class="about-stat"><div class="about-stat-n" id="statReaders">—</div><div class="about-stat-l">Total Readers</div></div>
     </div>
 
     <div class="about-mission reveal">
@@ -139,42 +139,94 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
 
     <div class="about-team reveal">
       <h2>The <em>Team</em></h2>
-      <div class="team-grid">
-        <div class="team-card">
-          <div class="team-ava">MS</div>
-          <div class="team-name">Muhammed Sinan</div>
-          <div class="team-role">Editor</div>
-          <div class="team-bio">MBA Candidate, Delhi School of Economics. Covers politics, society, and the economics of everyday India.</div>
-          <a href="author.html" class="team-link">View articles →</a>
-        </div>
-        <div class="team-card">
-          <div class="team-ava" style="background:var(--gold);">SP</div>
-          <div class="team-name">Shajahav PV</div>
-          <div class="team-role">President, MSF DU</div>
-          <div class="team-bio">MA Philosophy, Delhi University. Writes about culture, education, and the ideas that shape modern India.</div>
-          <a href="author.html" class="team-link">View articles →</a>
-        </div>
-        <div class="team-card" style="display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:40px;">
-          <div style="font-size:2rem;margin-bottom:12px;">✍️</div>
-          <div class="team-name" style="font-size:.95rem;">Write for Us</div>
-          <div class="team-bio" style="margin-top:8px;">We are always looking for sharp, thoughtful writers. If you have a story that needs telling, we want to hear it.</div>
-          <a href="contact.html" class="team-link" style="margin-top:12px;">Get in touch →</a>
-        </div>
+      <div class="team-grid" id="teamGrid">
+        <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--ink-3);">Loading team...</div>
       </div>
     </div>
   </div>
 </main>
 
-<footer><div class="foot-inner"><div class="foot-top"><div><div class="foot-brand-name">Indian <em>Populus</em></div><div class="foot-tag">Where India thinks out loud.</div></div><div class="foot-col"><h4>Sections</h4><ul><li><a href="#">Politics & Society</a></li><li><a href="#">Culture & Arts</a></li><li><a href="#">Health & Wellness</a></li><li><a href="category.html?cat=travel">Travel</a></li><li><a href="#">Food & Lifestyle</a></li><li><a href="category.html?cat=education">Education</a></li></ul></div><div class="foot-col"><h4>Masthead</h4><ul><li><a href="about.html">About us</a></li><li><a href="author.html">Our writers</a></li><li><a href="contact.html">Contact</a></li></ul></div><div class="foot-col"><h4>Follow</h4><ul><li><a href="#">Twitter / X</a></li><li><a href="#">Instagram</a></li><li><a href="#">LinkedIn</a></li></ul></div></div><div class="foot-bot"><span>© 2026 Indian Populus Media Pvt. Ltd.</span><span>Made with ♥ in India 🇮🇳</span></div></div></footer>
+<footer><div class="foot-inner"><div class="foot-top"><div><div class="foot-brand-name">Indian <em>Populus</em></div><div class="foot-tag">Where India thinks out loud.</div></div><div class="foot-col"><h4>Sections</h4><ul><li><a href="/politics">Politics & Society</a></li><li><a href="/culture">Culture & Arts</a></li><li><a href="/health">Health & Wellness</a></li><li><a href="/travel">Travel</a></li><li><a href="/food">Food & Lifestyle</a></li><li><a href="/education">Education</a></li></ul></div><div class="foot-col"><h4>Masthead</h4><ul><li><a href="/about">About us</a></li><li><a href="/authors">Our writers</a></li><li><a href="/contact">Contact</a></li></ul></div><div class="foot-col"><h4>Follow</h4><ul><li><a href="#">Twitter / X</a></li><li><a href="#">Instagram</a></li><li><a href="#">LinkedIn</a></li></ul></div></div><div class="foot-bot"><span>© 2026 Indian Populus Media Pvt. Ltd.</span><span>Made with ♥ in India 🇮🇳</span></div></div></footer>
 <script>
 window.addEventListener('scroll',function(){document.getElementById('nav').classList.toggle('scrolled',window.scrollY>12);},{passive:true});
 var revs=[].slice.call(document.querySelectorAll('.reveal'));
 if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08});revs.forEach(function(el){if(el.getBoundingClientRect().top<window.innerHeight*.95)el.classList.add('in');else io.observe(el);});}else{revs.forEach(function(el){el.classList.add('in');});}
 </script>
-<a href="index.html" class="home-btn" id="homeBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
+<a href="/" class="home-btn" id="homeBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
 <script>
 window.toggleMobileNav=function(){var mn=document.getElementById("mobileNav");if(mn)mn.classList.toggle("open");};
 window.addEventListener("scroll",function(){var btn=document.getElementById("homeBtn");if(btn)btn.style.opacity=window.scrollY>200?"1":"0";},{passive:true});
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore, collection, query, where, getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyBf4d83iuU7cSsh2TfYmsD6hTh6hWAL8pY",
+  authDomain: "indian-populus.firebaseapp.com",
+  projectId: "indian-populus",
+  storageBucket: "indian-populus.firebasestorage.app",
+  messagingSenderId: "784688896367",
+  appId: "1:784688896367:web:2dd371541554db97a6309a"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+window.__fb = { db, collection, query, where, getDocs };
+window.dispatchEvent(new Event('firebase-ready'));
+</script>
+
+<script>
+function getInitials(name){
+  return (name||'?').split(' ').filter(Boolean).map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
+}
+
+window.addEventListener('firebase-ready', async function(){
+  var fb = window.__fb;
+  try{
+    var artSnap = await fb.getDocs(fb.query(fb.collection(fb.db,'articles'), fb.where('status','==','published')));
+    var authSnap = await fb.getDocs(fb.collection(fb.db,'authors'));
+    var catSnap = await fb.getDocs(fb.collection(fb.db,'categories'));
+    var arts = artSnap.docs.map(function(d){ return d.data(); });
+    var totalViews = arts.reduce(function(s,a){ return s+(a.views||0); }, 0);
+
+    var elA=document.getElementById('statArticles'); if(elA) elA.textContent=artSnap.size;
+    var elB=document.getElementById('statAuthors'); if(elB) elB.textContent=authSnap.size;
+    var elC=document.getElementById('statCategories'); if(elC) elC.textContent=catSnap.size;
+    var elD=document.getElementById('statReaders'); if(elD) elD.textContent=totalViews;
+
+    // Team section — only authors with show_on_about = true
+    var teamGrid = document.getElementById('teamGrid');
+    var teamAuthors = authSnap.docs.map(function(d){ return Object.assign({id:d.id}, d.data()); }).filter(function(a){ return a.show_on_about === true; });
+
+    var cardsHtml = teamAuthors.map(function(a){
+      var roleTitleParts = [];
+      if(a.role) roleTitleParts.push(a.role);
+      if(a.title) roleTitleParts.push(a.title);
+      var roleText = roleTitleParts.join(' · ') || 'Contributor';
+      var avaHtml = a.photo_url ? '<img src="'+a.photo_url+'" alt="'+a.name+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"/>' : getInitials(a.name);
+      return '<div class="team-card">'
+        +'<div class="team-ava">'+avaHtml+'</div>'
+        +'<div class="team-name">'+a.name+'</div>'
+        +'<div class="team-role">'+roleText+'</div>'
+        +'<div class="team-bio">'+(a.bio||'')+'</div>'
+        +'<a href="/author?slug='+a.slug+'" class="team-link">View articles →</a>'
+        +'</div>';
+    }).join('');
+
+    cardsHtml += '<div class="team-card" style="display:flex;align-items:center;justify-content:center;flex-direction:column;text-align:center;padding:40px;">'
+      +'<div style="font-size:2rem;margin-bottom:12px;">✍️</div>'
+      +'<div class="team-name" style="font-size:.95rem;">Write for Us</div>'
+      +'<div class="team-bio" style="margin-top:8px;">We are always looking for sharp, thoughtful writers. If you have a story that needs telling, we want to hear it.</div>'
+      +'<a href="/contact" class="team-link" style="margin-top:12px;">Get in touch →</a>'
+      +'</div>';
+
+    if(teamGrid) teamGrid.innerHTML = cardsHtml;
+  }catch(e){
+    console.error('About page load error:', e);
+  }
+});
 </script>
 </body>
 </html>
