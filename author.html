@@ -100,17 +100,17 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
 
 <div class="author-hero">
   <div class="wrap">
-    <a href="articles.html" class="author-back">← All Authors</a>
+    <a href="/authors" class="author-back">← All Authors</a>
     <div class="author-hero__inner">
-      <div class="author-ava">AP</div>
+      <div class="author-ava" id="authorAva">—</div>
       <div>
-        <div class="author-role-badge">Editor-at-Large</div>
-        <h1 class="author-name">Ananya Pillai</h1>
-        <p class="author-bio">Ananya Pillai covers culture, craft, and the politics of everyday life in India. She is a graduate of the Delhi School of Journalism and has been writing for Indian Populus since its founding issue. Her work focuses on the intersection of tradition and modernity.</p>
+        <div class="author-role-badge" id="authorRoleBadge"></div>
+        <h1 class="author-name" id="authorName">Loading...</h1>
+        <p class="author-bio" id="authorBio"></p>
         <div class="author-stats">
-          <div><div class="author-stat-n">5</div><div class="author-stat-l">Articles</div></div>
-          <div><div class="author-stat-n">66</div><div class="author-stat-l">Total Views</div></div>
-          <div><div class="author-stat-n">7</div><div class="author-stat-l">Avg Min Read</div></div>
+          <div><div class="author-stat-n" id="statArticles">—</div><div class="author-stat-l">Articles</div></div>
+          <div><div class="author-stat-n" id="statViews">—</div><div class="author-stat-l">Total Views</div></div>
+          <div><div class="author-stat-n" id="statAvgRead">—</div><div class="author-stat-l">Avg Min Read</div></div>
         </div>
       </div>
     </div>
@@ -120,48 +120,9 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
 <main>
   <div class="wrap">
     <div class="auth-articles">
-      <h2>All Articles by <em>Ananya Pillai</em></h2>
-      <div class="auth-grid">
-        <a href="article.html" class="auth-card reveal">
-          <div class="auth-card__img"><div class="auth-card__img-ph">Handloom weaver, Varanasi</div></div>
-          <div class="auth-card__body">
-            <div class="auth-card__cat">Culture & Arts</div>
-            <div class="auth-card__title">Threads of Power: how the handloom became India's loudest statement</div>
-            <div class="auth-card__meta"><span>Jun 4, 2026</span><span class="dot"></span><span>14 min read</span></div>
-          </div>
-        </a>
-        <a href="article.html" class="auth-card reveal">
-          <div class="auth-card__img"><div class="auth-card__img-ph">Public square, Delhi</div></div>
-          <div class="auth-card__body">
-            <div class="auth-card__cat">Education</div>
-            <div class="auth-card__title">How Public Spaces Shape the Way We Think About Each Other</div>
-            <div class="auth-card__meta"><span>Mar 4, 2026</span><span class="dot"></span><span>6 min read</span></div>
-          </div>
-        </a>
-        <a href="article.html" class="auth-card reveal">
-          <div class="auth-card__img"><div class="auth-card__img-ph">Coastal village, Kerala</div></div>
-          <div class="auth-card__body">
-            <div class="auth-card__cat">Food & Lifestyle</div>
-            <div class="auth-card__title">The Coastal Villages That Tourism Forgot</div>
-            <div class="auth-card__meta"><span>Mar 4, 2026</span><span class="dot"></span><span>5 min read</span></div>
-          </div>
-        </a>
-        <a href="article.html" class="auth-card reveal">
-          <div class="auth-card__img"><div class="auth-card__img-ph">Theatre protest, Shaheen Bagh</div></div>
-          <div class="auth-card__body">
-            <div class="auth-card__cat">Culture & Arts</div>
-            <div class="auth-card__title">The Theatre of Protest: When Art Becomes Civil Disobedience</div>
-            <div class="auth-card__meta"><span>Mar 4, 2026</span><span class="dot"></span><span>8 min read</span></div>
-          </div>
-        </a>
-        <a href="article.html" class="auth-card reveal">
-          <div class="auth-card__img"><div class="auth-card__img-ph">Finland classroom</div></div>
-          <div class="auth-card__body">
-            <div class="auth-card__cat">Education</div>
-            <div class="auth-card__title">What Finnish Schools Teach About Failure</div>
-            <div class="auth-card__meta"><span>Mar 4, 2026</span><span class="dot"></span><span>7 min read</span></div>
-          </div>
-        </a>
+      <h2 id="authorArticlesHeading">All Articles</h2>
+      <div class="auth-grid" id="authorArticlesGrid">
+        <div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--ink-4);">Loading articles...</div>
       </div>
     </div>
   </div>
@@ -197,43 +158,74 @@ window.__fb = { db, collection, query, where, orderBy, getDocs };
 window.dispatchEvent(new Event('firebase-ready'));
 </script>
 <script>
+function getInitials(name){
+  return (name||'?').split(' ').filter(Boolean).map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
+}
+
 window.addEventListener('firebase-ready',async function(){
   var fb=window.__fb;
-  try{
-    var slug=new URLSearchParams(window.location.search).get('slug');
-    if(!slug) return;
+  var slug=new URLSearchParams(window.location.search).get('slug');
 
+  if(!slug){
+    document.getElementById('authorName').textContent='No author specified';
+    return;
+  }
+
+  try{
     var authQ=fb.query(fb.collection(fb.db,'authors'),fb.where('slug','==',slug));
     var authSnap=await fb.getDocs(authQ);
-    if(authSnap.empty) return;
+
+    if(authSnap.empty){
+      document.getElementById('authorName').textContent='Author not found';
+      document.getElementById('authorBio').innerHTML='This author profile doesn\'t exist. <a href="/authors" style="color:var(--gold-soft);">View all authors →</a>';
+      document.getElementById('authorArticlesGrid').innerHTML='';
+      document.getElementById('authorArticlesHeading').style.display='none';
+      return;
+    }
+
     var authorDoc=authSnap.docs[0];
     var author=authorDoc.data();
     var authorId=authorDoc.id;
 
-    document.querySelector('.author-name').textContent=author.name;
-    document.querySelector('.author-role-badge').textContent=author.role||'Author';
-    document.querySelector('.author-bio').textContent=author.bio||'';
-    document.querySelector('.author-ava').textContent=(author.name||'?').split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
     document.title=author.name+' — Indian Populus';
+    document.getElementById('authorName').textContent=author.name;
+
+    // Role + Title combined badge (e.g. "Editor · MSF President")
+    var roleTitleParts=[];
+    if(author.role) roleTitleParts.push(author.role);
+    if(author.title) roleTitleParts.push(author.title);
+    document.getElementById('authorRoleBadge').textContent=roleTitleParts.join(' · ') || 'Author';
+
+    document.getElementById('authorBio').textContent=author.bio||'';
+
+    var avaEl=document.getElementById('authorAva');
+    if(author.photo_url){
+      avaEl.innerHTML='<img src="'+author.photo_url+'" alt="'+author.name+'" style="width:100%;height:100%;border-radius:50%;object-fit:cover;"/>';
+    } else {
+      avaEl.textContent=getInitials(author.name);
+    }
+
+    document.getElementById('authorArticlesHeading').innerHTML='All Articles by <em>'+author.name+'</em>';
 
     var artQ=fb.query(fb.collection(fb.db,'articles'),fb.where('status','==','published'),fb.where('author_id','==',authorId),fb.orderBy('published_at','desc'));
     var artSnap=await fb.getDocs(artQ);
     var data=artSnap.docs.map(function(d){return Object.assign({id:d.id},d.data());});
     var totalViews=data.reduce(function(s,a){return s+(a.views||0);},0);
+    var avgRead=data.length?Math.round(data.reduce(function(s,a){return s+(a.read_time||5);},0)/data.length):0;
 
-    var stats=document.querySelectorAll('.author-stat-n');
-    if(stats[0]) stats[0].textContent=data.length;
-    if(stats[1]) stats[1].textContent=totalViews;
+    document.getElementById('statArticles').textContent=data.length;
+    document.getElementById('statViews').textContent=totalViews;
+    document.getElementById('statAvgRead').textContent=avgRead;
 
-    var grid=document.querySelector('.auth-grid');
-    if(!grid) return;
-    if(!data.length){grid.innerHTML='<div style="padding:40px;color:#888;font-size:.85rem;grid-column:1/-1;">No articles published yet.</div>';return;}
+    var grid=document.getElementById('authorArticlesGrid');
+    if(!data.length){
+      grid.innerHTML='<div style="grid-column:1/-1;text-align:center;padding:40px;color:var(--ink-4);font-size:.85rem;">No articles published yet.</div>';
+      return;
+    }
 
     var catSnap=await fb.getDocs(fb.collection(fb.db,'categories'));
     var catMap={};catSnap.docs.forEach(function(d){catMap[d.id]=d.data().name;});
 
-    var h2=document.querySelector('.auth-articles h2');
-    if(h2) h2.innerHTML='All Articles by <em>'+author.name+'</em>';
     grid.innerHTML=data.map(function(a){
       var pubDate=a.published_at;pubDate=pubDate&&pubDate.toDate?pubDate.toDate():new Date(pubDate||Date.now());
       return '<a href="/article?slug='+a.slug+'" class="auth-card reveal">'
@@ -243,13 +235,20 @@ window.addEventListener('firebase-ready',async function(){
         +'<div class="auth-card__meta"><span>'+pubDate.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})+'</span><span class="dot"></span><span>'+(a.read_time||5)+' min read</span></div>'
         +'</div></a>';
     }).join('');
+
     var revs=[].slice.call(document.querySelectorAll('.reveal'));
-    if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08});revs.forEach(function(el){io.observe(el);});}else{revs.forEach(function(el){el.classList.add('in');});}
+    if('IntersectionObserver' in window){
+      var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08});
+      revs.forEach(function(el){io.observe(el);});
+    } else {
+      revs.forEach(function(el){el.classList.add('in');});
+    }
   }catch(e){
     console.error('Author load error:',e);
+    document.getElementById('authorName').textContent='Failed to load author';
+    document.getElementById('authorBio').textContent=e.message;
   }
 });
 </script>
 </body>
 </html>
-</script>
