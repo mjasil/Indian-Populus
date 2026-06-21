@@ -1,0 +1,241 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Our Authors — Indian Populus</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,600;1,400&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+<style>
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0;}
+:root{--forest:#1a5c2a;--forest-d:#0f3a1a;--gold:#c9952a;--gold-soft:#d9b463;--ink:#111;--ink-2:#2c2c2c;--ink-3:#555;--ink-4:#888;--bg:#fafaf8;--bg-2:#f3f0e8;--bg-3:#ebe6d8;--white:#fff;--rule:#ddd8ce;--serif:'Playfair Display',Georgia,serif;--sans:'Inter',system-ui,sans-serif;--wrap:1240px;--px:32px;}
+html{scroll-behavior:smooth;}
+body{font-family:var(--sans);background:var(--bg);color:var(--ink);line-height:1.6;overflow-x:hidden;}
+a{color:inherit;text-decoration:none;}
+.wrap{max-width:var(--wrap);margin-inline:auto;padding-inline:var(--px);}
+.ticker{background:var(--forest);display:flex;align-items:stretch;overflow:hidden;height:36px;}
+.ticker__label{flex-shrink:0;background:var(--gold);color:var(--ink);font-size:.62rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:0 18px;display:flex;align-items:center;white-space:nowrap;}
+.ticker__track{display:flex;align-items:center;overflow:hidden;flex:1;}
+.ticker__inner{display:flex;animation:tick 36s linear infinite;white-space:nowrap;}
+.ticker__item{display:inline-flex;align-items:center;padding:0 36px;font-size:.7rem;color:rgba(255,255,255,.78);border-right:1px solid rgba(255,255,255,.12);}
+.ticker__item b{color:var(--gold-soft);font-weight:700;margin-right:6px;}
+@keyframes tick{from{transform:translateX(0)}to{transform:translateX(-50%)}}
+.nav{background:var(--bg);border-bottom:1px solid var(--rule);position:sticky;top:0;z-index:200;transition:box-shadow .3s;}
+.nav.scrolled{box-shadow:0 2px 24px rgba(0,0,0,.07);}
+.nav__bar{display:flex;align-items:center;justify-content:space-between;gap:24px;padding-block:14px;}
+.logo{display:flex;align-items:center;gap:10px;}
+.logo__leaf{width:28px;height:28px;color:var(--forest);}
+.logo__type{font-family:var(--serif);font-size:1.35rem;font-weight:400;}
+.logo__type em{color:var(--forest);font-style:italic;}
+.nav__links{display:flex;overflow-x:auto;scrollbar-width:none;}
+.nav__links::-webkit-scrollbar{display:none;}
+.nav__links a{font-size:.69rem;font-weight:500;letter-spacing:.7px;text-transform:uppercase;color:var(--ink-3);padding:6px 14px;white-space:nowrap;transition:color .2s;}
+.nav__links a:hover{color:var(--forest);}
+.btn-sub{display:inline-flex;align-items:center;gap:7px;background:var(--forest);color:var(--white);font-size:.72rem;font-weight:600;padding:8px 18px;transition:background .2s;}
+.btn-sub:hover{background:var(--forest-d);}
+.btn-sub svg{width:14px;height:14px;}
+
+/* HERO */
+.authors-hero{background:var(--ink);color:var(--white);padding:56px 0 48px;}
+.authors-hero__kicker{font-size:.62rem;font-weight:700;letter-spacing:1.8px;text-transform:uppercase;color:var(--gold-soft);margin-bottom:10px;}
+.authors-hero h1{font-family:var(--serif);font-size:2.6rem;font-weight:400;color:var(--white);}
+.authors-hero h1 em{font-style:italic;color:var(--gold-soft);}
+.authors-hero p{font-size:.85rem;color:rgba(255,255,255,.55);font-weight:300;margin-top:10px;max-width:480px;}
+
+/* GRID */
+.authors-section{padding:48px 0 72px;}
+.authors-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:1px;background:var(--rule);border:1px solid var(--rule);}
+.author-card-tile{background:var(--bg);padding:28px;transition:background .2s;display:flex;flex-direction:column;align-items:center;text-align:center;}
+.author-card-tile:hover{background:var(--white);}
+.tile-ava{width:80px;height:80px;border-radius:50%;background:var(--forest);display:flex;align-items:center;justify-content:center;font-family:var(--serif);font-size:1.6rem;font-weight:600;color:#fff;margin-bottom:16px;overflow:hidden;}
+.tile-ava img{width:100%;height:100%;object-fit:cover;}
+.tile-name{font-family:var(--serif);font-size:1.2rem;font-weight:600;color:var(--ink);margin-bottom:4px;}
+.tile-role{font-size:.68rem;font-weight:600;letter-spacing:.8px;text-transform:uppercase;color:var(--forest);margin-bottom:12px;}
+.tile-bio{font-size:.8rem;color:var(--ink-3);line-height:1.6;margin-bottom:16px;display:-webkit-box;-webkit-line-clamp:3;-webkit-box-orient:vertical;overflow:hidden;}
+.tile-stats{display:flex;gap:20px;padding-top:14px;border-top:1px solid var(--rule);width:100%;justify-content:center;}
+.tile-stat-n{font-family:var(--serif);font-size:1.1rem;color:var(--forest);}
+.tile-stat-l{font-size:.62rem;color:var(--ink-4);text-transform:uppercase;letter-spacing:.5px;}
+
+.empty-state{grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--ink-4);}
+
+footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
+.foot-inner{max-width:var(--wrap);margin:0 auto;}
+.foot-top{display:grid;grid-template-columns:2fr 1fr 1fr 1fr;gap:48px;padding-bottom:44px;border-bottom:1px solid rgba(255,255,255,.08);}
+.foot-brand-name{font-family:var(--serif);font-size:1.6rem;font-weight:400;}
+.foot-brand-name em{color:var(--gold-soft);font-style:italic;}
+.foot-tag{font-size:.72rem;color:rgba(255,255,255,.3);font-style:italic;font-family:var(--serif);margin-top:6px;margin-bottom:16px;}
+.foot-col h4{font-size:.6rem;font-weight:700;letter-spacing:1.5px;text-transform:uppercase;color:rgba(255,255,255,.28);margin-bottom:16px;}
+.foot-col li{margin-bottom:10px;}
+.foot-col a{font-size:.8rem;color:rgba(255,255,255,.5);transition:color .2s;}
+.foot-col a:hover{color:var(--gold-soft);}
+.foot-bot{display:flex;align-items:center;justify-content:space-between;padding-top:28px;font-size:.72rem;color:rgba(255,255,255,.22);flex-wrap:wrap;gap:10px;}
+
+.home-btn{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);z-index:300;display:flex;align-items:center;gap:7px;background:var(--ink);color:var(--white);font-family:var(--sans);font-size:.7rem;font-weight:600;letter-spacing:.5px;padding:9px 18px;border-radius:100px;box-shadow:0 4px 20px rgba(0,0,0,.2);white-space:nowrap;transition:background .2s,transform .2s;opacity:0;}
+.home-btn:hover{background:var(--forest);transform:translateX(-50%) translateY(-2px);}
+.home-btn svg{width:13px;height:13px;}
+
+.nav__mobile{display:none;flex-direction:column;background:var(--white);border-top:1px solid var(--rule);padding:8px 0;}
+.nav__mobile.open{display:flex;}
+.nav__mobile a{font-size:.78rem;font-weight:500;color:var(--ink-2);padding:12px 24px;border-bottom:1px solid var(--rule);transition:color .2s;}
+.nav__mobile a:hover{color:var(--forest);}
+.nav__toggle{display:none;background:none;border:1px solid var(--rule);width:36px;height:36px;border-radius:2px;cursor:pointer;position:relative;}
+.nav__toggle span,.nav__toggle::before,.nav__toggle::after{content:'';position:absolute;left:8px;width:20px;height:1.5px;background:var(--ink);}
+.nav__toggle span{top:50%;transform:translateY(-50%);}
+.nav__toggle::before{top:10px;}
+.nav__toggle::after{bottom:10px;}
+
+.reveal{opacity:0;transform:translateY(16px);transition:opacity .6s,transform .6s;}
+.reveal.in{opacity:1;transform:none;}
+
+@media(max-width:900px){
+  .authors-grid{grid-template-columns:1fr 1fr;}
+  .foot-top{grid-template-columns:1fr 1fr;gap:28px;}
+}
+@media(max-width:640px){
+  :root{--px:16px;}
+  .nav__links{display:none;}
+  .nav__toggle{display:flex;align-items:center;justify-content:center;}
+  .authors-hero h1{font-size:1.9rem;}
+  .authors-grid{grid-template-columns:1fr;}
+  .foot-top{grid-template-columns:1fr;}
+}
+</style>
+</head>
+<body>
+<div class="ticker"><div class="ticker__label">Live Wire</div><div class="ticker__track"><div class="ticker__inner"><div class="ticker__item"><b>Parliament</b>Monsoon session opens with debate on the data-protection bill</div><div class="ticker__item"><b>Markets</b>Sensex closes at record as monsoon forecast lifts rural demand</div><div class="ticker__item"><b>Culture</b>Kochi-Muziris Biennale unveils 2026 curatorial roster</div></div></div></div>
+
+<header class="nav" id="nav">
+  <div class="wrap nav__bar">
+    <a class="logo" href="/"><svg class="logo__leaf" viewBox="0 0 32 32" fill="none"><path d="M27 5C12 5 5 13 5 23c0 1.6.3 3 .8 4.4C9 19 15 13 26 11c-7 4-12 9-15 18 9 1 18-4 18-16 0-3.4-1-6-2-8z" fill="currentColor"/></svg><span class="logo__type">Indian <em>Populus</em></span></a>
+    <nav><div class="nav__links">
+      <a href="/politics">Politics & Society</a><a href="/culture">Culture & Arts</a><a href="/health">Health & Wellness</a><a href="/travel">Travel</a><a href="/food">Food & Lifestyle</a><a href="/education">Education</a>
+    </div></nav>
+    <a class="btn-sub" href="/#newsletter">Subscribe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
+    <button class="nav__toggle" id="navToggle" aria-label="Open menu"><span></span></button>
+  </div>
+  <div class="nav__mobile" id="mobileNav">
+    <a href="/politics">Politics & Society</a><a href="/culture">Culture & Arts</a><a href="/health">Health & Wellness</a><a href="/travel">Travel</a><a href="/food">Food & Lifestyle</a><a href="/education">Education</a>
+    <a href="/about">About</a><a href="/contact">Contact</a>
+  </div>
+</header>
+
+<div class="authors-hero">
+  <div class="wrap">
+    <div class="authors-hero__kicker">Meet the Writers</div>
+    <h1>Our <em>Authors</em></h1>
+    <p>The voices behind Indian Populus — journalists, scholars, and storytellers writing the country as it really is.</p>
+  </div>
+</div>
+
+<main>
+  <div class="wrap authors-section">
+    <div class="authors-grid" id="authorsGrid">
+      <div class="empty-state">Loading authors...</div>
+    </div>
+  </div>
+</main>
+
+<footer>
+  <div class="foot-inner">
+    <div class="foot-top">
+      <div><div class="foot-brand-name">Indian <em>Populus</em></div><div class="foot-tag">Where India thinks out loud.</div></div>
+      <div class="foot-col"><h4>Sections</h4><ul><li><a href="/politics">Politics & Society</a></li><li><a href="/culture">Culture & Arts</a></li><li><a href="/health">Health & Wellness</a></li><li><a href="/travel">Travel</a></li><li><a href="/food">Food & Lifestyle</a></li><li><a href="/education">Education</a></li></ul></div>
+      <div class="foot-col"><h4>Masthead</h4><ul><li><a href="/about">About us</a></li><li><a href="/authors">Our writers</a></li><li><a href="/contact">Contact</a></li></ul></div>
+      <div class="foot-col"><h4>Follow</h4><ul><li><a href="#">Twitter / X</a></li><li><a href="#">Instagram</a></li></ul></div>
+    </div>
+    <div class="foot-bot"><span>© 2026 Indian Populus Media Pvt. Ltd.</span><span>Made with ♥ in India 🇮🇳</span></div>
+  </div>
+</footer>
+
+<a href="/" class="home-btn" id="homeBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
+
+<script>
+window.addEventListener('scroll',function(){
+  document.getElementById('nav').classList.toggle('scrolled',window.scrollY>12);
+  var btn=document.getElementById('homeBtn');
+  if(btn) btn.style.opacity=window.scrollY>200?'1':'0';
+},{passive:true});
+document.getElementById('navToggle').addEventListener('click',function(){
+  document.getElementById('mobileNav').classList.toggle('open');
+});
+</script>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore, collection, query, where, orderBy, getDocs
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyBf4d83iuU7cSsh2TfYmsD6hTh6hWAL8pY",
+  authDomain: "indian-populus.firebaseapp.com",
+  projectId: "indian-populus",
+  storageBucket: "indian-populus.firebasestorage.app",
+  messagingSenderId: "784688896367",
+  appId: "1:784688896367:web:2dd371541554db97a6309a"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+window.__fb = { db, collection, query, where, orderBy, getDocs };
+window.dispatchEvent(new Event('firebase-ready'));
+</script>
+
+<script>
+function getInitials(name){
+  return (name||'?').split(' ').filter(Boolean).map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
+}
+
+window.addEventListener('firebase-ready', async function(){
+  var fb = window.__fb;
+  var grid = document.getElementById('authorsGrid');
+
+  try{
+    var snap = await fb.getDocs(fb.query(fb.collection(fb.db,'authors'), fb.orderBy('name')));
+
+    if(snap.empty){
+      grid.innerHTML = '<div class="empty-state">No authors yet. Check back soon!</div>';
+      return;
+    }
+
+    var authors = snap.docs.map(function(d){ return Object.assign({id:d.id}, d.data()); });
+
+    // get article counts for each author
+    var artSnap = await fb.getDocs(fb.query(fb.collection(fb.db,'articles'), fb.where('status','==','published')));
+    var arts = artSnap.docs.map(function(d){ return d.data(); });
+
+    grid.innerHTML = authors.map(function(a, i){
+      var count = arts.filter(function(x){ return x.author_id === a.id; }).length;
+      var views = arts.filter(function(x){ return x.author_id === a.id; }).reduce(function(s,x){return s+(x.views||0);},0);
+      var avaHtml = a.photo_url
+        ? '<img src="'+a.photo_url+'" alt="'+a.name+'"/>'
+        : getInitials(a.name);
+      var roleTitleParts = [];
+      if(a.role) roleTitleParts.push(a.role);
+      if(a.title) roleTitleParts.push(a.title);
+      var roleText = roleTitleParts.join(' · ') || 'Author';
+
+      return '<a href="/author?slug='+a.slug+'" class="author-card-tile reveal" style="transition-delay:'+(i*60)+'ms;">'
+        +'<div class="tile-ava">'+avaHtml+'</div>'
+        +'<div class="tile-name">'+a.name+'</div>'
+        +'<div class="tile-role">'+roleText+'</div>'
+        +'<div class="tile-bio">'+(a.bio||'')+'</div>'
+        +'<div class="tile-stats"><div><div class="tile-stat-n">'+count+'</div><div class="tile-stat-l">Articles</div></div><div><div class="tile-stat-n">'+views+'</div><div class="tile-stat-l">Views</div></div></div>'
+        +'</a>';
+    }).join('');
+
+    var revs = [].slice.call(document.querySelectorAll('.reveal'));
+    if('IntersectionObserver' in window){
+      var io = new IntersectionObserver(function(es){
+        es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+      },{threshold:.08});
+      revs.forEach(function(el){ io.observe(el); });
+    } else {
+      revs.forEach(function(el){ el.classList.add('in'); });
+    }
+  }catch(e){
+    console.error('Authors load error:', e);
+    grid.innerHTML = '<div class="empty-state" style="color:#e05252;">Failed to load authors: '+e.message+'</div>';
+  }
+});
+</script>
+</body>
+</html>
