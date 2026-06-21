@@ -198,12 +198,12 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
       <span class="logo__type">Indian <em>Populus</em></span>
     </a>
     <nav><div class="nav__links">
-      <a href="category.html?cat=politics">Politics & Society</a>
-      <a href="category.html?cat=culture">Culture & Arts</a>
-      <a href="category.html?cat=health">Health & Wellness</a>
-      <a href="category.html?cat=travel">Travel</a>
-      <a href="category.html?cat=food">Food & Lifestyle</a>
-      <a href="category.html?cat=education">Education</a>
+      <a href="/politics">Politics & Society</a>
+      <a href="/culture">Culture & Arts</a>
+      <a href="/health">Health & Wellness</a>
+      <a href="/travel">Travel</a>
+      <a href="/food">Food & Lifestyle</a>
+      <a href="/education">Education</a>
     </div></nav>
     <div class="nav__right">
       <a class="btn-sub" href="index.html#newsletter">Subscribe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
@@ -381,7 +381,7 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
         <div class="foot-brand-name">Indian <em>Populus</em></div>
         <div class="foot-tag">Where India thinks out loud.</div>
       </div>
-      <div class="foot-col"><h4>Sections</h4><ul><li><a href="#">Politics & Society</a></li><li><a href="#">Culture & Arts</a></li><li><a href="#">Health & Wellness</a></li><li><a href="category.html?cat=travel">Travel</a></li><li><a href="#">Food & Lifestyle</a></li><li><a href="category.html?cat=education">Education</a></li></ul></div>
+      <div class="foot-col"><h4>Sections</h4><ul><li><a href="#">Politics & Society</a></li><li><a href="#">Culture & Arts</a></li><li><a href="#">Health & Wellness</a></li><li><a href="/travel">Travel</a></li><li><a href="#">Food & Lifestyle</a></li><li><a href="/education">Education</a></li></ul></div>
       <div class="foot-col"><h4>Masthead</h4><ul><li><a href="about.html">About us</a></li><li><a href="author.html">Our writers</a></li><li><a href="contact.html">Contact</a></li></ul></div>
       <div class="foot-col"><h4>Follow</h4><ul><li><a href="#">Twitter / X</a></li><li><a href="#">Instagram</a></li><li><a href="#">LinkedIn</a></li></ul></div>
     </div>
@@ -394,25 +394,128 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
 window.addEventListener('scroll',function(){
   var s=document.documentElement.scrollTop||document.body.scrollTop;
   var h=document.documentElement.scrollHeight-document.documentElement.clientHeight;
-  document.getElementById('progressBar').style.width=(s/h*100)+'%';
+  var bar=document.getElementById('progressBar');
+  if(bar) bar.style.width=(s/h*100)+'%';
 },{passive:true});
-// Nav shadow
 window.addEventListener('scroll',function(){document.getElementById('nav').classList.toggle('scrolled',window.scrollY>12);},{passive:true});
-// Reveal
 var revs=[].slice.call(document.querySelectorAll('.reveal'));
-if('IntersectionObserver' in window){
-  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08});
-  revs.forEach(function(el){if(el.getBoundingClientRect().top<window.innerHeight*.95)el.classList.add('in');else io.observe(el);});
-}else{revs.forEach(function(el){el.classList.add('in');});}
-// Share
-function shareWA(){window.open('https://api.whatsapp.com/send?text='+encodeURIComponent(document.title+' '+window.location.href));}
-function shareX(){window.open('https://twitter.com/intent/tweet?text='+encodeURIComponent(document.title)+'&url='+encodeURIComponent(window.location.href));}
-function copyLink(){navigator.clipboard.writeText(window.location.href).then(function(){alert('Link copied!');});}
+if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08});revs.forEach(function(el){if(el.getBoundingClientRect().top<window.innerHeight*.95)el.classList.add('in');else io.observe(el);});}else{revs.forEach(function(el){el.classList.add('in');});}
 </script>
 <a href="index.html" class="home-btn" id="homeBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
+import {
+  getFirestore, collection, query, where, getDocs, doc, updateDoc, increment
+} from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
+const firebaseConfig = {
+  apiKey: "AIzaSyBf4d83iuU7cSsh2TfYmsD6hTh6hWAL8pY",
+  authDomain: "indian-populus.firebaseapp.com",
+  projectId: "indian-populus",
+  storageBucket: "indian-populus.firebasestorage.app",
+  messagingSenderId: "784688896367",
+  appId: "1:784688896367:web:2dd371541554db97a6309a"
+};
+const app = initializeApp(firebaseConfig);
+const db = getFirestore(app);
+window.__fb = { db, collection, query, where, getDocs, doc, updateDoc, increment };
+window.dispatchEvent(new Event('firebase-ready'));
+</script>
 <script>
-window.toggleMobileNav=function(){var mn=document.getElementById("mobileNav");if(mn)mn.classList.toggle("open");};
-window.addEventListener("scroll",function(){var btn=document.getElementById("homeBtn");if(btn)btn.style.opacity=window.scrollY>200?"1":"0";},{passive:true});
+window.toggleMobileNav=function(){var mn=document.getElementById('mobileNav');if(mn)mn.classList.toggle('open');};
+window.addEventListener('scroll',function(){var btn=document.getElementById('homeBtn');if(btn)btn.style.opacity=window.scrollY>200?'1':'0';},{passive:true});
+
+var fb=null;
+window.addEventListener('firebase-ready',async function(){
+  fb=window.__fb;
+  var slug=new URLSearchParams(window.location.search).get('slug');
+  if(!slug) return;
+
+  try{
+    var q=fb.query(fb.collection(fb.db,'articles'),fb.where('slug','==',slug),fb.where('status','==','published'));
+    var snap=await fb.getDocs(q);
+    if(snap.empty) return;
+    var d=snap.docs[0];
+    var a=Object.assign({id:d.id},d.data());
+
+    // increment views (non-blocking)
+    fb.updateDoc(fb.doc(fb.db,'articles',a.id),{views:fb.increment(1)}).catch(function(){});
+
+    // lookup author + category
+    var authSnap=a.author_id?await fb.getDocs(fb.query(fb.collection(fb.db,'authors'),fb.where('__name__','==',a.author_id))):null;
+    var catSnap=a.category_id?await fb.getDocs(fb.query(fb.collection(fb.db,'categories'),fb.where('__name__','==',a.category_id))):null;
+    var author=authSnap&&!authSnap.empty?authSnap.docs[0].data():null;
+    var authorId=authSnap&&!authSnap.empty?authSnap.docs[0].id:null;
+    var category=catSnap&&!catSnap.empty?catSnap.docs[0].data():null;
+
+    document.title=a.title+' — Indian Populus';
+
+    var titleEl=document.querySelector('.art-hero__title');
+    var dekEl=document.querySelector('.art-hero__dek');
+    if(titleEl) titleEl.textContent=a.title;
+    if(dekEl) dekEl.textContent=a.subtitle||'';
+
+    var catEl=document.querySelector('.art-meta-top .kicker--green');
+    if(catEl) catEl.textContent=category?category.name:'';
+
+    var authorName=author?author.name:'';
+    var ava=(authorName||'?').split(' ').map(function(w){return w[0];}).join('').toUpperCase().slice(0,2);
+    var avaEl=document.querySelector('.author-chip .author__ava');
+    var nameEl=document.querySelector('.author-chip .author__name');
+    var roleEl=document.querySelector('.author-chip .author__role');
+    if(avaEl) avaEl.textContent=ava;
+    if(nameEl) nameEl.textContent=authorName;
+    if(roleEl) roleEl.textContent=author?author.role:'';
+
+    var pubDate=a.published_at;pubDate=pubDate&&pubDate.toDate?pubDate.toDate():new Date(pubDate||Date.now());
+    var metaEl=document.querySelector('.byline-meta');
+    if(metaEl) metaEl.innerHTML='<span>'+pubDate.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})+'</span><span class="sep">·</span><span class="read"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> '+(a.read_time||5)+' min read</span><span class="sep">·</span><span>'+(a.views||0)+' views</span>';
+
+    var cover=document.querySelector('.art-cover');
+    if(cover&&a.cover_image_url) cover.innerHTML='<img src="'+a.cover_image_url+'" alt="'+a.title+'" style="width:100%;height:100%;object-fit:cover;"/>';
+
+    var body=document.querySelector('.art-body');
+    if(body&&a.body){
+      var paras=a.body.split('\n\n').filter(function(p){return p.trim();});
+      var bodyHtml=paras.map(function(p,i){
+        p=p.trim();
+        if(p.startsWith('# ')) return '<h2>'+p.slice(2)+'</h2>';
+        if(p.startsWith('## ')) return '<h3>'+p.slice(3)+'</h3>';
+        if(p.startsWith('> ')) return '<blockquote><p>'+p.slice(2)+'</p></blockquote>';
+        if(p==='---') return '<hr class="art-divider"/>';
+        return '<p'+(i===0?' class="drop-cap"':'')+'>'+p+'</p>';
+      }).join('');
+      if(a.tags&&a.tags.length) bodyHtml+='<div class="art-tags">'+a.tags.map(function(t){return '<a href="#" class="tag">'+t+'</a>';}).join('')+'</div>';
+      bodyHtml+='<div class="share-row"><span class="share-label">Share</span>'
+        +'<button class="share-btn" onclick="window.open(\'https://api.whatsapp.com/send?text=\'+encodeURIComponent(document.title+\' \'+window.location.href))">WhatsApp</button>'
+        +'<button class="share-btn" onclick="navigator.clipboard.writeText(window.location.href).then(function(){alert(\'Link copied!\');})">Copy Link</button></div>';
+      body.innerHTML=bodyHtml;
+
+      if(author){
+        body.innerHTML+='<div class="author-box"><div class="author-box-label">About the Author</div><div class="author-box-inner"><div class="author-box-ava">'+ava+'</div><div><div class="author-box-name">'+authorName+'</div><div class="author-box-role">'+(author.role||'')+'</div><div class="author-box-bio">'+(author.bio||'')+'</div><a href="/author?slug='+(author.slug||'')+'" class="author-box-link">View all articles →</a></div></div></div>';
+      }
+    }
+
+    // Related articles
+    if(a.category_id){
+      var relQ=fb.query(fb.collection(fb.db,'articles'),fb.where('status','==','published'),fb.where('category_id','==',a.category_id));
+      var relSnap=await fb.getDocs(relQ);
+      var related=relSnap.docs.map(function(rd){return Object.assign({id:rd.id},rd.data());}).filter(function(r){return r.id!==a.id;}).slice(0,3);
+      var sidebar=document.querySelector('.art-sidebar');
+      if(sidebar&&related.length){
+        var authMapSnap=await fb.getDocs(fb.collection(fb.db,'authors'));
+        var authMap={};authMapSnap.docs.forEach(function(ad){authMap[ad.id]=ad.data().name;});
+        var catMapSnap=await fb.getDocs(fb.collection(fb.db,'categories'));
+        var catMap={};catMapSnap.docs.forEach(function(cd){catMap[cd.id]=cd.data().name;});
+        var relHtml='<div class="sidebar-block"><div class="sidebar-block-label">Related Stories</div>';
+        relHtml+=related.map(function(r){
+          return '<a href="/article?slug='+r.slug+'" class="related-card"><div class="related-card-img">'+(r.cover_image_url?'<img src="'+r.cover_image_url+'" style="width:100%;height:100%;object-fit:cover;" alt="'+r.title+'"/>':'')+'</div><div><div class="related-cat">'+(catMap[r.category_id]||'')+'</div><div class="related-title">'+r.title+'</div><div class="related-meta">'+(authMap[r.author_id]||'')+'</div></div></a>';
+        }).join('');
+        relHtml+='</div>';
+        sidebar.innerHTML=relHtml;
+      }
+    }
+  }catch(e){console.error('Article load error:',e);}
+});
 </script>
 </body>
 </html>
