@@ -121,10 +121,8 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
 
 <main>
   <div class="wrap cat-body">
-    <div class="cat-grid">
-      <a href="article.html" class="cat-card reveal"><div class="cat-card__img"><div class="cat-card__img-ph">Delhi street, dusk</div></div><div class="cat-card__body"><div class="cat-card__cat" id="c1">Politics & Society</div><div class="cat-card__title">Reading Slowly in an Age of Algorithmic Summaries</div><div class="cat-card__meta"><span>Muhammed Sinan</span><span class="dot"></span><span>7 min</span></div></div></a>
-      <a href="article.html" class="cat-card reveal"><div class="cat-card__img"><div class="cat-card__img-ph">City skyline</div></div><div class="cat-card__body"><div class="cat-card__cat">Politics & Society</div><div class="cat-card__title">On Grief, Cortisol, and the Body That Remembers Loss</div><div class="cat-card__meta"><span>Muhammed Sinan</span><span class="dot"></span><span>5 min</span></div></div></a>
-      <a href="article.html" class="cat-card reveal"><div class="cat-card__img"><div class="cat-card__img-ph">Public space</div></div><div class="cat-card__body"><div class="cat-card__cat">Politics & Society</div><div class="cat-card__title">How Public Spaces Shape the Way We Think About Each Other</div><div class="cat-card__meta"><span>Shajahav PV</span><span class="dot"></span><span>6 min</span></div></div></a>
+    <div class="cat-grid" id="catGrid">
+      <div style="grid-column:1/-1;text-align:center;padding:60px 20px;color:var(--ink-4);font-size:.85rem;">Loading articles...</div>
     </div>
   </div>
 </main>
@@ -142,7 +140,7 @@ var cats={
   education:{emoji:'📚',title:'<em>Education</em>',desc:'Schools, syllabi, students, and the systems that shape a generation.',count:'2 articles'}
 };
 var p=new URLSearchParams(window.location.search);
-var cat=p.get('cat')||'politics';
+var cat=p.get('cat')||(window.location.pathname.replace(/^\/+/,'').replace(/\/+$/,'')||'politics');
 var data=cats[cat]||cats.politics;
 document.getElementById('catEmoji').textContent=data.emoji;
 document.getElementById('catTitle').innerHTML=data.title;
@@ -189,8 +187,10 @@ var DEFAULT_CATEGORIES = [
 window.addEventListener('firebase-ready',async function(){
   var fb=window.__fb;
   try{
-    var catSlug=new URLSearchParams(window.location.search).get('cat')||window.location.pathname.replace('/','');
-    if(!catSlug) return;
+    // Get slug from pathname (/politics) or fallback to ?cat= query param
+    var pathname=window.location.pathname.replace(/^\/+/,'').replace(/\/+$/,'');
+    var catSlug=pathname||new URLSearchParams(window.location.search).get('cat')||'politics';
+    if(!catSlug) catSlug='politics';
 
     var catQ=fb.query(fb.collection(fb.db,'categories'),fb.where('slug','==',catSlug));
     var catSnap=await fb.getDocs(catQ);
@@ -223,7 +223,7 @@ window.addEventListener('firebase-ready',async function(){
       document.title=cat.name+' — Indian Populus';
     }
 
-    var grid=document.querySelector('.cat-grid');
+    var grid=document.getElementById('catGrid');
     if(!grid) return;
 
     if(!catId){
@@ -253,7 +253,7 @@ window.addEventListener('firebase-ready',async function(){
     if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08});revs.forEach(function(el){io.observe(el);});}else{revs.forEach(function(el){el.classList.add('in');});}
   }catch(e){
     console.error('Category load error:',e);
-    var grid=document.querySelector('.cat-grid');
+    var grid=document.getElementById('catGrid');
     if(grid) grid.innerHTML='<div style="padding:40px;color:#e05252;text-align:center;grid-column:1/-1;">Failed to load category: '+e.message+'</div>';
   }
 });
