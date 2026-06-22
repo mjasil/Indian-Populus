@@ -141,91 +141,18 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
     </div>
 
     <div class="arch-body">
-      <!-- LEAD TWO -->
-      <div class="arch-lead">
-        <a href="article.html" class="card-lead" data-cat="education">
-          <div class="card-lead__img"><div class="card-lead__img-ph">Mumbai skyline, golden hour</div></div>
-          <div class="card-lead__body">
-            <div class="card-lead__cat">Education</div>
-            <div class="card-lead__title">How Public Spaces Shape the Way We Think About Each Other</div>
-            <div class="card-lead__dek">The design of our shared spaces does more than move bodies. It shapes assumptions and quietly decides who belongs.</div>
-            <div class="card-lead__meta"><span>Shajahav PV</span><span class="dot"></span><span>Mar 4, 2026</span><span class="dot"></span><span>6 min read</span></div>
-          </div>
-        </a>
-        <a href="article.html" class="card-lead" data-cat="culture">
-          <div class="card-lead__img"><div class="card-lead__img-ph">Dancers backstage</div></div>
-          <div class="card-lead__body">
-            <div class="card-lead__cat">Culture & Arts</div>
-            <div class="card-lead__title">The Theatre of Protest: When Art Becomes Civil Disobedience</div>
-            <div class="card-lead__dek">From Habib Tanvir to the streets of Shaheen Bagh, protest in India has always worn an artistic face.</div>
-            <div class="card-lead__meta"><span>Shajahav PV</span><span class="dot"></span><span>Mar 4, 2026</span><span class="dot"></span><span>8 min read</span></div>
-          </div>
-        </a>
-      </div>
+      <!-- LEAD TWO (dynamic) -->
+      <div class="arch-lead" id="archLead"></div>
 
-      <!-- LIST -->
+      <!-- LIST (dynamic) -->
       <div class="arch-list" id="archList">
-        <a href="article.html" class="arch-row reveal" data-cat="politics">
-          <div class="arch-row__num">03</div>
-          <div class="arch-row__img"><div class="arch-row__img-ph"></div></div>
-          <div class="arch-row__body">
-            <div class="arch-row__cat">Politics & Society</div>
-            <div class="arch-row__title">Reading Slowly in an Age of Algorithmic Summaries</div>
-            <div class="arch-row__meta"><span>Muhammed Sinan</span><span class="dot"></span><span>Mar 4, 2026</span><span class="dot"></span><span>7 min read</span></div>
-          </div>
-        </a>
-        <a href="article.html" class="arch-row reveal" data-cat="travel">
-          <div class="arch-row__num">04</div>
-          <div class="arch-row__img"><div class="arch-row__img-ph"></div></div>
-          <div class="arch-row__body">
-            <div class="arch-row__cat">Travel</div>
-            <div class="arch-row__title">The Quiet Science of Forest Bathing and Stress Recovery</div>
-            <div class="arch-row__meta"><span>Muhammed Sinan</span><span class="dot"></span><span>Mar 4, 2026</span><span class="dot"></span><span>3 min read</span></div>
-          </div>
-        </a>
-        <a href="article.html" class="arch-row reveal" data-cat="food">
-          <div class="arch-row__num">05</div>
-          <div class="arch-row__img"><div class="arch-row__img-ph"></div></div>
-          <div class="arch-row__body">
-            <div class="arch-row__cat">Food & Lifestyle</div>
-            <div class="arch-row__title">The Coastal Villages That Tourism Forgot</div>
-            <div class="arch-row__meta"><span>Shajahav PV</span><span class="dot"></span><span>Mar 4, 2026</span><span class="dot"></span><span>5 min read</span></div>
-          </div>
-        </a>
-        <a href="article.html" class="arch-row reveal" data-cat="politics">
-          <div class="arch-row__num">06</div>
-          <div class="arch-row__img"><div class="arch-row__img-ph"></div></div>
-          <div class="arch-row__body">
-            <div class="arch-row__cat">Politics & Society</div>
-            <div class="arch-row__title">On Grief, Cortisol, and the Body That Remembers Loss</div>
-            <div class="arch-row__meta"><span>Muhammed Sinan</span><span class="dot"></span><span>Mar 4, 2026</span><span class="dot"></span><span>5 min read</span></div>
-          </div>
-        </a>
-        <a href="article.html" class="arch-row reveal" data-cat="education">
-          <div class="arch-row__num">07</div>
-          <div class="arch-row__img"><div class="arch-row__img-ph"></div></div>
-          <div class="arch-row__body">
-            <div class="arch-row__cat">Education</div>
-            <div class="arch-row__title">What Finnish Schools Teach About Failure</div>
-            <div class="arch-row__meta"><span>Shajahav PV</span><span class="dot"></span><span>Mar 4, 2026</span><span class="dot"></span><span>7 min read</span></div>
-          </div>
-        </a>
-        <a href="article.html" class="arch-row reveal" data-cat="food">
-          <div class="arch-row__num">08</div>
-          <div class="arch-row__img"><div class="arch-row__img-ph"></div></div>
-          <div class="arch-row__body">
-            <div class="arch-row__cat">Food & Lifestyle</div>
-            <div class="arch-row__title">Fermentation Across Cultures: Preserving More Than Just Food</div>
-            <div class="arch-row__meta"><span>Shajahav PV</span><span class="dot"></span><span>Mar 4, 2026</span><span class="dot"></span><span>4 min read</span></div>
-          </div>
-        </a>
+        <div style="padding:40px;text-align:center;color:#888;">Loading articles...</div>
       </div>
-      <div class="load-more"><button>Load more stories</button></div>
     </div>
   </div>
 </main>
 
-<footer><div class="foot-inner"><div class="foot-top"><div><div class="foot-brand-name">Indian <em>Populus</em></div><div class="foot-tag">Where India thinks out loud.</div></div><div class="foot-col"><h4>Sections</h4><ul><li><a href="#">Politics & Society</a></li><li><a href="#">Culture & Arts</a></li><li><a href="#">Health & Wellness</a></li><li><a href="/travel">Travel</a></li><li><a href="#">Food & Lifestyle</a></li><li><a href="/education">Education</a></li></ul></div><div class="foot-col"><h4>Masthead</h4><ul><li><a href="about.html">About us</a></li><li><a href="contact.html">Contact</a></li></ul></div><div class="foot-col"><h4>Follow</h4><ul><li><a href="#">Twitter / X</a></li><li><a href="#">Instagram</a></li></ul></div></div><div class="foot-bot"><span>© 2026 Indian Populus Media Pvt. Ltd.</span><span>Made with ♥ in India 🇮🇳</span></div></div></footer>
+<footer><div class="foot-inner"><div class="foot-top"><div><div class="foot-brand-name">Indian <em>Populus</em></div><div class="foot-tag">Where India thinks out loud.</div></div><div class="foot-col"><h4>Sections</h4><ul><li><a href="/politics">Politics & Society</a></li><li><a href="/culture">Culture & Arts</a></li><li><a href="/health">Health & Wellness</a></li><li><a href="/travel">Travel</a></li><li><a href="/food">Food & Lifestyle</a></li><li><a href="/education">Education</a></li></ul></div><div class="foot-col"><h4>Masthead</h4><ul><li><a href="/about">About us</a></li><li><a href="/authors">Our writers</a></li><li><a href="/contact">Contact</a></li></ul></div><div class="foot-col"><h4>Follow</h4><ul><li><a href="#">Twitter / X</a></li><li><a href="#">Instagram</a></li></ul></div></div><div class="foot-bot"><span>© 2026 Indian Populus Media Pvt. Ltd.</span><span>Made with ♥ in India 🇮🇳</span></div></div></footer>
 
 <script>
 window.addEventListener('scroll',function(){document.getElementById('nav').classList.toggle('scrolled',window.scrollY>12);},{passive:true});
@@ -274,9 +201,14 @@ window.addEventListener('firebase-ready',async function(){
     qParts.push(fb.limit(50));
     var q=fb.query(fb.collection(fb.db,'articles'),...qParts);
     var snap=await fb.getDocs(q);
+    var leadWrap=document.getElementById('archLead');
     var list=document.getElementById('archList');
     if(!list) return;
-    if(snap.empty){list.innerHTML='<div style="padding:40px;text-align:center;color:#888;">No articles yet.</div>';return;}
+    if(snap.empty){
+      if(leadWrap) leadWrap.style.display='none';
+      list.innerHTML='<div style="padding:40px;text-align:center;color:#888;">No articles yet. Publish your first story from the admin!</div>';
+      return;
+    }
     var data=snap.docs.map(function(d){return Object.assign({id:d.id},d.data());});
 
     var authSnap=await fb.getDocs(fb.collection(fb.db,'authors'));
@@ -285,23 +217,56 @@ window.addEventListener('firebase-ready',async function(){
     var catMap={};catSnap.docs.forEach(function(d){catMap[d.id]={name:d.data().name,slug:d.data().slug};});
 
     var hdr=document.querySelector('.arch-header p');
-    if(hdr) hdr.textContent=data.length+' articles across 6 categories';
-    list.innerHTML=data.map(function(a,i){
-      var cat=catMap[a.category_id]||{};
-      return '<a href="/article?slug='+a.slug+'" class="arch-row reveal" data-cat="'+(cat.slug||'')+'">'
-        +'<div class="arch-row__num">0'+(i+1)+'</div>'
-        +'<div class="arch-row__img">'+(a.cover_image_url?'<img src="'+a.cover_image_url+'" alt="'+a.title+'" style="width:100%;height:100%;object-fit:cover;"/>':'<div class="arch-row__img-ph"></div>')+'</div>'
-        +'<div class="arch-row__body"><div class="arch-row__cat">'+(cat.name||'')+'</div>'
-        +'<div class="arch-row__title">'+a.title+'</div>'
-        +'<div class="arch-row__meta"><span>'+(authMap[a.author_id]||'')+'</span><span class="dot"></span><span>'+(a.read_time||5)+' min</span></div>'
-        +'</div></a>';
-    }).join('');
+    if(hdr) hdr.textContent=data.length+' article'+(data.length===1?'':'s')+' across 6 categories';
+
+    // First 2 articles → lead cards (only if we have at least 2)
+    var leadCount=Math.min(2,data.length);
+    var leadArticles=data.slice(0,leadCount);
+    var restArticles=data.slice(leadCount);
+
+    if(leadWrap){
+      if(leadArticles.length===0){
+        leadWrap.style.display='none';
+      } else {
+        leadWrap.style.display='';
+        leadWrap.innerHTML=leadArticles.map(function(a){
+          var cat=catMap[a.category_id]||{};
+          var dv=a.published_at;dv=dv&&dv.toDate?dv.toDate():new Date(dv||Date.now());
+          return '<a href="/article?slug='+a.slug+'" class="card-lead reveal" data-cat="'+(cat.slug||'')+'">'
+            +'<div class="card-lead__img">'+(a.cover_image_url?'<img src="'+a.cover_image_url+'" alt="'+a.title+'" style="width:100%;height:100%;object-fit:cover;"/>':'<div class="card-lead__img-ph">'+(cat.name||'')+'</div>')+'</div>'
+            +'<div class="card-lead__body"><div class="card-lead__cat">'+(cat.name||'')+'</div>'
+            +'<div class="card-lead__title">'+a.title+'</div>'
+            +(a.subtitle?'<div class="card-lead__dek">'+a.subtitle+'</div>':'')
+            +'<div class="card-lead__meta"><span>'+(authMap[a.author_id]||'')+'</span><span class="dot"></span><span>'+dv.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})+'</span><span class="dot"></span><span>'+(a.read_time||5)+' min read</span></div>'
+            +'</div></a>';
+        }).join('');
+      }
+    }
+
+    if(restArticles.length===0){
+      list.innerHTML='';
+    } else {
+      list.innerHTML=restArticles.map(function(a,i){
+        var cat=catMap[a.category_id]||{};
+        var dv=a.published_at;dv=dv&&dv.toDate?dv.toDate():new Date(dv||Date.now());
+        return '<a href="/article?slug='+a.slug+'" class="arch-row reveal" data-cat="'+(cat.slug||'')+'">'
+          +'<div class="arch-row__num">0'+(i+1)+'</div>'
+          +'<div class="arch-row__img">'+(a.cover_image_url?'<img src="'+a.cover_image_url+'" alt="'+a.title+'" style="width:100%;height:100%;object-fit:cover;"/>':'<div class="arch-row__img-ph"></div>')+'</div>'
+          +'<div class="arch-row__body"><div class="arch-row__cat">'+(cat.name||'')+'</div>'
+          +'<div class="arch-row__title">'+a.title+'</div>'
+          +'<div class="arch-row__meta"><span>'+(authMap[a.author_id]||'')+'</span><span class="dot"></span><span>'+dv.toLocaleDateString('en-IN',{day:'numeric',month:'short',year:'numeric'})+'</span><span class="dot"></span><span>'+(a.read_time||5)+' min read</span></div>'
+          +'</div></a>';
+      }).join('');
+    }
+
     var revs=[].slice.call(document.querySelectorAll('.reveal'));
     if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08});revs.forEach(function(el){io.observe(el);});}else{revs.forEach(function(el){el.classList.add('in');});}
   }catch(e){
     console.error('Articles load error:',e);
-    var list=document.getElementById('archList');
-    if(list) list.innerHTML='<div style="padding:40px;text-align:center;color:#e05252;">Failed to load articles.</div>';
+    var leadWrapErr=document.getElementById('archLead');
+    if(leadWrapErr) leadWrapErr.style.display='none';
+    var listErr=document.getElementById('archList');
+    if(listErr) listErr.innerHTML='<div style="padding:40px;text-align:center;color:#e05252;">Failed to load: '+e.message+'</div>';
   }
 });
 </script>
