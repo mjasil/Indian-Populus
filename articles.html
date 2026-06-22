@@ -116,7 +116,7 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
 <header class="nav" id="nav">
   <div class="wrap nav__bar">
     <a class="logo" href="index.html"><svg class="logo__leaf" viewBox="0 0 32 32" fill="none"><path d="M27 5C12 5 5 13 5 23c0 1.6.3 3 .8 4.4C9 19 15 13 26 11c-7 4-12 9-15 18 9 1 18-4 18-16 0-3.4-1-6-2-8z" fill="currentColor"/></svg><span class="logo__type">Indian <em>Populus</em></span></a>
-    <nav><div class="nav__links"><a href="/politics">Politics & Society</a><a href="/culture">Culture & Arts</a><a href="/health">Health & Wellness</a><a href="/travel">Travel</a><a href="/food">Food & Lifestyle</a><a href="/education">Education</a></div></nav>
+    <nav><div class="nav__links"><a href="/articles?cat=politics">Politics & Society</a><a href="/articles?cat=culture">Culture & Arts</a><a href="/articles?cat=health">Health & Wellness</a><a href="/articles?cat=travel">Travel</a><a href="/articles?cat=food">Food & Lifestyle</a><a href="/articles?cat=education">Education</a></div></nav>
     <a class="btn-sub" href="index.html#newsletter">Subscribe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
   </div>
 </header>
@@ -131,13 +131,13 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
 
     <!-- FILTER TABS -->
     <div class="filter-wrap">
-      <button class="filter-tab active" onclick="filterCat('all',this)">All</button>
-      <button class="filter-tab" onclick="filterCat('politics',this)">🏛️ Politics & Society</button>
-      <button class="filter-tab" onclick="filterCat('culture',this)">🎭 Culture & Arts</button>
-      <button class="filter-tab" onclick="filterCat('health',this)">🌿 Health & Wellness</button>
-      <button class="filter-tab" onclick="filterCat('travel',this)">✈️ Travel</button>
-      <button class="filter-tab" onclick="filterCat('food',this)">🍽️ Food & Lifestyle</button>
-      <button class="filter-tab" onclick="filterCat('education',this)">📚 Education</button>
+      <button class="filter-tab" data-cat="all">All</button>
+      <button class="filter-tab" data-cat="politics">🏛️ Politics & Society</button>
+      <button class="filter-tab" data-cat="culture">🎭 Culture & Arts</button>
+      <button class="filter-tab" data-cat="health">🌿 Health & Wellness</button>
+      <button class="filter-tab" data-cat="travel">✈️ Travel</button>
+      <button class="filter-tab" data-cat="food">🍽️ Food & Lifestyle</button>
+      <button class="filter-tab" data-cat="education">📚 Education</button>
     </div>
 
     <div class="arch-body">
@@ -152,20 +152,33 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
   </div>
 </main>
 
-<footer><div class="foot-inner"><div class="foot-top"><div><div class="foot-brand-name">Indian <em>Populus</em></div><div class="foot-tag">Where India thinks out loud.</div></div><div class="foot-col"><h4>Sections</h4><ul><li><a href="/politics">Politics & Society</a></li><li><a href="/culture">Culture & Arts</a></li><li><a href="/health">Health & Wellness</a></li><li><a href="/travel">Travel</a></li><li><a href="/food">Food & Lifestyle</a></li><li><a href="/education">Education</a></li></ul></div><div class="foot-col"><h4>Masthead</h4><ul><li><a href="/about">About us</a></li><li><a href="/authors">Our writers</a></li><li><a href="/contact">Contact</a></li></ul></div><div class="foot-col"><h4>Follow</h4><ul><li><a href="#">Twitter / X</a></li><li><a href="#">Instagram</a></li></ul></div></div><div class="foot-bot"><span>© 2026 Indian Populus Media Pvt. Ltd.</span><span>Made with ♥ in India 🇮🇳</span></div></div></footer>
+<footer><div class="foot-inner"><div class="foot-top"><div><div class="foot-brand-name">Indian <em>Populus</em></div><div class="foot-tag">Where India thinks out loud.</div></div><div class="foot-col"><h4>Sections</h4><ul><li><a href="/articles?cat=politics">Politics & Society</a></li><li><a href="/articles?cat=culture">Culture & Arts</a></li><li><a href="/articles?cat=health">Health & Wellness</a></li><li><a href="/articles?cat=travel">Travel</a></li><li><a href="/articles?cat=food">Food & Lifestyle</a></li><li><a href="/articles?cat=education">Education</a></li></ul></div><div class="foot-col"><h4>Masthead</h4><ul><li><a href="/about">About us</a></li><li><a href="/authors">Our writers</a></li><li><a href="/contact">Contact</a></li></ul></div><div class="foot-col"><h4>Follow</h4><ul><li><a href="#">Twitter / X</a></li><li><a href="#">Instagram</a></li></ul></div></div><div class="foot-bot"><span>© 2026 Indian Populus Media Pvt. Ltd.</span><span>Made with ♥ in India 🇮🇳</span></div></div></footer>
 
 <script>
 window.addEventListener('scroll',function(){document.getElementById('nav').classList.toggle('scrolled',window.scrollY>12);},{passive:true});
-function filterCat(cat,btn){
-  document.querySelectorAll('.filter-tab').forEach(function(t){t.classList.remove('active');});
-  btn.classList.add('active');
+
+// Read cat from URL and activate tab
+var _activeCat = new URLSearchParams(window.location.search).get('cat') || 'all';
+
+function applyFilter(cat) {
+  _activeCat = cat;
+  document.querySelectorAll('.filter-tab').forEach(function(t){ t.classList.remove('active'); });
+  var activeTab = document.querySelector('.filter-tab[data-cat="'+cat+'"]');
+  if(activeTab) activeTab.classList.add('active');
   document.querySelectorAll('.arch-row,.card-lead').forEach(function(el){
-    el.style.display=(cat==='all'||el.dataset.cat===cat)?'':'none';
-    if(el.classList.contains('arch-row')) el.style.display=(cat==='all'||el.dataset.cat===cat)?'flex':'none';
+    var show = (cat === 'all' || el.dataset.cat === cat);
+    el.style.display = show ? (el.classList.contains('arch-row') ? 'flex' : '') : 'none';
   });
 }
-var revs=[].slice.call(document.querySelectorAll('.reveal'));
-if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08});revs.forEach(function(el){if(el.getBoundingClientRect().top<window.innerHeight*.95)el.classList.add('in');else io.observe(el);});}else{revs.forEach(function(el){el.classList.add('in');});}
+
+document.querySelectorAll('.filter-tab').forEach(function(btn){
+  btn.addEventListener('click', function(){ applyFilter(btn.getAttribute('data-cat')); });
+});
+
+// Activate on page load from URL
+document.addEventListener('DOMContentLoaded', function(){ applyFilter(_activeCat); });
+// Also apply after Firebase loads articles
+window._applyFilterAfterLoad = function(){ applyFilter(_activeCat); };
 </script>
 <a href="index.html" class="home-btn" id="homeBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
 <script>
@@ -261,6 +274,7 @@ window.addEventListener('firebase-ready',async function(){
 
     var revs=[].slice.call(document.querySelectorAll('.reveal'));
     if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');io.unobserve(e.target);}});},{threshold:.08});revs.forEach(function(el){io.observe(el);});}else{revs.forEach(function(el){el.classList.add('in');});}
+    if(window._applyFilterAfterLoad) window._applyFilterAfterLoad();
   }catch(e){
     console.error('Articles load error:',e);
     var leadWrapErr=document.getElementById('archLead');
