@@ -405,7 +405,7 @@ if('IntersectionObserver' in window){var io=new IntersectionObserver(function(es
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-app.js";
 import {
-  getFirestore, collection, query, where, getDocs, doc, updateDoc, increment
+  getFirestore, collection, query, where, getDocs, doc, getDoc, updateDoc, increment
 } from "https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore.js";
 const firebaseConfig = {
   apiKey: "AIzaSyBf4d83iuU7cSsh2TfYmsD6hTh6hWAL8pY",
@@ -417,7 +417,7 @@ const firebaseConfig = {
 };
 const app = initializeApp(firebaseConfig);
 const db = getFirestore(app);
-window.__fb = { db, collection, query, where, getDocs, doc, updateDoc, increment };
+window.__fb = { db, collection, query, where, getDocs, doc, getDoc, updateDoc, increment };
 window.dispatchEvent(new Event('firebase-ready'));
 </script>
 <script>
@@ -441,11 +441,11 @@ window.addEventListener('firebase-ready',async function(){
     fb.updateDoc(fb.doc(fb.db,'articles',a.id),{views:fb.increment(1)}).catch(function(){});
 
     // lookup author + category
-    var authSnap=a.author_id?await fb.getDocs(fb.query(fb.collection(fb.db,'authors'),fb.where('__name__','==',a.author_id))):null;
-    var catSnap=a.category_id?await fb.getDocs(fb.query(fb.collection(fb.db,'categories'),fb.where('__name__','==',a.category_id))):null;
-    var author=authSnap&&!authSnap.empty?authSnap.docs[0].data():null;
-    var authorId=authSnap&&!authSnap.empty?authSnap.docs[0].id:null;
-    var category=catSnap&&!catSnap.empty?catSnap.docs[0].data():null;
+    var authSnap=a.author_id?await fb.getDoc(fb.doc(fb.db,'authors',a.author_id)):null;
+    var catSnap=a.category_id?await fb.getDoc(fb.doc(fb.db,'categories',a.category_id)):null;
+    var author=authSnap&&authSnap.exists()?authSnap.data():null;
+    var authorId=authSnap&&authSnap.exists()?authSnap.id:null;
+    var category=catSnap&&catSnap.exists()?catSnap.data():null;
 
     document.title=a.title+' — Indian Populus';
 
