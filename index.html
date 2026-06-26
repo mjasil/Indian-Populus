@@ -803,9 +803,9 @@ window.addEventListener('firebase-ready',function(){
     btn.textContent='Subscribing...';btn.disabled=true;
     var result=await window.handleSubscribe(email);
     btn.textContent='Subscribe';btn.disabled=false;
-    if(result===true){input.value='';showSubPopup('🌿','You\'re in!','Welcome to Indian Populus. See you Sunday.');}
-    else if(result==='exists'){showSubPopup('✅','Already subscribed!','You\'re on the list. Watch your inbox.');}
-    else{showSubPopup('❌','Something went wrong','Please try again in a moment.');}
+    if(result===true){input.value='';window.showSubPopup('🌿','You\'re in!','Welcome to Indian Populus. See you Sunday.');}
+    else if(result==='exists'){window.showSubPopup('✅','Already subscribed!','You\'re on the list. Watch your inbox.');}
+    else{window.showSubPopup('❌','Something went wrong','Please try again in a moment.');}
   });}
   Promise.all([loadHero(),loadPicks(),loadRecent(),loadCategoryCounts(),loadFeatured()]);
 });
@@ -1012,7 +1012,7 @@ var EMAILJS_PUBLIC_KEY   = window.IP_CONFIG ? window.IP_CONFIG.EMAILJS_PUBLIC_KE
 var EMAILJS_SERVICE_ID   = window.IP_CONFIG ? window.IP_CONFIG.EMAILJS_SERVICE_ID : '';
 var EMAILJS_TMPL_WELCOME = window.IP_CONFIG ? window.IP_CONFIG.TMPL_WELCOME : '';
 
-function showSubPopup(ico, title, sub){
+window.showSubPopup = function showSubPopup(ico, title, sub){
   var p=document.getElementById('subPopup');
   var prog=document.getElementById('spProg');
   document.getElementById('spIco').textContent=ico;
