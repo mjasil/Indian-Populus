@@ -88,6 +88,7 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
 .home-btn:hover{background:var(--forest);transform:translateX(-50%) translateY(-2px);}
 .home-btn svg{width:13px;height:13px;}
 </style>
+<script src="/config.js"></script>
 </head>
 <body>
 <div class="ticker"><div class="ticker__label">Live Wire</div><div class="ticker__track"><div class="ticker__inner"><div class="ticker__item"><b>Parliament</b>Monsoon session opens with debate on the data-protection bill</div><div class="ticker__item"><b>Markets</b>Sensex closes at record as monsoon forecast lifts rural demand</div><div class="ticker__item"><b>Culture</b>Kochi-Muziris Biennale unveils 2026 curatorial roster</div><div class="ticker__item"><b>Parliament</b>Monsoon session opens with debate on the data-protection bill</div><div class="ticker__item"><b>Markets</b>Sensex closes at record as monsoon forecast lifts rural demand</div><div class="ticker__item"><b>Culture</b>Kochi-Muziris Biennale unveils 2026 curatorial roster</div></div></div></div>
@@ -166,11 +167,11 @@ import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.g
 const db = getFirestore(initializeApp({apiKey:"AIzaSyBf4d83iuU7cSsh2TfYmsD6hTh6hWAL8pY",authDomain:"indian-populus.firebaseapp.com",projectId:"indian-populus"}));
 
 // ── EmailJS Config ──
-const EMAILJS_PUBLIC_KEY      = 'YOUR_EMAILJS_PUBLIC_KEY';
-const EMAILJS_SERVICE_ID      = 'YOUR_SERVICE_ID';
-const EMAILJS_TMPL_NOTIFY     = 'template_contact_notify';
-const EMAILJS_TMPL_REPLY      = 'template_contact_reply';
-const ADMIN_EMAIL             = 'jasiljasil000@gmail.com';
+const EMAILJS_PUBLIC_KEY      = window.IP_CONFIG.EMAILJS_PUBLIC_KEY;
+const EMAILJS_SERVICE_ID      = window.IP_CONFIG.EMAILJS_SERVICE_ID;
+const EMAILJS_TMPL_NOTIFY     = window.IP_CONFIG.TMPL_CONTACT_NOTIFY;
+const EMAILJS_TMPL_REPLY      = window.IP_CONFIG.TMPL_CONTACT_REPLY;
+const ADMIN_EMAIL             = window.IP_CONFIG.ADMIN_EMAIL;
 
 document.getElementById('contactForm').addEventListener('submit', async function(e){
   e.preventDefault();
@@ -184,7 +185,7 @@ document.getElementById('contactForm').addEventListener('submit', async function
     await addDoc(collection(db,'contact_messages'),{
       name, email, subject, message, status:'unread', created_at: serverTimestamp()
     });
-    if(EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY'){
+    if(EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY'){
       emailjs.init({publicKey: EMAILJS_PUBLIC_KEY});
       await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TMPL_NOTIFY, {from_name:name, from_email:email, subject, message, to_email:ADMIN_EMAIL});
       await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TMPL_REPLY,  {to_name:name, to_email:email, subject, message});
