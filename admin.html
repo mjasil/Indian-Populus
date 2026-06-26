@@ -1816,12 +1816,21 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
       var rows = snap.docs.map(function(d){
         var t = d.data();
         var isPermanent = t.email === SEED_OWNER;
+        var actions = isPermanent
+          ? '<span style="font-size:.68rem;color:var(--text3);">Permanent</span>'
+          : '<div style="display:flex;gap:6px;">'
+            + '<button type="button" class="btn btn-ghost btn-sm" data-edit-team="'+d.id+'">Edit</button>'
+            + '<button type="button" class="btn btn-red btn-sm" data-delete-team="'+d.id+'">Remove</button>'
+            + '</div>';
         return '<tr><td class="td-title">'+escapeHtml(t.name||'—')+'</td><td style="font-size:.78rem;">'+escapeHtml(t.email)+'</td><td><span class="badge badge-gray">'+(roleLabel[t.role]||t.role)+'</span></td>'
-          +'<td>'+(isPermanent ? '<span style="font-size:.68rem;color:var(--text3);">Permanent</span>' : '<button type="button" class="btn btn-red btn-sm" data-delete-team="'+d.id+'">Remove</button>')+'</td></tr>';
+          +'<td>'+actions+'</td></tr>';
       }).join('');
       list.innerHTML = '<div class="card" style="padding:0;"><table><thead><tr><th>Name</th><th>Email</th><th>Role</th><th>Actions</th></tr></thead><tbody>'+rows+'</tbody></table></div>';
       list.querySelectorAll('[data-delete-team]').forEach(function(b){
         b.addEventListener('click', function(){ deleteTeamMember(b.getAttribute('data-delete-team')); });
+      });
+      list.querySelectorAll('[data-edit-team]').forEach(function(b){
+        b.addEventListener('click', function(){ openEditTeam(b.getAttribute('data-edit-team')); });
       });
     }catch(e){
       list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--red);">Failed: '+e.message+'</div>';
@@ -1841,6 +1850,22 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
     openModal('modalTeam');
   }
 
+  async function openEditTeam(id){
+    var snap = await FB.getDoc(FB.doc(FB.db,'team_members',id));
+    if(!snap.exists()) return;
+    var t = snap.data();
+    $('teamId').value = id;
+    $('teamName').value = t.name || '';
+    $('teamEmail').value = t.email || '';
+    $('teamEmail').disabled = true; // email = doc ID, can't change
+    $('teamRole').value = t.role || 'junior_editor';
+    $('teamPass').value = '';
+    $('teamPassGroup').style.display = 'none'; // no password change in edit
+    $('teamModalTitle').textContent = 'Edit Team Member';
+    await loadTeamAuthorOptions(t.author_id || '');
+    openModal('modalTeam');
+  }
+
   async function loadTeamAuthorOptions(selectedId) {
     var sel = $('teamAuthorId');
     sel.innerHTML = '<option value="">— None —</option>';
@@ -1857,12 +1882,26 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
   }
 
   async function saveTeam(){
+    var id = $('teamId').value;
     var name = $('teamName').value.trim();
     var email = $('teamEmail').value.trim().toLowerCase();
-    var pass = $('teamPass').value;
     var role = $('teamRole').value;
     var authorId = $('teamAuthorId').value || null;
     if(!name || !email){ toast('Name and email required', 'error'); return; }
+
+    // EDIT MODE
+    if(id){
+      try{
+        await FB.updateDoc(FB.doc(FB.db,'team_members',id), { name: name, role: role, author_id: authorId });
+        toast('Team member updated! ✅', 'success');
+        closeModal('modalTeam');
+        loadTeam();
+      }catch(e){ toast('Failed: ' + e.message, 'error'); }
+      return;
+    }
+
+    // ADD MODE
+    var pass = $('teamPass').value;
     if(!pass || pass.length < 6){ toast('Password must be at least 6 characters', 'error'); return; }
 
     try{
