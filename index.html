@@ -1002,7 +1002,7 @@ var EMAILJS_PUBLIC_KEY   = window.IP_CONFIG ? window.IP_CONFIG.EMAILJS_PUBLIC_KE
 var EMAILJS_SERVICE_ID   = window.IP_CONFIG ? window.IP_CONFIG.EMAILJS_SERVICE_ID : '';
 var EMAILJS_TMPL_WELCOME = window.IP_CONFIG ? window.IP_CONFIG.TMPL_WELCOME : '';
 
-async function handleSubscribe(email){
+window.handleSubscribe = async function handleSubscribe(email){
   if(!email||!email.includes('@')) return false;
   // Use fb directly - already set by firebase-ready listener above
   if(!fb) fb = window.__fb;
