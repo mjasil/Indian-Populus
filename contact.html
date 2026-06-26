@@ -93,8 +93,8 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
 <div class="ticker"><div class="ticker__label">Live Wire</div><div class="ticker__track"><div class="ticker__inner"><div class="ticker__item"><b>Parliament</b>Monsoon session opens with debate on the data-protection bill</div><div class="ticker__item"><b>Markets</b>Sensex closes at record as monsoon forecast lifts rural demand</div><div class="ticker__item"><b>Culture</b>Kochi-Muziris Biennale unveils 2026 curatorial roster</div><div class="ticker__item"><b>Parliament</b>Monsoon session opens with debate on the data-protection bill</div><div class="ticker__item"><b>Markets</b>Sensex closes at record as monsoon forecast lifts rural demand</div><div class="ticker__item"><b>Culture</b>Kochi-Muziris Biennale unveils 2026 curatorial roster</div></div></div></div>
 <header class="nav" id="nav">
   <div class="wrap nav__bar">
-    <a class="logo" href="index.html"><svg class="logo__leaf" viewBox="0 0 32 32" fill="none"><path d="M27 5C12 5 5 13 5 23c0 1.6.3 3 .8 4.4C9 19 15 13 26 11c-7 4-12 9-15 18 9 1 18-4 18-16 0-3.4-1-6-2-8z" fill="currentColor"/></svg><span class="logo__type">Indian <em>Populus</em></span></a>
-    <nav><div class="nav__links"><a href="category.html?cat=politics">Politics & Society</a><a href="category.html?cat=culture">Culture & Arts</a><a href="category.html?cat=health">Health & Wellness</a><a href="category.html?cat=travel">Travel</a><a href="category.html?cat=food">Food & Lifestyle</a><a href="category.html?cat=education">Education</a></div></nav>
+    <a class="logo" href="/"><svg class="logo__leaf" viewBox="0 0 32 32" fill="none"><path d="M27 5C12 5 5 13 5 23c0 1.6.3 3 .8 4.4C9 19 15 13 26 11c-7 4-12 9-15 18 9 1 18-4 18-16 0-3.4-1-6-2-8z" fill="currentColor"/></svg><span class="logo__type">Indian <em>Populus</em></span></a>
+    <nav><div class="nav__links"><a href="/articles?cat=politics-society">Politics & Society</a><a href="/articles?cat=culture-arts">Culture & Arts</a><a href="/articles?cat=health-wellness">Health & Wellness</a><a href="/articles?cat=travel">Travel</a><a href="/articles?cat=food-lifestyle">Food & Lifestyle</a><a href="/articles?cat=education">Education</a></div></nav>
     <a class="btn-sub" href="index.html#newsletter">Subscribe <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round"><path d="M5 12h14M13 6l6 6-6 6"/></svg></a>
   </div>
 </header>
@@ -155,7 +155,7 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
   </div>
 </main>
 
-<footer><div class="foot-inner"><div class="foot-top"><div><div class="foot-brand-name">Indian <em>Populus</em></div><div class="foot-tag">Where India thinks out loud.</div></div><div class="foot-col"><h4>Sections</h4><ul><li><a href="#">Politics & Society</a></li><li><a href="#">Culture & Arts</a></li><li><a href="#">Health & Wellness</a></li><li><a href="category.html?cat=travel">Travel</a></li></ul></div><div class="foot-col"><h4>Masthead</h4><ul><li><a href="about.html">About us</a></li><li><a href="contact.html">Contact</a></li></ul></div><div class="foot-col"><h4>Follow</h4><ul><li><a href="#">Twitter / X</a></li><li><a href="#">Instagram</a></li></ul></div></div><div class="foot-bot"><span>© 2026 Indian Populus Media Pvt. Ltd.</span><span>Made with ♥ in India 🇮🇳</span></div></div></footer>
+<footer><div class="foot-inner"><div class="foot-top"><div><div class="foot-brand-name">Indian <em>Populus</em></div><div class="foot-tag">Where India thinks out loud.</div></div><div class="foot-col"><h4>Sections</h4><ul><li><a href="#">Politics & Society</a></li><li><a href="#">Culture & Arts</a></li><li><a href="#">Health & Wellness</a></li><li><a href="/articles?cat=travel">Travel</a></li></ul></div><div class="foot-col"><h4>Masthead</h4><ul><li><a href="/about">About us</a></li><li><a href="/contact">Contact</a></li></ul></div><div class="foot-col"><h4>Follow</h4><ul><li><a href="#">Twitter / X</a></li><li><a href="#">Instagram</a></li></ul></div></div><div class="foot-bot"><span>© 2026 Indian Populus Media Pvt. Ltd.</span><span>Made with ♥ in India 🇮🇳</span></div></div></footer>
 <script>
 window.addEventListener('scroll',function(){document.getElementById('nav').classList.toggle('scrolled',window.scrollY>12);},{passive:true});
 document.getElementById('contactForm').addEventListener('submit',function(e){
@@ -164,7 +164,7 @@ document.getElementById('contactForm').addEventListener('submit',function(e){
   document.getElementById('formSuccess').style.display='block';
 });
 </script>
-<a href="index.html" class="home-btn" id="homeBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
+<a href="/" class="home-btn" id="homeBtn"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"><path d="M3 9l9-7 9 7v11a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg>Home</a>
 <script>
 window.toggleMobileNav=function(){var mn=document.getElementById("mobileNav");if(mn)mn.classList.toggle("open");};
 window.addEventListener("scroll",function(){var btn=document.getElementById("homeBtn");if(btn)btn.style.opacity=window.scrollY>200?"1":"0";},{passive:true});
