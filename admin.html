@@ -1872,19 +1872,23 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
 
       if(result.error){
         if(result.error.code === 'auth/email-already-in-use'){
-          // Auth account exists (was removed from team but Auth account persists)
-          // Re-add them using the UID returned from secondary auth attempt
-          var uid = result.uid || result.existingUid;
-          if(uid){
-            await FB.setDoc(FB.doc(FB.db,'team_members', uid), {
-              name: name, email: email, role: role,
-              author_id: authorId, created_at: FB.serverTimestamp()
-            });
-            toast('Team member re-added! They can log in with their existing password.', 'success');
-            closeModal('modalTeam');
-            loadTeam();
-          } else {
-            toast('Account exists — they can log in with their old password. Remove access first if needed.', 'error');
+          // Auth account exists — look up their UID from our email→uid map
+          try {
+            var uidDoc = await FB.getDoc(FB.doc(FB.db, 'uid_map', email.replace(/\./g,'_').replace(/@/g,'__')));
+            if(uidDoc.exists()){
+              var savedUid = uidDoc.data().uid;
+              await FB.setDoc(FB.doc(FB.db,'team_members', savedUid), {
+                name: name, email: email, role: role,
+                author_id: authorId, created_at: FB.serverTimestamp()
+              });
+              toast('Team member re-added! They use their existing password.', 'success');
+              closeModal('modalTeam');
+              loadTeam();
+            } else {
+              toast('Cannot re-add: go to Firebase Console → Authentication → delete ' + email + ', then add again here.', 'error');
+            }
+          } catch(e2) {
+            toast('Failed to re-add: ' + e2.message, 'error');
           }
           return;
         }
@@ -1892,10 +1896,13 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
         return;
       }
 
+      var emailKey = email.replace(/\./g,'_').replace(/@/g,'__');
       await FB.setDoc(FB.doc(FB.db,'team_members', result.uid), {
         name: name, email: email, role: role,
         author_id: authorId, created_at: FB.serverTimestamp()
       });
+      // Save email→uid mapping so we can re-add if removed
+      await FB.setDoc(FB.doc(FB.db,'uid_map', emailKey), { uid: result.uid, email: email });
       toast('Team member added! Login: ' + email, 'success');
       closeModal('modalTeam');
       loadTeam();
