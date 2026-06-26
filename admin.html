@@ -278,6 +278,7 @@ tr:last-child td{border-bottom:none;}
 .toast.error{background:#e05252;}
 .toast.warn{background:#c9952a;}
 </style>
+<script src="/config.js"></script>
 </head>
 <body>
 
@@ -2301,13 +2302,13 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
   // ══════════════════════════════════════════════════════
   // EMAILJS CONFIG — fill these in after EmailJS setup
   // ══════════════════════════════════════════════════════
-  var EMAILJS_PUBLIC_KEY    = 'YOUR_EMAILJS_PUBLIC_KEY';
-  var EMAILJS_SERVICE_ID    = 'YOUR_SERVICE_ID';
-  var EMAILJS_TMPL_REPLY    = 'template_contact_reply';
-  var EMAILJS_TMPL_NEWSLETTER = 'template_newsletter';
-  var ADMIN_EMAIL           = 'jasiljasil000@gmail.com';
+  var EMAILJS_PUBLIC_KEY    = window.IP_CONFIG.EMAILJS_PUBLIC_KEY;
+  var EMAILJS_SERVICE_ID    = window.IP_CONFIG.EMAILJS_SERVICE_ID;
+  var EMAILJS_TMPL_REPLY    = window.IP_CONFIG.TMPL_CONTACT_REPLY;
+  var EMAILJS_TMPL_NEWSLETTER = window.IP_CONFIG.TMPL_NEWSLETTER;
+  var ADMIN_EMAIL           = window.IP_CONFIG.ADMIN_EMAIL;
 
-  function emailjsReady(){ return EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY' && typeof emailjs !== 'undefined'; }
+  function emailjsReady(){ return EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY' && typeof emailjs !== 'undefined'; }
 
   // ── MESSAGES ──
   var _replyMsgId = null;
