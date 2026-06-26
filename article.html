@@ -338,8 +338,12 @@ window.addEventListener('firebase-ready',async function(){
     var d=snap.docs[0];
     var a=Object.assign({id:d.id},d.data());
 
-    // increment views (non-blocking)
-    fb.updateDoc(fb.doc(fb.db,'articles',a.id),{views:fb.increment(1)}).catch(function(){});
+    // increment views once per session per article (non-blocking)
+    var viewKey = 'viewed_' + a.id;
+    if(!sessionStorage.getItem(viewKey)){
+      sessionStorage.setItem(viewKey, '1');
+      fb.updateDoc(fb.doc(fb.db,'articles',a.id),{views:fb.increment(1)}).catch(function(){});
+    }
 
     // lookup author + category
     var authSnap=a.author_id?await fb.getDoc(fb.doc(fb.db,'authors',a.author_id)):null;
@@ -369,7 +373,7 @@ window.addEventListener('firebase-ready',async function(){
 
     var pubDate=a.published_at;pubDate=pubDate&&pubDate.toDate?pubDate.toDate():new Date(pubDate||Date.now());
     var metaEl=document.querySelector('.byline-meta');
-    if(metaEl) metaEl.innerHTML='<span>'+pubDate.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})+'</span><span class="sep">·</span><span class="read"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> '+(a.read_time||5)+' min read</span><span class="sep">·</span><span>'+(a.views||0)+' views</span>';
+    if(metaEl) metaEl.innerHTML='<span>'+pubDate.toLocaleDateString('en-IN',{day:'numeric',month:'long',year:'numeric'})+'</span><span class="sep">·</span><span class="read"><svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg> '+(a.read_time||5)+' min read</span>';
 
     var cover=document.querySelector('.art-cover');
     if(cover&&a.cover_image_url) cover.innerHTML='<img src="'+a.cover_image_url+'" alt="'+a.title+'" style="width:100%;height:100%;object-fit:cover;"/>';
