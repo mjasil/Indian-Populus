@@ -998,19 +998,22 @@ async function loadFeatured(){
 }
 
 // ── NEWSLETTER SUBSCRIBE ──
-// EmailJS config (same as contact.html)
-var EMAILJS_PUBLIC_KEY   = window.IP_CONFIG.EMAILJS_PUBLIC_KEY;
-var EMAILJS_SERVICE_ID   = window.IP_CONFIG.EMAILJS_SERVICE_ID;
-var EMAILJS_TMPL_WELCOME = window.IP_CONFIG.TMPL_WELCOME;
+var EMAILJS_PUBLIC_KEY   = window.IP_CONFIG ? window.IP_CONFIG.EMAILJS_PUBLIC_KEY : '';
+var EMAILJS_SERVICE_ID   = window.IP_CONFIG ? window.IP_CONFIG.EMAILJS_SERVICE_ID : '';
+var EMAILJS_TMPL_WELCOME = window.IP_CONFIG ? window.IP_CONFIG.TMPL_WELCOME : '';
 
 async function handleSubscribe(email){
   if(!email||!email.includes('@')) return false;
+  // Wait for Firebase if not ready
+  if(!fb){
+    await new Promise(function(r){ window.addEventListener('firebase-ready',r,{once:true}); });
+    fb = window.__fb;
+  }
   try{
     var q=fb.query(fb.collection(fb.db,'subscribers'),fb.where('email','==',email.toLowerCase().trim()));
     var existing=await fb.getDocs(q);
     if(!existing.empty) return 'exists';
     await fb.addDoc(fb.collection(fb.db,'subscribers'),{email:email.toLowerCase().trim(),subscribed_at:fb.serverTimestamp(),is_active:true});
-    // Send welcome email if EmailJS configured
     if(EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY' && typeof emailjs !== 'undefined'){
       emailjs.init({publicKey: EMAILJS_PUBLIC_KEY});
       emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TMPL_WELCOME, {to_email: email}).catch(function(){});
