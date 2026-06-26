@@ -997,6 +997,11 @@ async function loadFeatured(){
 }
 
 // ── NEWSLETTER SUBSCRIBE ──
+// EmailJS config (same as contact.html)
+var EMAILJS_PUBLIC_KEY   = 'YOUR_EMAILJS_PUBLIC_KEY';
+var EMAILJS_SERVICE_ID   = 'YOUR_SERVICE_ID';
+var EMAILJS_TMPL_WELCOME = 'template_welcome';
+
 async function handleSubscribe(email){
   if(!email||!email.includes('@')) return false;
   try{
@@ -1004,9 +1009,15 @@ async function handleSubscribe(email){
     var existing=await fb.getDocs(q);
     if(!existing.empty) return 'exists';
     await fb.addDoc(fb.collection(fb.db,'subscribers'),{email:email.toLowerCase().trim(),subscribed_at:fb.serverTimestamp(),is_active:true});
+    // Send welcome email if EmailJS configured
+    if(EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY' && typeof emailjs !== 'undefined'){
+      emailjs.init({publicKey: EMAILJS_PUBLIC_KEY});
+      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TMPL_WELCOME, {to_email: email}).catch(function(){});
+    }
     return true;
   }catch(e){console.error('Subscribe error:',e);return false;}
 }
 </script>
+<script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 </body>
 </html>
