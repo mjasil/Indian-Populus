@@ -764,6 +764,18 @@ async function createUserSeparately(email, password){
     await signOut(secondaryAuth);
     return { uid, error: null };
   }catch(err){
+    if(err.code === 'auth/email-already-in-use'){
+      // Try signing in with the provided password to get their existing UID
+      try{
+        const cred = await signInWithEmailAndPassword(secondaryAuth, email, password);
+        const uid = cred.user.uid;
+        await signOut(secondaryAuth);
+        return { uid, existingUid: uid, error: err };
+      }catch(signInErr){
+        // Wrong password - can't get UID, but account exists
+        return { uid: null, existingUid: null, error: err };
+      }
+    }
     return { uid: null, error: err };
   }
 }
@@ -1848,6 +1860,7 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
     var email = $('teamEmail').value.trim().toLowerCase();
     var pass = $('teamPass').value;
     var role = $('teamRole').value;
+    var authorId = $('teamAuthorId').value || null;
     if(!name || !email){ toast('Name and email required', 'error'); return; }
     if(!pass || pass.length < 6){ toast('Password must be at least 6 characters', 'error'); return; }
 
@@ -1856,16 +1869,32 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
       if(existing){ toast('This email already has access', 'error'); return; }
 
       var result = await FB.createUserSeparately(email, pass);
+
       if(result.error){
-        var msg = result.error.message || 'Failed to create account';
-        if(result.error.code === 'auth/email-already-in-use') msg = 'An account with this email already exists.';
-        toast('Failed: ' + msg, 'error');
+        if(result.error.code === 'auth/email-already-in-use'){
+          // Auth account exists (was removed from team but Auth account persists)
+          // Re-add them using the UID returned from secondary auth attempt
+          var uid = result.uid || result.existingUid;
+          if(uid){
+            await FB.setDoc(FB.doc(FB.db,'team_members', uid), {
+              name: name, email: email, role: role,
+              author_id: authorId, created_at: FB.serverTimestamp()
+            });
+            toast('Team member re-added! They can log in with their existing password.', 'success');
+            closeModal('modalTeam');
+            loadTeam();
+          } else {
+            toast('Account exists — they can log in with their old password. Remove access first if needed.', 'error');
+          }
+          return;
+        }
+        toast('Failed: ' + (result.error.message || 'Unknown error'), 'error');
         return;
       }
+
       await FB.setDoc(FB.doc(FB.db,'team_members', result.uid), {
         name: name, email: email, role: role,
-        author_id: $('teamAuthorId').value || null,
-        created_at: FB.serverTimestamp()
+        author_id: authorId, created_at: FB.serverTimestamp()
       });
       toast('Team member added! Login: ' + email, 'success');
       closeModal('modalTeam');
