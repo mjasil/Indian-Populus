@@ -567,20 +567,15 @@ tr:last-child td{border-bottom:none;}
           <div class="stat-card green"><div class="stat-label">Total Subscribers</div><div class="stat-value" id="statSubscribersNl">—</div><div class="stat-icon">📬</div></div>
           <div class="stat-card gold"><div class="stat-label">Active</div><div class="stat-value" id="statSubscribersActive">—</div><div class="stat-icon">✅</div></div>
         </div>
-
-        <!-- COMPOSE -->
         <div class="card">
           <div class="section-title">Send Newsletter</div>
-          <div class="alert alert-info" style="margin-bottom:16px;">Requires EmailJS to be configured. Set your keys in admin config.</div>
           <div class="form-group" style="margin-bottom:12px;"><label>Subject</label><input type="text" id="nlSubject" placeholder="e.g. This week in Indian Populus"/></div>
-          <div class="form-group" style="margin-bottom:12px;"><label>Body (plain text or simple HTML)</label><textarea id="nlBody" rows="8" placeholder="Write your newsletter content here..."></textarea></div>
+          <div class="form-group" style="margin-bottom:12px;"><label>Body</label><textarea id="nlBody" rows="8" placeholder="Write your newsletter content here..."></textarea></div>
           <div style="display:flex;gap:10px;align-items:center;">
             <button type="button" class="btn btn-green" id="btnSendNewsletter">Send to All Subscribers</button>
             <span id="nlSendStatus" style="font-size:.78rem;color:var(--text3);"></span>
           </div>
         </div>
-
-        <!-- SUBSCRIBERS LIST -->
         <div class="card">
           <div class="section-title">Subscribers</div>
           <div id="subscribersList" style="max-height:400px;overflow-y:auto;"></div>
@@ -592,10 +587,9 @@ tr:last-child td{border-bottom:none;}
       <div class="page" id="page-messages">
         <div class="page-header"><div><h1>Contact Messages</h1><p>Messages from the contact form</p></div></div>
         <div id="messagesList"><div style="text-align:center;padding:40px;color:var(--text3);">Loading...</div></div>
-        <!-- Reply Modal trigger area -->
         <div id="replyArea" style="display:none;" class="card">
-          <div class="section-title">Reply to: <span id="replyToName"></span> &lt;<span id="replyToEmail"></span>&gt;</div>
-          <div class="form-group" style="margin-bottom:12px;"><label>Your Reply</label><textarea id="replyText" rows="6" placeholder="Type your reply here..."></textarea></div>
+          <div class="section-title">Reply to: <span id="replyToName"></span></div>
+          <div class="form-group" style="margin-bottom:12px;"><label>Your Reply</label><textarea id="replyText" rows="6" placeholder="Type your reply..."></textarea></div>
           <div style="display:flex;gap:10px;">
             <button type="button" class="btn btn-green" id="btnSendReply">Send Reply</button>
             <button type="button" class="btn btn-ghost" id="btnCancelReply">Cancel</button>
@@ -1015,9 +1009,9 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
   function applyPermUI() {
     // NAV items
     $('nav-team').style.display       = can('manage_team')       ? '' : 'none';
+    $('nav-messages').style.display   = can('approve_comments')  ? '' : 'none';
     $('nav-categories').style.display = can('manage_categories') ? '' : 'none';
     $('nav-newsletter').style.display = can('export_data')       ? '' : 'none';
-    $('nav-messages').style.display   = can('approve_comments')  ? '' : 'none';
     $('nav-roles').style.display      = userRole === 'owner'     ? '' : 'none';
     $('nav-settings').style.display   = can('manage_settings')   ? '' : 'none';
 
@@ -2300,145 +2294,133 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
           toast('Permissions saved! ✅', 'success');
         } catch(e) {
           toast('Failed to save: ' + e.message, 'error');
-  // ══════════════════════════════════════════════════════
-  // EMAILJS CONFIG — fill these in after EmailJS setup
-  // ══════════════════════════════════════════════════════
+        }
+      });
+    }
+  }
+
+  // ══ EMAILJS CONFIG ══
   var _cfg = window.IP_CONFIG || {};
   var EMAILJS_PUBLIC_KEY    = _cfg.EMAILJS_PUBLIC_KEY    || '';
   var EMAILJS_SERVICE_ID    = _cfg.EMAILJS_SERVICE_ID    || '';
-  var EMAILJS_TMPL_REPLY    = _cfg.TMPL_CONTACT_REPLY    || '';
-  var EMAILJS_TMPL_NEWSLETTER = _cfg.TMPL_NEWSLETTER     || '';
+  var EMAILJS_TMPL_REPLY    = _cfg.TMPL_CONTACT_REPLY    || 'template_contact_reply';
+  var EMAILJS_TMPL_NEWSLETTER = _cfg.TMPL_NEWSLETTER     || 'template_newsletter';
   var ADMIN_EMAIL           = _cfg.ADMIN_EMAIL           || 'jasiljasil000@gmail.com';
 
   function emailjsReady(){ return EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY' && typeof emailjs !== 'undefined'; }
 
-  // ── MESSAGES ──
+  // ══ MESSAGES ══
   var _replyMsgId = null;
   var _replyEmail = null;
 
   async function loadMessages(){
     var list = $('messagesList');
+    if(!list) return;
     list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);">Loading...</div>';
     $('replyArea').style.display = 'none';
     try{
       var snap = await FB.getDocs(FB.query(FB.collection(FB.db,'contact_messages'), FB.orderBy('created_at','desc')));
-      // Update badge
       var unread = snap.docs.filter(function(d){ return d.data().status === 'unread'; }).length;
       var badge = $('messagesBadge');
       if(badge){ badge.textContent = unread; badge.style.display = unread ? 'inline' : 'none'; }
-
       if(snap.empty){ list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--text3);">No messages yet.</div>'; return; }
-      list.innerHTML = '<div class="card" style="padding:0;"><table><thead><tr><th>Name</th><th>Email</th><th>Subject</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead><tbody>'
+      var roleLabel = {owner:'👑 Owner',editor:'✍️ Editor',junior_editor:'📝 Junior Editor'};
+      list.innerHTML = '<div class="card" style="padding:0;overflow-x:auto;"><table><thead><tr><th>Name</th><th>Email</th><th>Subject</th><th>Date</th><th>Status</th><th>Actions</th></tr></thead><tbody>'
         + snap.docs.map(function(d){
           var m = d.data();
           var dv = m.created_at && m.created_at.toDate ? m.created_at.toDate() : new Date();
           var isUnread = m.status === 'unread';
           return '<tr style="'+(isUnread?'font-weight:600;':'')+'">'
-            +'<td>'+escapeHtml(m.name||'—')+'</td>'
+            +'<td class="td-title">'+escapeHtml(m.name||'—')+'</td>'
             +'<td style="font-size:.75rem;">'+escapeHtml(m.email||'')+'</td>'
             +'<td style="font-size:.78rem;">'+escapeHtml(m.subject||'')+'</td>'
             +'<td style="font-size:.72rem;color:var(--text3);">'+dv.toLocaleDateString('en-IN')+'</td>'
-            +'<td><span class="badge '+(isUnread?'badge-red':'badge-gray')+'">'+(isUnread?'Unread':'Read')+'</span></td>'
-            +'<td style="display:flex;gap:6px;">'
-            +'<button class="btn btn-ghost btn-sm" data-view-msg="'+d.id+'" data-msg-email="'+escapeHtml(m.email||'')+'" data-msg-name="'+escapeHtml(m.name||'')+'">View</button>'
+            +'<td><span class="badge '+(isUnread?'badge-yellow':'badge-gray')+'">'+(isUnread?'Unread':'Read')+'</span></td>'
+            +'<td><div style="display:flex;gap:6px;">'
+            +'<button class="btn btn-ghost btn-sm" data-view-msg="'+d.id+'">View</button>'
             +'<button class="btn btn-green btn-sm" data-reply-msg="'+d.id+'" data-msg-email="'+escapeHtml(m.email||'')+'" data-msg-name="'+escapeHtml(m.name||'')+'">Reply</button>'
-            +'</td></tr>';
+            +'</div></td></tr>';
         }).join('')
         +'</tbody></table></div>';
 
-      // View message — show full content in a toast-style card
       list.querySelectorAll('[data-view-msg]').forEach(function(b){
         b.addEventListener('click', async function(){
           var id = b.getAttribute('data-view-msg');
-          var snap2 = await FB.getDoc(FB.doc(FB.db,'contact_messages',id));
-          var m = snap2.data();
+          var s2 = await FB.getDoc(FB.doc(FB.db,'contact_messages',id));
+          var m = s2.data();
           var dv = m.created_at && m.created_at.toDate ? m.created_at.toDate() : new Date();
           alert('From: '+m.name+' <'+m.email+'>\nSubject: '+m.subject+'\nDate: '+dv.toLocaleString('en-IN')+'\n\n'+m.message);
-          if(m.status === 'unread') await FB.updateDoc(FB.doc(FB.db,'contact_messages',id),{status:'read'});
+          if(m.status==='unread') await FB.updateDoc(FB.doc(FB.db,'contact_messages',id),{status:'read'});
           loadMessages();
         });
       });
-
-      // Reply
       list.querySelectorAll('[data-reply-msg]').forEach(function(b){
         b.addEventListener('click', function(){
           _replyMsgId = b.getAttribute('data-reply-msg');
           _replyEmail = b.getAttribute('data-msg-email');
-          $('replyToName').textContent  = b.getAttribute('data-msg-name');
-          $('replyToEmail').textContent = _replyEmail;
+          $('replyToName').textContent = b.getAttribute('data-msg-name')+' <'+_replyEmail+'>';
           $('replyText').value = '';
           $('replyArea').style.display = '';
           $('replyArea').scrollIntoView({behavior:'smooth'});
         });
       });
-
     }catch(e){ list.innerHTML = '<div style="text-align:center;padding:40px;color:var(--red);">Failed: '+e.message+'</div>'; }
   }
 
   function bindMessageEvents(){
-    $('btnSendReply') && $('btnSendReply').addEventListener('click', async function(){
+    var btnReply = $('btnSendReply');
+    if(btnReply) btnReply.addEventListener('click', async function(){
       var reply = $('replyText').value.trim();
       if(!reply){ toast('Write a reply first','error'); return; }
-      if(!emailjsReady()){ toast('EmailJS not configured yet. Add your keys to admin.html','error'); return; }
-      this.textContent = 'Sending...'; this.disabled = true;
+      if(!emailjsReady()){ toast('EmailJS not configured yet','error'); return; }
+      this.textContent='Sending...'; this.disabled=true;
       try{
-        emailjs.init({publicKey: EMAILJS_PUBLIC_KEY});
+        emailjs.init({publicKey:EMAILJS_PUBLIC_KEY});
         await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TMPL_REPLY, {
-          to_email: _replyEmail,
-          to_name: $('replyToName').textContent,
-          reply_message: reply,
-          from_name: 'Indian Populus'
+          to_email:_replyEmail, to_name:$('replyToName').textContent, reply_message:reply, from_name:'Indian Populus'
         });
-        await FB.updateDoc(FB.doc(FB.db,'contact_messages',_replyMsgId),{status:'replied', replied_at: FB.serverTimestamp()});
+        await FB.updateDoc(FB.doc(FB.db,'contact_messages',_replyMsgId),{status:'replied',replied_at:FB.serverTimestamp()});
         toast('Reply sent! ✅','success');
-        $('replyArea').style.display = 'none';
+        $('replyArea').style.display='none';
         loadMessages();
       }catch(e){ toast('Failed: '+e.message,'error'); }
-      this.textContent = 'Send Reply'; this.disabled = false;
+      this.textContent='Send Reply'; this.disabled=false;
     });
-    $('btnCancelReply') && $('btnCancelReply').addEventListener('click', function(){ $('replyArea').style.display='none'; });
-
-    // Newsletter send
-    $('btnSendNewsletter') && $('btnSendNewsletter').addEventListener('click', async function(){
-      var subject = $('nlSubject').value.trim();
-      var body    = $('nlBody').value.trim();
+    var btnCancel = $('btnCancelReply');
+    if(btnCancel) btnCancel.addEventListener('click', function(){ $('replyArea').style.display='none'; });
+    var btnSend = $('btnSendNewsletter');
+    if(btnSend) btnSend.addEventListener('click', async function(){
+      var subject=$('nlSubject').value.trim(), body=$('nlBody').value.trim();
       if(!subject||!body){ toast('Subject and body required','error'); return; }
-      if(!emailjsReady()){ toast('EmailJS not configured. Add your keys to admin.html','error'); return; }
-      if(!confirm('Send this newsletter to ALL active subscribers? This cannot be undone.')) return;
-      var status = $('nlSendStatus');
-      this.disabled = true;
+      if(!emailjsReady()){ toast('EmailJS not configured. Add your keys to config.js','error'); return; }
+      if(!confirm('Send to ALL active subscribers?')) return;
+      var status=$('nlSendStatus'); this.disabled=true;
       try{
-        emailjs.init({publicKey: EMAILJS_PUBLIC_KEY});
-        var snap = await FB.getDocs(FB.query(FB.collection(FB.db,'subscribers'), FB.where('is_active','==',true)));
-        var total = snap.size;
-        var sent = 0;
-        status.textContent = 'Sending to '+total+' subscribers...';
+        emailjs.init({publicKey:EMAILJS_PUBLIC_KEY});
+        var snap=await FB.getDocs(FB.query(FB.collection(FB.db,'subscribers'),FB.where('is_active','==',true)));
+        var total=snap.size, sent=0;
+        status.textContent='Sending to '+total+'...';
         for(var i=0;i<snap.docs.length;i++){
-          var email = snap.docs[i].data().email;
-          try{
-            await emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TMPL_NEWSLETTER, {to_email:email, subject:subject, body:body});
-            sent++;
-            status.textContent = 'Sent '+sent+'/'+total+'...';
-          }catch(e2){ console.error('Failed for '+email,e2); }
-          // Small delay to avoid rate limits
-          if(i < snap.docs.length-1) await new Promise(function(r){setTimeout(r,300);});
+          try{ await emailjs.send(EMAILJS_SERVICE_ID,EMAILJS_TMPL_NEWSLETTER,{to_email:snap.docs[i].data().email,subject:subject,body:body}); sent++; }catch(e2){}
+          status.textContent='Sent '+sent+'/'+total+'...';
+          if(i<snap.docs.length-1) await new Promise(function(r){setTimeout(r,300);});
         }
-        toast('Newsletter sent to '+sent+' subscribers! ✅','success');
-        status.textContent = 'Sent to '+sent+'/'+total+' subscribers';
+        toast('Sent to '+sent+' subscribers! ✅','success');
         $('nlSubject').value=''; $('nlBody').value='';
-      }catch(e){ toast('Failed: '+e.message,'error'); status.textContent=''; }
+        status.textContent='Done — sent to '+sent+'/'+total;
+      }catch(e){ toast('Failed: '+e.message,'error'); }
       this.disabled=false;
     });
   }
 
-  // Show unread message count badge on load
   async function loadMessageBadge(){
     try{
-      var snap = await FB.getDocs(FB.query(FB.collection(FB.db,'contact_messages'),FB.where('status','==','unread')));
-      var badge = $('messagesBadge');
-      if(badge){ badge.textContent = snap.size; badge.style.display = snap.size ? 'inline' : 'none'; }
+      var snap=await FB.getDocs(FB.query(FB.collection(FB.db,'contact_messages'),FB.where('status','==','unread')));
+      var badge=$('messagesBadge');
+      if(badge){ badge.textContent=snap.size; badge.style.display=snap.size?'inline':'none'; }
     }catch(e){}
   }
+
 
 })();
 </script>
