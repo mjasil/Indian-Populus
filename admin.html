@@ -764,18 +764,19 @@ async function createUserSeparately(email, password){
     await signOut(secondaryAuth);
     return { uid, error: null };
   }catch(err){
-    if(err.code === 'auth/email-already-in-use'){
-      // Try signing in with the provided password to get their existing UID
-      try{
-        const cred = await signInWithEmailAndPassword(secondaryAuth, email, password);
-        const uid = cred.user.uid;
-        await signOut(secondaryAuth);
-        return { uid, existingUid: uid, error: err };
-      }catch(signInErr){
-        // Wrong password - can't get UID, but account exists
-        return { uid: null, existingUid: null, error: err };
-      }
-    }
+    return { uid: null, error: err };
+  }
+}
+
+async function signInSecondaryAndGetUid(email, password){
+  const secondaryApp = initializeApp(firebaseConfig, 'secondary-signin-' + Date.now());
+  const secondaryAuth = getAuth(secondaryApp);
+  try{
+    const cred = await signInWithEmailAndPassword(secondaryAuth, email, password);
+    const uid = cred.user.uid;
+    await signOut(secondaryAuth);
+    return { uid };
+  }catch(err){
     return { uid: null, error: err };
   }
 }
@@ -785,7 +786,7 @@ window.FB = {
   signInWithEmailAndPassword, signInWithPopup, signOut, onAuthStateChanged,
   collection, doc, getDoc, getDocs, addDoc, setDoc, updateDoc, deleteDoc,
   query, where, orderBy, limit, increment, serverTimestamp,
-  createUserSeparately
+  createUserSeparately, signInSecondaryAndGetUid
 };
 
 window.dispatchEvent(new CustomEvent('fb-ready'));
@@ -1872,23 +1873,23 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
 
       if(result.error){
         if(result.error.code === 'auth/email-already-in-use'){
-          // Auth account exists — look up their UID from our email→uid map
+          // Auth account exists — try signing in with provided password to get UID
+          // This also works as a password update if they know old one
           try {
-            var uidDoc = await FB.getDoc(FB.doc(FB.db, 'uid_map', email.replace(/\./g,'_').replace(/@/g,'__')));
-            if(uidDoc.exists()){
-              var savedUid = uidDoc.data().uid;
-              await FB.setDoc(FB.doc(FB.db,'team_members', savedUid), {
+            var reResult = await FB.signInSecondaryAndGetUid(email, pass);
+            if(reResult.uid){
+              await FB.setDoc(FB.doc(FB.db,'team_members', reResult.uid), {
                 name: name, email: email, role: role,
                 author_id: authorId, created_at: FB.serverTimestamp()
               });
-              toast('Team member re-added! They use their existing password.', 'success');
+              toast('Team member re-added! ✅ They log in with password: ' + pass, 'success');
               closeModal('modalTeam');
               loadTeam();
             } else {
-              toast('Cannot re-add: go to Firebase Console → Authentication → delete ' + email + ', then add again here.', 'error');
+              toast('Account exists with a different password. Delete ' + email + ' from Firebase Console → Authentication, then re-add.', 'error');
             }
-          } catch(e2) {
-            toast('Failed to re-add: ' + e2.message, 'error');
+          } catch(e2){
+            toast('Failed: ' + e2.message, 'error');
           }
           return;
         }
@@ -1896,13 +1897,10 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
         return;
       }
 
-      var emailKey = email.replace(/\./g,'_').replace(/@/g,'__');
       await FB.setDoc(FB.doc(FB.db,'team_members', result.uid), {
         name: name, email: email, role: role,
         author_id: authorId, created_at: FB.serverTimestamp()
       });
-      // Save email→uid mapping so we can re-add if removed
-      await FB.setDoc(FB.doc(FB.db,'uid_map', emailKey), { uid: result.uid, email: email });
       toast('Team member added! Login: ' + email, 'success');
       closeModal('modalTeam');
       loadTeam();
