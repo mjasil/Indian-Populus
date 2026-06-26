@@ -671,21 +671,7 @@ body{animation:pageFadeIn .4s ease both;}
     rail.addEventListener('pointermove',function(e){if(!down)return;e.preventDefault();rail.scrollLeft=scl-(e.pageX-startX);});
   }
 
-  // ── NEWSLETTER ──
-  var form=document.getElementById('newsForm');
-  if(form){form.addEventListener('submit',async function(e){
-    e.preventDefault();
-    var input=form.querySelector('input');
-    var btn=form.querySelector('button');
-    var email=input.value.trim();
-    if(!email){return;}
-    btn.textContent='Subscribing...';
-    var result=await handleSubscribe(email);
-    if(result===true){btn.textContent='Welcome aboard ✓';btn.style.background='#d9b463';input.value='';}
-    else if(result==='exists'){btn.textContent='Already subscribed!';btn.style.background='#c9952a';}
-    else{btn.textContent='Try again';btn.style.background='#e05252';}
-    setTimeout(function(){btn.textContent='Subscribe';btn.style.background='';},3000);
-  });}
+  // ── NEWSLETTER handler moved to firebase-ready block below ──
 
   // ── HERO WORD REVEAL (Style D) ──
   function initWordReveal(){
@@ -797,6 +783,22 @@ function initials(name){return (name||'?').split(' ').map(function(w){return w[0
 var fb=null;
 window.addEventListener('firebase-ready',function(){
   fb=window.__fb;
+
+  // ── NEWSLETTER ──
+  var form=document.getElementById('newsForm');
+  if(form){form.addEventListener('submit',async function(e){
+    e.preventDefault();
+    var input=form.querySelector('input');
+    var btn=form.querySelector('button');
+    var email=input.value.trim();
+    if(!email){return;}
+    btn.textContent='Subscribing...';
+    var result=await window.handleSubscribe(email);
+    if(result===true){btn.textContent='Welcome aboard ✓';btn.style.background='#d9b463';input.value='';}
+    else if(result==='exists'){btn.textContent='Already subscribed!';btn.style.background='#c9952a';}
+    else{btn.textContent='Try again';btn.style.background='#e05252';}
+    setTimeout(function(){btn.textContent='Subscribe';btn.style.background='';},3000);
+  });}
   Promise.all([loadHero(),loadPicks(),loadRecent(),loadCategoryCounts(),loadFeatured()]);
 });
 
@@ -1002,7 +1004,7 @@ var EMAILJS_PUBLIC_KEY   = window.IP_CONFIG ? window.IP_CONFIG.EMAILJS_PUBLIC_KE
 var EMAILJS_SERVICE_ID   = window.IP_CONFIG ? window.IP_CONFIG.EMAILJS_SERVICE_ID : '';
 var EMAILJS_TMPL_WELCOME = window.IP_CONFIG ? window.IP_CONFIG.TMPL_WELCOME : '';
 
-window.handleSubscribe = async function handleSubscribe(email){
+async function handleSubscribe(email){
   if(!email||!email.includes('@')) return false;
   // Use fb directly - already set by firebase-ready listener above
   if(!fb) fb = window.__fb;
