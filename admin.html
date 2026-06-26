@@ -1885,4 +1885,173 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
     var newWrap = wrap.cloneNode(true);
     wrap.parentNode.replaceChild(newWrap, wrap);
     // Re-assign canvas ref
-    _crop.canvas 
+    _crop.canvas = newWrap.querySelector('#cropCanvas') || $('cropCanvas');
+
+    // Mouse drag
+    newWrap.addEventListener('mousedown', function(e) {
+      _crop.dragStart = { x: e.clientX - _crop.ox, y: e.clientY - _crop.oy };
+    });
+    window.addEventListener('mousemove', function(e) {
+      if(!_crop.dragStart) return;
+      _crop.ox = e.clientX - _crop.dragStart.x;
+      _crop.oy = e.clientY - _crop.dragStart.y;
+      clampCrop(); drawCrop();
+    });
+    window.addEventListener('mouseup', function() { _crop.dragStart = null; });
+
+    // Touch drag
+    var lastTouch = null;
+    newWrap.addEventListener('touchstart', function(e) {
+      if(e.touches.length === 1) {
+        lastTouch = { x: e.touches[0].clientX - _crop.ox, y: e.touches[0].clientY - _crop.oy };
+      }
+    }, {passive:true});
+    newWrap.addEventListener('touchmove', function(e) {
+      e.preventDefault();
+      if(e.touches.length === 1 && lastTouch) {
+        _crop.ox = e.touches[0].clientX - lastTouch.x;
+        _crop.oy = e.touches[0].clientY - lastTouch.y;
+        clampCrop(); drawCrop();
+      }
+    }, {passive:false});
+    newWrap.addEventListener('touchend', function() { lastTouch = null; }, {passive:true});
+
+    // Scroll to zoom
+    newWrap.addEventListener('wheel', function(e) {
+      e.preventDefault();
+      var delta = e.deltaY > 0 ? -0.05 : 0.05;
+      var newScale = Math.max(_crop.minScale, Math.min(_crop.maxScale, _crop.scale + delta));
+      var ratio = newScale / _crop.scale;
+      var cx = _crop.canvas.width / 2;
+      var cy = _crop.canvas.height / 2;
+      _crop.ox = cx - (cx - _crop.ox) * ratio;
+      _crop.oy = cy - (cy - _crop.oy) * ratio;
+      _crop.scale = newScale;
+      clampCrop(); drawCrop();
+      var pct = Math.round((_crop.scale / _crop.minScale) * 100);
+      $('cropZoom').value = Math.min(300, pct);
+      $('cropZoomVal').textContent = (_crop.scale / _crop.minScale).toFixed(1) + '×';
+    }, {passive:false});
+
+    // Zoom slider
+    $('cropZoom').addEventListener('input', function() {
+      var pct = parseInt(this.value) / 100;
+      _crop.scale = _crop.minScale * pct;
+      clampCrop(); drawCrop();
+      $('cropZoomVal').textContent = pct.toFixed(1) + '×';
+    });
+  }
+
+  function applyCrop() {
+    var canvas = _crop.canvas;
+    // Export at 2× for retina
+    var outW = 1200, outH = Math.round(1200 / _crop.aspect);
+    var out = document.createElement('canvas');
+    out.width = outW; out.height = outH;
+    var octx = out.getContext('2d');
+    var scaleX = outW / canvas.width;
+    var scaleY = outH / canvas.height;
+    octx.drawImage(_crop.img,
+      -_crop.ox / _crop.scale, -_crop.oy / _crop.scale,
+      _crop.img.naturalWidth, _crop.img.naturalHeight,
+      0, 0, _crop.img.naturalWidth * _crop.scale * scaleX, _crop.img.naturalHeight * _crop.scale * scaleY
+    );
+    out.toBlob(function(blob) {
+      var croppedFile = new File([blob], _crop.originalFile.name, { type: 'image/jpeg' });
+      closeModal('modalCrop');
+      uploadImage(croppedFile, _crop.targetInput, _crop.previewImg, _crop.previewWrap, _crop.placeholder, _crop.uploadingEl);
+    }, 'image/jpeg', 0.92);
+  }
+
+  function bindUploadEvents(){
+    // Cover image — 16:9 crop
+    $('coverDrop').addEventListener('click', function(){ $('coverFile').click(); });
+    $('coverFile').addEventListener('change', function(){
+      if(this.files[0]) openCropModal(this.files[0], 16/9, 'artCover', 'coverPreview', 'coverPreviewWrap', 'coverPlaceholder', 'coverUploading');
+      this.value = '';
+    });
+    // Author photo — 1:1 crop
+    $('authorPhotoDrop').addEventListener('click', function(){ $('authorPhotoFile').click(); });
+    $('authorPhotoFile').addEventListener('change', function(){
+      if(this.files[0]) openCropModal(this.files[0], 1/1, 'authorPhoto', 'authorPhotoPreview', 'authorPhotoPreviewWrap', 'authorPhotoPlaceholder', 'authorPhotoPlaceholder');
+      this.value = '';
+    });
+    // Crop apply / cancel
+    $('btnCropApply').addEventListener('click', applyCrop);
+    $('btnCropCancel').addEventListener('click', function(){ closeModal('modalCrop'); });
+  }
+
+  function getCropTitle(aspect) {
+    if(Math.abs(aspect - 16/9) < 0.01) return '✂️ Crop Cover Image — 16:9 (article header)';
+    if(Math.abs(aspect - 1) < 0.01)   return '✂️ Crop Author Photo — 1:1 (square)';
+    return '✂️ Crop Image';
+  }
+
+  // ══════════════════════════════════════════════════════
+  // ROLE PERMISSIONS
+  // ══════════════════════════════════════════════════════
+  var DEFAULT_PERMISSIONS = {
+    write_article:    { label: 'Write articles',           owner: true,  editor: true,  junior: true  },
+    publish_article:  { label: 'Publish articles',         owner: true,  editor: true,  junior: false },
+    edit_any_article: { label: 'Edit any article',         owner: true,  editor: true,  junior: false },
+    delete_article:   { label: 'Delete articles',          owner: true,  editor: false, junior: false },
+    manage_authors:   { label: 'Add / edit authors',       owner: true,  editor: true,  junior: false },
+    manage_categories:{ label: 'Manage categories',        owner: true,  editor: false, junior: false },
+    manage_team:      { label: 'Manage team members',      owner: true,  editor: false, junior: false },
+    manage_settings:  { label: 'Edit site settings',       owner: true,  editor: false, junior: false },
+    approve_comments: { label: 'Approve / reject comments',owner: true,  editor: true,  junior: false },
+    export_data:      { label: 'Export subscribers CSV',   owner: true,  editor: true,  junior: false },
+  };
+
+  var _perms = null;
+
+  async function loadRolePermissions() {
+    var tbody = $('rolesTbody');
+    if(!tbody) return;
+    tbody.innerHTML = '<tr><td colspan="4" style="text-align:center;padding:32px;color:var(--text3);">Loading...</td></tr>';
+    try {
+      var permDoc = await FB.getDoc(FB.doc(FB.db, 'role_permissions', 'settings'));
+      _perms = permDoc.exists() ? permDoc.data() : {};
+    } catch(e) {
+      _perms = {};
+    }
+
+    var rows = Object.keys(DEFAULT_PERMISSIONS).map(function(key) {
+      var def = DEFAULT_PERMISSIONS[key];
+      var editorVal  = _perms[key] !== undefined ? (_perms[key].editor  !== undefined ? _perms[key].editor  : def.editor)  : def.editor;
+      var juniorVal  = _perms[key] !== undefined ? (_perms[key].junior  !== undefined ? _perms[key].junior  : def.junior)  : def.junior;
+      return '<tr>'
+        + '<td style="padding:12px 16px;font-size:.82rem;">'+def.label+'</td>'
+        + '<td style="text-align:center;"><span style="color:var(--green3);font-size:1rem;">✓</span></td>'
+        + '<td style="text-align:center;"><label class="toggle" style="justify-content:center;"><input type="checkbox" class="perm-toggle" data-key="'+key+'" data-role="editor" '+(editorVal?'checked':'')+'/><span class="toggle-slider"></span></label></td>'
+        + '<td style="text-align:center;"><label class="toggle" style="justify-content:center;"><input type="checkbox" class="perm-toggle" data-key="'+key+'" data-role="junior" '+(juniorVal?'checked':'')+'/><span class="toggle-slider"></span></label></td>'
+        + '</tr>';
+    }).join('');
+    tbody.innerHTML = rows;
+
+    // Save button
+    var saveBtn = $('btnSaveRoles');
+    if(saveBtn) {
+      saveBtn.addEventListener('click', async function() {
+        var payload = {};
+        document.querySelectorAll('.perm-toggle').forEach(function(cb) {
+          var key = cb.getAttribute('data-key');
+          var role = cb.getAttribute('data-role');
+          if(!payload[key]) payload[key] = {};
+          payload[key][role] = cb.checked;
+        });
+        try {
+          await FB.setDoc(FB.doc(FB.db,'role_permissions','settings'), payload);
+          toast('Permissions saved! ✅', 'success');
+        } catch(e) {
+          toast('Failed to save: ' + e.message, 'error');
+        }
+      });
+    }
+  }
+
+})();
+</script>
+</body>
+</html>
+
