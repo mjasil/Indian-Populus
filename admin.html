@@ -883,17 +883,105 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
     $('settingsEmail').value = user.email;
     $('settingsRole').value = userRole;
 
-    if(userRole !== 'owner'){
-      $('nav-team').style.display = 'none';
-    } else {
-      $('nav-team').style.display = '';
-    }
+    $('sidebarAva').textContent = initials;
+    $('topbarAvatar').textContent = initials;
+    $('settingsName').value = name;
+    $('settingsEmail').value = user.email;
+    $('settingsRole').value = userRole;
+
+    // Load permissions then apply UI restrictions
+    applyRoleRestrictions();
 
     var d = new Date();
     var months = ['January','February','March','April','May','June','July','August','September','October','November','December'];
     $('dashDate').textContent = months[d.getMonth()] + ' ' + d.getFullYear();
 
     showPage('dashboard');
+  }
+
+  // ── PERMISSIONS ──
+  var _userPerms = null;
+
+  var PERM_DEFAULTS = {
+    owner: {
+      write_article:true, publish_article:true, edit_any_article:true,
+      delete_article:true, manage_authors:true, manage_categories:true,
+      manage_team:true, manage_settings:true, approve_comments:true, export_data:true
+    },
+    editor: {
+      write_article:true, publish_article:true, edit_any_article:true,
+      delete_article:false, manage_authors:true, manage_categories:false,
+      manage_team:false, manage_settings:false, approve_comments:true, export_data:true
+    },
+    junior_editor: {
+      write_article:true, publish_article:false, edit_any_article:false,
+      delete_article:false, manage_authors:false, manage_categories:false,
+      manage_team:false, manage_settings:false, approve_comments:false, export_data:false
+    }
+  };
+
+  async function applyRoleRestrictions() {
+    if(userRole === 'owner') {
+      _userPerms = PERM_DEFAULTS.owner;
+      applyPermUI();
+      return;
+    }
+    // Load custom permissions from Firestore
+    try {
+      var permDoc = await FB.getDoc(FB.doc(FB.db, 'role_permissions', 'settings'));
+      var saved = permDoc.exists() ? permDoc.data() : {};
+      var defaults = PERM_DEFAULTS[userRole] || PERM_DEFAULTS.junior_editor;
+      _userPerms = {};
+      Object.keys(PERM_DEFAULTS.owner).forEach(function(key) {
+        var roleKey = userRole === 'editor' ? 'editor' : 'junior';
+        _userPerms[key] = saved[key] !== undefined
+          ? (saved[key][roleKey] !== undefined ? saved[key][roleKey] : defaults[key])
+          : defaults[key];
+      });
+    } catch(e) {
+      _userPerms = PERM_DEFAULTS[userRole] || PERM_DEFAULTS.junior_editor;
+    }
+    applyPermUI();
+  }
+
+  function can(perm) {
+    if(userRole === 'owner') return true;
+    return _userPerms ? !!_userPerms[perm] : false;
+  }
+
+  function applyPermUI() {
+    // NAV items
+    $('nav-team').style.display       = can('manage_team')       ? '' : 'none';
+    $('nav-categories').style.display = can('manage_categories') ? '' : 'none';
+    $('nav-newsletter').style.display = can('export_data')       ? '' : 'none';
+    $('nav-roles').style.display      = userRole === 'owner'     ? '' : 'none';
+    $('nav-settings').style.display   = can('manage_settings')   ? '' : 'none';
+
+    // Article form — hide Publish button if can't publish
+    var btnPublish = $('btnPublish');
+    if(btnPublish) btnPublish.style.display = can('publish_article') ? '' : 'none';
+
+    // Hide delete buttons on articles list
+    document.querySelectorAll('[data-delete-article]').forEach(function(b){
+      b.style.display = can('delete_article') ? '' : 'none';
+    });
+
+    // Hide edit buttons on articles list if can't edit any
+    if(!can('edit_any_article') && !can('write_article')) {
+      document.querySelectorAll('[data-edit-article]').forEach(function(b){ b.style.display='none'; });
+    }
+
+    // Authors page — hide add/edit/delete if no permission
+    var btnAddAuthor = $('btnAddAuthor');
+    if(btnAddAuthor) btnAddAuthor.style.display = can('manage_authors') ? '' : 'none';
+    document.querySelectorAll('[data-edit-author],[data-delete-author]').forEach(function(b){
+      b.style.display = can('manage_authors') ? '' : 'none';
+    });
+
+    // Comments — hide approve if no permission
+    document.querySelectorAll('.btn-approve,.btn-reject').forEach(function(b){
+      b.style.display = can('approve_comments') ? '' : 'none';
+    });
   }
 
   // ── LOGIN EVENTS ──
@@ -1160,6 +1248,7 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
       tbody.querySelectorAll('[data-delete-article]').forEach(function(b){
         b.addEventListener('click', function(){ deleteArticle(b.getAttribute('data-delete-article')); });
       });
+      if(_userPerms) applyPermUI();
     }catch(e){
       console.error(e);
       tbody.innerHTML = '<tr><td colspan="7" style="text-align:center;padding:32px;color:var(--red);">Failed to load: '+e.message+'</td></tr>';
@@ -1167,6 +1256,7 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
   }
 
   async function deleteArticle(id){
+    if(!can('delete_article')){ toast('You don\'t have permission to delete articles.', 'error'); return; }
     if(!confirm('Delete this article?')) return;
     try{
       await FB.deleteDoc(FB.doc(FB.db,'articles',id));
@@ -1228,6 +1318,7 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
   }
 
   async function saveArticleAs(status){
+    if(status === 'published' && !can('publish_article')){ toast('You don\'t have permission to publish articles.', 'error'); return; }
     var id = $('artId').value;
     var title = $('artTitle').value.trim();
     if(!title){ toast('Title is required!', 'error'); return; }
