@@ -634,6 +634,11 @@ tr:last-child td{border-bottom:none;}
         <div class="form-group form-full"><label>Role</label>
           <select id="teamRole"><option value="junior_editor">Junior Editor</option><option value="editor">Editor</option><option value="owner">Owner</option></select>
         </div>
+        <div class="form-group form-full">
+          <label>Linked Author Profile <span style="color:var(--text3);font-weight:400;">(optional)</span></label>
+          <select id="teamAuthorId"><option value="">— None —</option></select>
+          <span class="form-hint">Articles they write will default to this author profile</span>
+        </div>
       </div>
     </div>
     <div class="modal-footer"><button type="button" class="btn btn-ghost" data-close="modalTeam">Cancel</button><button type="button" class="btn btn-green" id="btnSaveTeam">Save</button></div>
@@ -785,6 +790,7 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
   var FB = null;
   var user = null;
   var userRole = null;
+  var userAuthorId = null; // linked author profile for this team member
 
   // ── TOAST ──
   function toast(msg, type){
@@ -839,7 +845,8 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
   async function handleSignedIn(u){
     user = u;
     try{
-      var role = await getTeamRole(u.email);
+      var teamData = await getTeamData(u.email);
+      var role = teamData ? teamData.role : null;
       if(!role && u.email.toLowerCase() === SEED_OWNER){
         await FB.setDoc(FB.doc(FB.db, 'team_members', u.uid), {
           name: u.displayName || 'Owner',
@@ -854,6 +861,7 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
         await FB.signOut(FB.auth);
         return;
       }
+      userAuthorId = teamData ? (teamData.author_id || null) : null;
       userRole = role;
       showAdmin();
     }catch(e){
@@ -862,11 +870,16 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
     }
   }
 
-  async function getTeamRole(email){
+  async function getTeamData(email){
     var q = FB.query(FB.collection(FB.db, 'team_members'), FB.where('email', '==', email.toLowerCase()));
     var snap = await FB.getDocs(q);
     if(snap.empty) return null;
-    return snap.docs[0].data().role;
+    return snap.docs[0].data();
+  }
+
+  async function getTeamRole(email){
+    var data = await getTeamData(email);
+    return data ? data.role : null;
   }
 
   function showAdmin(){
@@ -1299,10 +1312,26 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
     }catch(e){ catSel.innerHTML = '<option value="">Failed to load</option>'; }
     try{
       var authSnap = await FB.getDocs(FB.query(FB.collection(FB.db,'authors'), FB.orderBy('name')));
+
+      // Determine which author to auto-select
+      // Priority: editing existing article → use its author_id
+      //           new article → use logged-in user's linked author
+      var autoSelect = selectedAuth || userAuthorId || '';
+      var canPickAny = can('edit_any_article') || userRole === 'owner';
+
       authSel.innerHTML = authSnap.empty ? '<option value="">No authors — add one first</option>' :
         '<option value="">Select Author</option>' + authSnap.docs.map(function(d){
-          return '<option value="'+d.id+'"'+(d.id===selectedAuth?' selected':'')+'>'+escapeHtml(d.data().name)+'</option>';
+          return '<option value="'+d.id+'"'+(d.id===autoSelect?' selected':'')+'>'+escapeHtml(d.data().name)+'</option>';
         }).join('');
+
+      // Lock dropdown if user can only write as themselves
+      if(!canPickAny && userAuthorId){
+        authSel.disabled = true;
+        authSel.title = 'You can only publish as your own author profile';
+      } else {
+        authSel.disabled = false;
+        authSel.title = '';
+      }
     }catch(e){ authSel.innerHTML = '<option value="">Failed to load</option>'; }
   }
 
@@ -1320,6 +1349,11 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
   async function saveArticleAs(status){
     if(status === 'published' && !can('publish_article')){ toast('You don\'t have permission to publish articles.', 'error'); return; }
     var id = $('artId').value;
+    var chosenAuthor = $('artAuthor').value || null;
+    // Enforce: junior/editor without edit_any can only write as themselves
+    if(!can('edit_any_article') && userRole !== 'owner' && userAuthorId && chosenAuthor !== userAuthorId){
+      toast('You can only publish articles under your own author profile.', 'error'); return;
+    }
     var title = $('artTitle').value.trim();
     if(!title){ toast('Title is required!', 'error'); return; }
 
@@ -1781,7 +1815,7 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
     }
   }
 
-  function openAddTeam(){
+  async function openAddTeam(){
     $('teamId').value = '';
     $('teamName').value = '';
     $('teamEmail').value = '';
@@ -1790,7 +1824,23 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
     $('teamRole').value = 'junior_editor';
     $('teamModalTitle').textContent = 'Add Team Member';
     $('teamPassGroup').style.display = '';
+    await loadTeamAuthorOptions('');
     openModal('modalTeam');
+  }
+
+  async function loadTeamAuthorOptions(selectedId) {
+    var sel = $('teamAuthorId');
+    sel.innerHTML = '<option value="">— None —</option>';
+    try {
+      var snap = await FB.getDocs(FB.query(FB.collection(FB.db,'authors'), FB.orderBy('name')));
+      snap.docs.forEach(function(d) {
+        var opt = document.createElement('option');
+        opt.value = d.id;
+        opt.textContent = d.data().name;
+        if(d.id === selectedId) opt.selected = true;
+        sel.appendChild(opt);
+      });
+    } catch(e) {}
   }
 
   async function saveTeam(){
@@ -1813,7 +1863,9 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
         return;
       }
       await FB.setDoc(FB.doc(FB.db,'team_members', result.uid), {
-        name: name, email: email, role: role, created_at: FB.serverTimestamp()
+        name: name, email: email, role: role,
+        author_id: $('teamAuthorId').value || null,
+        created_at: FB.serverTimestamp()
       });
       toast('Team member added! Login: ' + email, 'success');
       closeModal('modalTeam');
