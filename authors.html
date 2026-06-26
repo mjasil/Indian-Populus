@@ -204,7 +204,6 @@ window.addEventListener('firebase-ready', async function(){
 
     grid.innerHTML = authors.map(function(a, i){
       var count = arts.filter(function(x){ return x.author_id === a.id; }).length;
-      var views = arts.filter(function(x){ return x.author_id === a.id; }).reduce(function(s,x){return s+(x.views||0);},0);
       var avaHtml = a.photo_url
         ? '<img src="'+a.photo_url+'" alt="'+a.name+'"/>'
         : getInitials(a.name);
@@ -218,7 +217,7 @@ window.addEventListener('firebase-ready', async function(){
         +'<div class="tile-name">'+a.name+'</div>'
         +'<div class="tile-role">'+roleText+'</div>'
         +'<div class="tile-bio">'+(a.bio||'')+'</div>'
-        +'<div class="tile-stats"><div><div class="tile-stat-n">'+count+'</div><div class="tile-stat-l">Articles</div></div><div><div class="tile-stat-n">'+views+'</div><div class="tile-stat-l">Views</div></div></div>'
+        +'<div class="tile-stats"><div><div class="tile-stat-n">'+count+'</div><div class="tile-stat-l">Articles</div></div></div>'
         +'</a>';
     }).join('');
 
