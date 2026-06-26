@@ -1004,7 +1004,7 @@ var EMAILJS_PUBLIC_KEY   = window.IP_CONFIG ? window.IP_CONFIG.EMAILJS_PUBLIC_KE
 var EMAILJS_SERVICE_ID   = window.IP_CONFIG ? window.IP_CONFIG.EMAILJS_SERVICE_ID : '';
 var EMAILJS_TMPL_WELCOME = window.IP_CONFIG ? window.IP_CONFIG.TMPL_WELCOME : '';
 
-async function handleSubscribe(email){
+window.handleSubscribe = async function(email){
   if(!email||!email.includes('@')) return false;
   // Use fb directly - already set by firebase-ready listener above
   if(!fb) fb = window.__fb;
@@ -1019,7 +1019,7 @@ async function handleSubscribe(email){
       emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TMPL_WELCOME, {to_email: email}).catch(function(){});
     }
     return true;
-  }catch(e){console.error('Subscribe error:',e);return false;}
+  }catch(e){console.error('Subscribe error:',e);alert('Subscribe error: '+e.message);return false;}
 }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
