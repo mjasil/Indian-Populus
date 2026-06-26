@@ -109,8 +109,6 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
         <p class="author-bio" id="authorBio"></p>
         <div class="author-stats">
           <div><div class="author-stat-n" id="statArticles">—</div><div class="author-stat-l">Articles</div></div>
-          <div><div class="author-stat-n" id="statViews">—</div><div class="author-stat-l">Total Views</div></div>
-          <div><div class="author-stat-n" id="statAvgRead">—</div><div class="author-stat-l">Avg Min Read</div></div>
         </div>
       </div>
     </div>
@@ -210,12 +208,8 @@ window.addEventListener('firebase-ready',async function(){
     var artQ=fb.query(fb.collection(fb.db,'articles'),fb.where('status','==','published'),fb.where('author_id','==',authorId),fb.orderBy('published_at','desc'));
     var artSnap=await fb.getDocs(artQ);
     var data=artSnap.docs.map(function(d){return Object.assign({id:d.id},d.data());});
-    var totalViews=data.reduce(function(s,a){return s+(a.views||0);},0);
-    var avgRead=data.length?Math.round(data.reduce(function(s,a){return s+(a.read_time||5);},0)/data.length):0;
 
     document.getElementById('statArticles').textContent=data.length;
-    document.getElementById('statViews').textContent=totalViews;
-    document.getElementById('statAvgRead').textContent=avgRead;
 
     var grid=document.getElementById('authorArticlesGrid');
     if(!data.length){
