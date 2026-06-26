@@ -119,7 +119,6 @@ footer{background:var(--ink);color:var(--white);padding:60px 32px 32px;}
       <div class="about-stat"><div class="about-stat-n" id="statArticles">—</div><div class="about-stat-l">Articles Published</div></div>
       <div class="about-stat"><div class="about-stat-n" id="statAuthors">—</div><div class="about-stat-l">Contributing Authors</div></div>
       <div class="about-stat"><div class="about-stat-n" id="statCategories">—</div><div class="about-stat-l">Editorial Categories</div></div>
-      <div class="about-stat"><div class="about-stat-n" id="statReaders">—</div><div class="about-stat-l">Total Readers</div></div>
     </div>
 
     <div class="about-mission reveal">
@@ -189,12 +188,10 @@ window.addEventListener('firebase-ready', async function(){
     var authSnap = await fb.getDocs(fb.collection(fb.db,'authors'));
     var catSnap = await fb.getDocs(fb.collection(fb.db,'categories'));
     var arts = artSnap.docs.map(function(d){ return d.data(); });
-    var totalViews = arts.reduce(function(s,a){ return s+(a.views||0); }, 0);
 
     var elA=document.getElementById('statArticles'); if(elA) elA.textContent=artSnap.size;
     var elB=document.getElementById('statAuthors'); if(elB) elB.textContent=authSnap.size;
     var elC=document.getElementById('statCategories'); if(elC) elC.textContent=catSnap.size;
-    var elD=document.getElementById('statReaders'); if(elD) elD.textContent=totalViews;
 
     // Team section — only authors with show_on_about = true
     var teamGrid = document.getElementById('teamGrid');
