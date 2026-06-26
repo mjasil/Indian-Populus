@@ -346,6 +346,24 @@ body{animation:pageFadeIn .4s ease both;}
   .news__card{padding:28px;}
   .footer__bot{flex-direction:column;gap:8px;}
 }
+
+/* ── SUBSCRIBE POPUP ── */
+#subscribePopup{
+  position:fixed;bottom:32px;left:50%;transform:translateX(-50%) translateY(20px);
+  background:#1a2e1f;color:#fff;padding:18px 28px;border-radius:12px;
+  box-shadow:0 8px 40px rgba(0,0,0,.35);z-index:9999;
+  display:flex;align-items:center;gap:14px;
+  opacity:0;transition:opacity .35s ease,transform .35s ease;pointer-events:none;
+  min-width:260px;max-width:90vw;
+}
+#subscribePopup.show{opacity:1;transform:translateX(-50%) translateY(0);}
+#subscribePopup .sp-icon{font-size:1.6rem;line-height:1;}
+#subscribePopup .sp-text{}
+#subscribePopup .sp-title{font-size:.88rem;font-weight:700;color:#fff;margin-bottom:3px;}
+#subscribePopup .sp-sub{font-size:.72rem;color:rgba(255,255,255,.6);}
+#subscribePopup .sp-bar{position:absolute;bottom:0;left:0;height:3px;background:var(--gold-soft,#d9b463);border-radius:0 0 12px 12px;width:100%;transform-origin:left;animation:none;}
+#subscribePopup.show .sp-bar{animation:spBar 2.8s linear forwards;}
+@keyframes spBar{from{transform:scaleX(1);}to{transform:scaleX(0);}}
 </style>
 <script src="/config.js"></script>
 </head>
@@ -792,12 +810,12 @@ window.addEventListener('firebase-ready',function(){
     var btn=form.querySelector('button');
     var email=input.value.trim();
     if(!email){return;}
-    btn.textContent='Subscribing...';
+    btn.textContent='Subscribing...'; btn.disabled=true;
     var result=await window.handleSubscribe(email);
-    if(result===true){btn.textContent='Welcome aboard ✓';btn.style.background='#d9b463';input.value='';}
-    else if(result==='exists'){btn.textContent='Already subscribed!';btn.style.background='#c9952a';}
-    else{btn.textContent='Try again';btn.style.background='#e05252';}
-    setTimeout(function(){btn.textContent='Subscribe';btn.style.background='';},3000);
+    btn.textContent='Subscribe'; btn.disabled=false;
+    if(result===true){input.value='';showSubscribePopup('You\'re in! 🌿','Welcome to Indian Populus. See you Sunday.');}
+    else if(result==='exists'){showSubscribePopup('Already subscribed ✓','You\'re on the list. Watch your inbox.');}
+    else{showSubscribePopup('Something went wrong','Please try again in a moment.');}
   });}
   Promise.all([loadHero(),loadPicks(),loadRecent(),loadCategoryCounts(),loadFeatured()]);
 });
@@ -1004,6 +1022,21 @@ var EMAILJS_PUBLIC_KEY   = window.IP_CONFIG ? window.IP_CONFIG.EMAILJS_PUBLIC_KE
 var EMAILJS_SERVICE_ID   = window.IP_CONFIG ? window.IP_CONFIG.EMAILJS_SERVICE_ID : '';
 var EMAILJS_TMPL_WELCOME = window.IP_CONFIG ? window.IP_CONFIG.TMPL_WELCOME : '';
 
+
+function showSubscribePopup(title, sub){
+  var p = document.getElementById('subscribePopup');
+  var bar = p.querySelector('.sp-bar');
+  document.getElementById('spTitle').textContent = title;
+  document.getElementById('spSub').textContent = sub;
+  // Reset bar animation
+  bar.style.animation = 'none';
+  p.classList.remove('show');
+  void p.offsetWidth;
+  p.classList.add('show');
+  bar.style.animation = '';
+  clearTimeout(window._spTimer);
+  window._spTimer = setTimeout(function(){ p.classList.remove('show'); }, 3000);
+}
 window.handleSubscribe = async function(email){
   if(!email||!email.includes('@')) return false;
   // Use fb directly - already set by firebase-ready listener above
@@ -1019,9 +1052,18 @@ window.handleSubscribe = async function(email){
       emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TMPL_WELCOME, {to_email: email}).catch(function(){});
     }
     return true;
-  }catch(e){console.error('Subscribe error:',e);alert('Subscribe error: '+e.message);return false;}
+  }catch(e){console.error('Subscribe error:',e);return false;}
 }
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
+
+<div id="subscribePopup">
+  <div class="sp-icon">🌿</div>
+  <div class="sp-text">
+    <div class="sp-title" id="spTitle">You're in!</div>
+    <div class="sp-sub" id="spSub">Welcome to Indian Populus. See you Sunday.</div>
+  </div>
+  <div class="sp-bar"></div>
+</div>
 </body>
 </html>
