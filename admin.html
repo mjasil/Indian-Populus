@@ -2302,11 +2302,12 @@ window.dispatchEvent(new CustomEvent('fb-ready'));
   // ══════════════════════════════════════════════════════
   // EMAILJS CONFIG — fill these in after EmailJS setup
   // ══════════════════════════════════════════════════════
-  var EMAILJS_PUBLIC_KEY    = window.IP_CONFIG.EMAILJS_PUBLIC_KEY;
-  var EMAILJS_SERVICE_ID    = window.IP_CONFIG.EMAILJS_SERVICE_ID;
-  var EMAILJS_TMPL_REPLY    = window.IP_CONFIG.TMPL_CONTACT_REPLY;
-  var EMAILJS_TMPL_NEWSLETTER = window.IP_CONFIG.TMPL_NEWSLETTER;
-  var ADMIN_EMAIL           = window.IP_CONFIG.ADMIN_EMAIL;
+  var _cfg = window.IP_CONFIG || {};
+  var EMAILJS_PUBLIC_KEY    = _cfg.EMAILJS_PUBLIC_KEY    || '';
+  var EMAILJS_SERVICE_ID    = _cfg.EMAILJS_SERVICE_ID    || '';
+  var EMAILJS_TMPL_REPLY    = _cfg.TMPL_CONTACT_REPLY    || '';
+  var EMAILJS_TMPL_NEWSLETTER = _cfg.TMPL_NEWSLETTER     || '';
+  var ADMIN_EMAIL           = _cfg.ADMIN_EMAIL           || 'jasiljasil000@gmail.com';
 
   function emailjsReady(){ return EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY' && typeof emailjs !== 'undefined'; }
 
