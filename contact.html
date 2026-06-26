@@ -167,11 +167,11 @@ import { getFirestore, collection, addDoc, serverTimestamp } from "https://www.g
 const db = getFirestore(initializeApp({apiKey:"AIzaSyBf4d83iuU7cSsh2TfYmsD6hTh6hWAL8pY",authDomain:"indian-populus.firebaseapp.com",projectId:"indian-populus"}));
 
 // ── EmailJS Config ──
-const EMAILJS_PUBLIC_KEY      = window.IP_CONFIG.EMAILJS_PUBLIC_KEY;
-const EMAILJS_SERVICE_ID      = window.IP_CONFIG.EMAILJS_SERVICE_ID;
-const EMAILJS_TMPL_NOTIFY     = window.IP_CONFIG.TMPL_CONTACT_NOTIFY;
-const EMAILJS_TMPL_REPLY      = window.IP_CONFIG.TMPL_CONTACT_REPLY;
-const ADMIN_EMAIL             = window.IP_CONFIG.ADMIN_EMAIL;
+const EMAILJS_PUBLIC_KEY      = (window.IP_CONFIG||{}).EMAILJS_PUBLIC_KEY||'';
+const EMAILJS_SERVICE_ID      = (window.IP_CONFIG||{}).EMAILJS_SERVICE_ID||'';
+const EMAILJS_TMPL_NOTIFY     = (window.IP_CONFIG||{}).TMPL_CONTACT_NOTIFY||'';
+const EMAILJS_TMPL_REPLY      = (window.IP_CONFIG||{}).TMPL_CONTACT_REPLY||'';
+const ADMIN_EMAIL             = (window.IP_CONFIG||{}).ADMIN_EMAIL||'jasiljasil000@gmail.com';
 
 document.getElementById('contactForm').addEventListener('submit', async function(e){
   e.preventDefault();
