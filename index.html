@@ -803,9 +803,24 @@ window.addEventListener('firebase-ready',function(){
     btn.textContent='Subscribing...';btn.disabled=true;
     var result=await window.handleSubscribe(email);
     btn.textContent='Subscribe';btn.disabled=false;
-    if(result===true){input.value='';window.showSubPopup('🌿','You\'re in!','Welcome to Indian Populus. See you Sunday.');}
-    else if(result==='exists'){window.showSubPopup('✅','Already subscribed!','You\'re on the list. Watch your inbox.');}
-    else{window.showSubPopup('❌','Something went wrong','Please try again in a moment.');}
+    var _ico=result===true?'🌿':result==='exists'?'✅':'❌';
+    var _tt=result===true?"You're in!":result==='exists'?'Already subscribed!':'Something went wrong';
+    var _sb=result===true?'Welcome to Indian Populus. See you Sunday.':result==='exists'?"You're on the list.":'Please try again.';
+    if(result===true) input.value='';
+    var _p=document.getElementById('subPopup');
+    var _b=document.getElementById('spBar');
+    if(_p){
+      document.getElementById('spIc').textContent=_ico;
+      document.getElementById('spTt').textContent=_tt;
+      document.getElementById('spSb').textContent=_sb;
+      _b.style.cssText='transition:none;transform:scaleX(1)';
+      _p.classList.remove('on');
+      void _p.offsetWidth;
+      _p.classList.add('on');
+      setTimeout(function(){_b.style.cssText='transition:transform 3s linear;transform:scaleX(0)';},60);
+      clearTimeout(window._spT);
+      window._spT=setTimeout(function(){_p.classList.remove('on');},3400);
+    }
   });}
   Promise.all([loadHero(),loadPicks(),loadRecent(),loadCategoryCounts(),loadFeatured()]);
 });
