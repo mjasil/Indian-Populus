@@ -47,7 +47,7 @@ button,input{font-family:var(--sans);}
 .ticker{background:var(--forest);display:flex;align-items:stretch;overflow:hidden;height:36px;}
 .ticker__label{flex-shrink:0;background:var(--gold);color:var(--ink);font-family:var(--sans);font-size:.62rem;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;padding:0 18px;display:flex;align-items:center;white-space:nowrap;}
 .ticker__track{display:flex;align-items:center;overflow:hidden;flex:1;}
-.ticker__inner{display:flex;align-items:center;gap:0;animation:tick 36s linear infinite;white-space:nowrap;}
+.ticker__inner{display:flex;animation:tickerScroll 30s linear infinite;}
 .ticker__inner:hover{animation-play-state:paused;}
 .ticker__item{display:inline-flex;align-items:center;gap:10px;padding:0 36px;font-size:.7rem;color:rgba(255,255,255,.78);font-weight:400;border-right:1px solid rgba(255,255,255,.12);}
 .ticker__item b{color:var(--gold-soft);font-weight:700;letter-spacing:.5px;margin-right:2px;}
@@ -360,20 +360,11 @@ body{animation:pageFadeIn .4s ease both;}
 <body>
 
 <!-- TICKER -->
-<div class="ticker" aria-label="Latest headlines">
-  <div class="ticker__label">Live Wire</div>
+<div class="ticker" aria-label="Latest articles">
+  <div class="ticker__label">Latest</div>
   <div class="ticker__track">
     <div class="ticker__inner" id="tickerInner">
-      <div class="ticker__item"><b>Parliament</b> Monsoon session opens with debate on the new data-protection bill</div>
-      <div class="ticker__item"><b>Markets</b> Sensex closes at record as monsoon forecast lifts rural demand</div>
-      <div class="ticker__item"><b>Culture</b> Kochi-Muziris Biennale unveils its 2026 curatorial roster</div>
-      <div class="ticker__item"><b>Sport</b> Indian women's chess team takes Olympiad gold in Budapest</div>
-      <div class="ticker__item"><b>Cities</b> Bengaluru pilots a 15-minute neighbourhood plan across four wards</div>
-      <div class="ticker__item"><b>Parliament</b> Monsoon session opens with debate on the new data-protection bill</div>
-      <div class="ticker__item"><b>Markets</b> Sensex closes at record as monsoon forecast lifts rural demand</div>
-      <div class="ticker__item"><b>Culture</b> Kochi-Muziris Biennale unveils its 2026 curatorial roster</div>
-      <div class="ticker__item"><b>Sport</b> Indian women's chess team takes Olympiad gold in Budapest</div>
-      <div class="ticker__item"><b>Cities</b> Bengaluru pilots a 15-minute neighbourhood plan across four wards</div>
+      <div class="ticker__item">Loading latest articles...</div>
     </div>
   </div>
 </div>
@@ -841,7 +832,25 @@ window.addEventListener('firebase-ready',function(){
       window._spT=setTimeout(function(){_p.classList.remove('on');},3400);
     }
   });}
-  Promise.all([loadHero(),loadPicks(),loadRecent(),loadCategoryCounts(),loadFeatured()]);
+  
+  // ── TICKER: load latest 5 article titles ──
+  async function loadTicker(){
+    try{
+      var q=fb.query(fb.collection(fb.db,'articles'),fb.where('status','==','published'),fb.orderBy('published_at','desc'),fb.limit(5));
+      var snap=await fb.getDocs(q);
+      if(snap.empty) return;
+      var inner=document.getElementById('tickerInner');
+      if(!inner) return;
+      var items=snap.docs.map(function(d){
+        var a=d.data();
+        return '<a href="/article?slug='+a.slug+'" class="ticker__item">'+a.title+'</a>';
+      });
+      // Duplicate for seamless loop
+      inner.innerHTML=items.join('')+items.join('');
+    }catch(e){}
+  }
+
+  Promise.all([loadHero(),loadPicks(),loadRecent(),loadCategoryCounts(),loadFeatured(),loadTicker()]);
 });
 
 async function getCatAuthorMaps(){
