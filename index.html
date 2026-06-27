@@ -792,6 +792,25 @@ var fb=null;
 window.addEventListener('firebase-ready',function(){
   fb=window.__fb;
 
+  window.handleSubscribe = async function(email){
+    if(!email||!email.includes('@')) return false;
+    // Use fb directly - already set by firebase-ready listener above
+    if(!fb) fb = window.__fb;
+    if(!fb) return false;
+    try{
+      var q=fb.query(fb.collection(fb.db,'subscribers'),fb.where('email','==',email.toLowerCase().trim()));
+      var existing=await fb.getDocs(q);
+      if(!existing.empty) return 'exists';
+      await fb.addDoc(fb.collection(fb.db,'subscribers'),{email:email.toLowerCase().trim(),subscribed_at:fb.serverTimestamp(),is_active:true});
+      if(EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY' && typeof emailjs !== 'undefined'){
+        emailjs.init({publicKey: EMAILJS_PUBLIC_KEY});
+        emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TMPL_WELCOME, {to_email: email}).catch(function(){});
+      }
+      return true;
+    }catch(e){console.error('Subscribe error:',e);return false;}
+  }
+
+
   // ── NEWSLETTER ──
   var form=document.getElementById('newsForm');
   if(form){form.addEventListener('submit',async function(e){
@@ -1041,23 +1060,7 @@ window.showSubPopup = function showSubPopup(ico, title, sub){
   clearTimeout(window._spT);
   window._spT=setTimeout(function(){p.classList.remove('on');},3200);
 }
-window.handleSubscribe = async function(email){
-  if(!email||!email.includes('@')) return false;
-  // Use fb directly - already set by firebase-ready listener above
-  if(!fb) fb = window.__fb;
-  if(!fb) return false;
-  try{
-    var q=fb.query(fb.collection(fb.db,'subscribers'),fb.where('email','==',email.toLowerCase().trim()));
-    var existing=await fb.getDocs(q);
-    if(!existing.empty) return 'exists';
-    await fb.addDoc(fb.collection(fb.db,'subscribers'),{email:email.toLowerCase().trim(),subscribed_at:fb.serverTimestamp(),is_active:true});
-    if(EMAILJS_PUBLIC_KEY && EMAILJS_PUBLIC_KEY !== 'YOUR_EMAILJS_PUBLIC_KEY' && typeof emailjs !== 'undefined'){
-      emailjs.init({publicKey: EMAILJS_PUBLIC_KEY});
-      emailjs.send(EMAILJS_SERVICE_ID, EMAILJS_TMPL_WELCOME, {to_email: email}).catch(function(){});
-    }
-    return true;
-  }catch(e){console.error('Subscribe error:',e);return false;}
-}
+// handleSubscribe moved into firebase-ready block
 </script>
 <script src="https://cdn.jsdelivr.net/npm/@emailjs/browser@4/dist/email.min.js"></script>
 <div id="subPopup"><div class="sp-ico" id="spIco">🌿</div><div><div class="sp-t" id="spT">You're in!</div><div class="sp-s" id="spS">Welcome to Indian Populus. See you Sunday.</div></div><div class="sp-prog" id="spProg"></div></div>
